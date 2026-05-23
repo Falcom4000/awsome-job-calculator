@@ -76,6 +76,7 @@ export type ScoreResult = {
     grade: string;
     title: string;
     description: string;
+    percentile: number;
   };
   dimensions: Record<DimensionKey, number>;
   aggregateScores: {
@@ -115,6 +116,10 @@ export const dimensionLabels: Record<DimensionKey, string> = {
 };
 
 export const scoringConfig = {
+  totalDistribution: {
+    mean: 70,
+    standardDeviation: 10,
+  },
   weights: {
     income: 0.32,
     stability: 0.16,
@@ -124,11 +129,11 @@ export const scoringConfig = {
     fit: 0.08,
   } satisfies Record<DimensionKey, number>,
   subjectiveMap: {
-    1: 8,
-    2: 31,
-    3: 50,
-    4: 69,
-    5: 92,
+    1: 20,
+    2: 45,
+    3: 70,
+    4: 84,
+    5: 96,
   } satisfies Record<number, number>,
   companySizeScore: {
     "": 55,
@@ -429,12 +434,19 @@ function calculateFit(inputs: JobInputs) {
   );
 }
 
+function getTotalPercentile(total: number) {
+  const { mean, standardDeviation } = scoringConfig.totalDistribution;
+  const percentile = normalCdf((total - mean) / standardDeviation) * 100;
+  return clamp(Math.round(percentile), 1, 99);
+}
+
 function getRating(total: number) {
-  if (total >= 85) return { grade: "S", title: "这班真能上", description: "钱、成长、消耗都在线，疯得很值。" };
-  if (total >= 75) return { grade: "A", title: "这班可以上", description: "整体划算，有短板但不影响大局。" };
-  if (total >= 65) return { grade: "B", title: "这班先上着", description: "不是梦中情班，但暂时不算亏。" };
-  if (total >= 55) return { grade: "C", title: "这班边上边看", description: "能上，但别太上头，边干边找解法。" };
-  return { grade: "D", title: "这班就上到这里吧", description: "疯得不太值，该认真准备退路了。" };
+  const percentile = getTotalPercentile(total);
+  if (percentile >= 90) return { grade: "S", title: "这班真能上", description: "钱、成长、消耗都在线，疯得很值。", percentile };
+  if (percentile >= 70) return { grade: "A", title: "这班可以上", description: "整体划算，有短板但不影响大局。", percentile };
+  if (percentile >= 30) return { grade: "B", title: "这班先上着", description: "不是梦中情班，但暂时不算亏。", percentile };
+  if (percentile >= 10) return { grade: "C", title: "这班边上边看", description: "能上，但别太上头，边干边找解法。", percentile };
+  return { grade: "D", title: "这班就上到这里吧", description: "疯得不太值，该认真准备退路了。", percentile };
 }
 
 function getOptionValueDescription(score: number) {

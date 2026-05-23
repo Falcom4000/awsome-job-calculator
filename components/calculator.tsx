@@ -802,6 +802,7 @@ export default function JobCalculator() {
                     <span className="text-7xl font-black leading-none">{result.total}</span>
                     <span className="pb-2 text-xl font-bold text-stone-500">/ 100</span>
                   </div>
+                  <p className="mt-3 text-sm font-bold text-stone-500">约超过 {result.rating.percentile}% 的工作</p>
                 </div>
               </div>
             </header>
