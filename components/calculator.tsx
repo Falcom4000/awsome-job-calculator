@@ -870,17 +870,13 @@ export default function JobCalculator() {
               </div>
               <div className="mt-8 grid gap-6 md:grid-cols-[minmax(0,1fr)_260px]">
                 <div>
-                  <p className="text-sm font-bold tracking-[0.24em] text-emerald-200">测完了</p>
-                  <div className="mt-3 flex flex-wrap items-end gap-x-4 gap-y-2">
+                  <div className="flex flex-wrap items-end gap-x-4 gap-y-2">
                     <span className="text-8xl font-black leading-none md:text-9xl">{result.rating.grade}</span>
                     <div className="pb-2">
                       <h1 className="text-3xl font-black tracking-tight md:text-5xl">{result.rating.title}</h1>
                       <p className="mt-3 max-w-2xl text-base leading-8 text-stone-300">{result.rating.description}</p>
                     </div>
                   </div>
-                  <p className="mt-5 text-sm leading-6 text-stone-400">
-                    结果基于你本次填写的信息生成，可返回修改输入后重新测。
-                  </p>
                 </div>
                 <div className="rounded-[2rem] bg-white p-5 text-stone-950">
                   <div className="flex items-center justify-between">
