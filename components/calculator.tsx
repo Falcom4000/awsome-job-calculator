@@ -33,7 +33,6 @@ type RatingOption = {
 };
 
 type RatingCopyKey =
-  | "raisePotential"
   | "stress"
   | "atmosphere"
   | "peopleHealth"
@@ -67,13 +66,6 @@ const genericRatingOptions: RatingOption[] = [
 ];
 
 const ratingCopy: Record<RatingCopyKey, RatingOption[]> = {
-  raisePotential: [
-    { score: 1, title: "几乎没有", description: "未来 1-2 年基本看不到涨薪空间。" },
-    { score: 2, title: "偏低", description: "可能小幅上涨，但空间有限或不确定。" },
-    { score: 3, title: "一般", description: "有正常调薪机会，但不会明显改变收入水平。" },
-    { score: 4, title: "较高", description: "有明确晋升、调薪或奖金提升机会。" },
-    { score: 5, title: "很高", description: "未来 1-2 年大概率显著提升收入。" },
-  ],
   stress: [
     { score: 1, title: "压力很大", description: "经常焦虑，明显影响情绪或生活。" },
     { score: 2, title: "压力偏大", description: "经常需要硬撑，恢复成本较高。" },
@@ -555,7 +547,7 @@ export default function JobCalculator() {
               <div className="relative">
                 <div className="mx-auto h-16 w-16 animate-spin rounded-full border-4 border-white/20 border-t-emerald-300" />
                 <p className="mt-6 text-center text-xs font-bold tracking-[0.24em] text-emerald-200">正在评估</p>
-                <h1 className="mt-2 text-center text-3xl font-black">正在生成工作资产报告</h1>
+                <h1 className="mt-2 text-center text-3xl font-black">正在判断这班疯得值不值</h1>
                 <p className="mt-3 max-w-md text-center text-sm leading-6 text-stone-300">
                   正在匹配薪酬分位、城市基准和六个维度的评分规则。
                 </p>
@@ -575,14 +567,14 @@ export default function JobCalculator() {
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] text-emerald-100">
                 <BriefcaseBusiness className="h-4 w-4" />
-                工作资产评估
+                打工哪有不疯的
               </div>
             </div>
             <div className="mt-8">
               <div>
-                <h1 className="max-w-3xl text-4xl font-black tracking-tight md:text-6xl">工作资产评估</h1>
+                <h1 className="max-w-3xl text-4xl font-black tracking-tight md:text-6xl">打工哪有不疯的</h1>
                 <p className="mt-4 max-w-2xl text-base leading-8 text-stone-300">
-                  把一份工作当作人力资本资产，结合公开薪酬数据和你的实际情况，评估当前收益、稳定性、持有友好度、成长、流动性和个人匹配度。
+                  测测这份工作疯得值不值。结合薪酬分位、工作消耗、成长空间和外部选择权，看看这班到底该怎么上。
                 </p>
               </div>
             </div>
@@ -669,26 +661,10 @@ export default function JobCalculator() {
           </Section>
 
           <Section eyebrow="第二步" title="当前收益">
-            <NumberField label="税后到手年收入" suffix="元/年" value={inputs.afterTaxIncome} onChange={(value) => setValue("afterTaxIncome", value)} />
-            <SelectField<Certainty>
-              label="奖金确定性"
-              options={[
-                { value: "high", label: "高" },
-                { value: "medium", label: "中" },
-                { value: "low", label: "低" },
-                { value: "unknown", label: "不清楚" },
-              ]}
-              value={inputs.bonusCertainty}
-              onChange={(value) => setValue("bonusCertainty", value)}
-            />
-            {inputs.mode === "detailed" ? (
-              <>
-                <NumberField label="税前年现金包" suffix="元/年" value={inputs.preTaxPackage} onChange={(value) => setValue("preTaxPackage", value)} />
-                <NumberField label="固定工资占比" suffix="%" value={inputs.fixedPayRatio} onChange={(value) => setValue("fixedPayRatio", value)} />
-                <NumberField label="年度福利折算" suffix="元/年" value={inputs.benefitsValue} onChange={(value) => setValue("benefitsValue", value)} />
-                <RatingField label="未来 1-2 年涨薪空间" low="低" high="高" copyKey="raisePotential" value={inputs.raisePotential} onChange={(value) => setValue("raisePotential", value)} />
-              </>
-            ) : null}
+            <NumberField label="税前年现金收入" suffix="元/年" value={inputs.annualCashIncome} onChange={(value) => setValue("annualCashIncome", value)} />
+            <p className="text-sm leading-6 text-stone-500 md:col-span-2">
+              包括固定工资、现金奖金和现金补贴；不包含股权、期权或尚未兑现的收益。
+            </p>
           </Section>
 
           <Section eyebrow="第三步" title="持有友好度">
@@ -864,8 +840,8 @@ export default function JobCalculator() {
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div>
                 <p className="text-xs font-bold tracking-[0.24em] text-emerald-200">生成报告</p>
-                <p className="mt-1 text-xl font-black">根据当前输入生成工作资产报告</p>
-                <p className="mt-2 text-sm leading-6 text-stone-300">评估在本地完成，会展示总分、评级、雷达图、优势短板和数据口径。</p>
+                <p className="mt-1 text-xl font-black">生成这份工作的发疯性价比报告</p>
+                <p className="mt-2 text-sm leading-6 text-stone-300">会展示总分、上班档位、雷达图、优势短板和数据口径。</p>
               </div>
               <button
                 className="rounded-2xl bg-emerald-300 px-8 py-4 text-base font-black text-stone-950 transition hover:bg-emerald-200 disabled:cursor-not-allowed disabled:opacity-70"
@@ -883,19 +859,19 @@ export default function JobCalculator() {
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] text-emerald-100">
                   <BriefcaseBusiness className="h-4 w-4" />
-                  评估报告
+                  发疯报告
                 </div>
               </div>
               <div className="mt-8 grid gap-6 md:grid-cols-[1fr_240px]">
                 <div>
-                  <p className="text-sm font-bold tracking-[0.24em] text-emerald-200">评估结果</p>
-                  <h1 className="mt-2 max-w-3xl text-4xl font-black tracking-tight md:text-6xl">工作资产评分报告</h1>
+                  <p className="text-sm font-bold tracking-[0.24em] text-emerald-200">测完了</p>
+                  <h1 className="mt-2 max-w-3xl text-4xl font-black tracking-tight md:text-6xl">这份工作疯得值不值</h1>
                   <p className="mt-4 max-w-2xl text-base leading-8 text-stone-300">
-                    结果基于你本次填写的信息生成，可返回修改输入后重新计算。
+                    结果基于你本次填写的信息生成，可返回修改输入后重新测。
                   </p>
                 </div>
                 <div className="rounded-[2rem] bg-white p-4 text-stone-950">
-                  <p className="text-sm font-bold text-stone-500">综合评级</p>
+                  <p className="text-sm font-bold text-stone-500">上班档位</p>
                   <div className="mt-3 flex items-end gap-2">
                     <span className="text-7xl font-black leading-none">{result.rating.grade}</span>
                     <span className="pb-2 text-lg font-black">{result.rating.title}</span>

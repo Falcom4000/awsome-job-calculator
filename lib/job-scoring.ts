@@ -28,12 +28,7 @@ export type JobInputs = {
   mode: InputMode;
   city: CityKey | "";
   cityResident: ResidentState;
-  afterTaxIncome: number;
-  preTaxPackage: number;
-  fixedPayRatio: number;
-  bonusCertainty: Certainty;
-  benefitsValue: number;
-  raisePotential: RatingValue;
+  annualCashIncome: number;
   weeklyHours: number;
   commuteMinutes: number;
   stress: RatingValue;
@@ -140,13 +135,6 @@ export const scoringConfig = {
     4: 80,
     5: 95,
   } satisfies Record<number, number>,
-  incomeCertaintyPenalty: {
-    "": -3,
-    high: 0,
-    medium: -4,
-    low: -8,
-    unknown: -3,
-  } satisfies Record<Certainty, number>,
   healthPenalty: {
     "": 0,
     none: 0,
@@ -195,12 +183,7 @@ export const defaultInputs: JobInputs = {
   mode: "",
   city: "",
   cityResident: "",
-  afterTaxIncome: 360000,
-  preTaxPackage: 450000,
-  fixedPayRatio: 80,
-  bonusCertainty: "",
-  benefitsValue: 12000,
-  raisePotential: null,
+  annualCashIncome: 450000,
   weeklyHours: 45,
   commuteMinutes: 35,
   stress: null,
@@ -356,26 +339,12 @@ function calculateBenchmark(inputs: JobInputs) {
 
 function calculateIncome(inputs: JobInputs) {
   const benchmark = calculateBenchmark(inputs);
-  const comparableIncome = !isDetailedMode(inputs)
-    ? inputs.afterTaxIncome
-    : inputs.preTaxPackage > 0
-      ? inputs.preTaxPackage
-      : (inputs.afterTaxIncome + inputs.benefitsValue) / 0.72;
-  const cashIncome =
-    !isDetailedMode(inputs) ? inputs.afterTaxIncome : Math.max(inputs.afterTaxIncome + inputs.benefitsValue, inputs.preTaxPackage * 0.72);
+  const comparableIncome = inputs.annualCashIncome;
   const industry = isDetailedMode(inputs) ? getIndustryBenchmark(industryKey(inputs), inputs.experienceYears, industryBenchmarkOptions(inputs)) : null;
   const fittedPercentile = fitLogNormalPercentile(comparableIncome, industry?.salaryQuantiles);
   const activeBenchmark = fittedPercentile === null ? benchmark : industry?.salaryQuantiles?.p50 ?? benchmark;
-  const ratio = fittedPercentile === null ? cashIncome / activeBenchmark : comparableIncome / activeBenchmark;
-  let score = fittedPercentile === null ? scoreByRatio(cashIncome / benchmark) : fittedPercentile * 100;
-  const raisePotential = inputs.raisePotential ?? 3;
-
-  score += scoringConfig.incomeCertaintyPenalty[inputs.bonusCertainty];
-  if (isDetailedMode(inputs)) {
-    if (inputs.fixedPayRatio > 0 && inputs.fixedPayRatio < 60) score -= 5;
-    if (raisePotential >= 4) score += 3;
-    if (raisePotential <= 2) score -= 3;
-  }
+  const ratio = comparableIncome / activeBenchmark;
+  const score = fittedPercentile === null ? scoreByRatio(comparableIncome / benchmark) : fittedPercentile * 100;
 
   return { score: clamp(score), benchmark: activeBenchmark, ratio };
 }
@@ -471,11 +440,11 @@ function calculateFit(inputs: JobInputs) {
 }
 
 function getRating(total: number) {
-  if (total >= 85) return { grade: "S", title: "顶级工作资产", description: "非常优质，除非有极好机会，否则应长期持有。" };
-  if (total >= 75) return { grade: "A", title: "优质工作资产", description: "值得继续持有，同时优化短板。" };
-  if (total >= 65) return { grade: "B", title: "中上工作资产", description: "性价比不错，但有明显短板，需要主动改造。" };
-  if (total >= 55) return { grade: "C", title: "普通工作资产", description: "可以暂时持有，但应寻找改进或替代机会。" };
-  return { grade: "D", title: "低质量工作资产", description: "不适合长期持有，除非有特殊短期目的。" };
+  if (total >= 85) return { grade: "S", title: "这班真能上", description: "收益、消耗、成长和选择权都在线，疯得比较值。" };
+  if (total >= 75) return { grade: "A", title: "这班可以上", description: "整体是划算的，继续上班可以，但别忘了修补短板。" };
+  if (total >= 65) return { grade: "B", title: "这班先上着", description: "有一些性价比，但不适合闭眼上，最低分维度要盯住。" };
+  if (total >= 55) return { grade: "C", title: "这班边上边看", description: "能上，但别太上头，建议同步看机会和改造空间。" };
+  return { grade: "D", title: "这班就上到这里吧", description: "疯得不太值，除非有明确短期目的，否则该准备退路。" };
 }
 
 function getOptionValueDescription(score: number) {
@@ -567,7 +536,7 @@ export function calculateJobScore(inputs: JobInputs): ScoreResult {
     rating: getRating(total),
     dimensions,
     optionValue,
-    unitHourlyIncome: Math.round(inputs.afterTaxIncome / Math.max(inputs.weeklyHours * 52, 1)),
+    unitHourlyIncome: Math.round(inputs.annualCashIncome / Math.max(inputs.weeklyHours * 52, 1)),
     benchmarkIncome: Math.round(income.benchmark),
     incomeRatio: Number(income.ratio.toFixed(2)),
     strengths,
