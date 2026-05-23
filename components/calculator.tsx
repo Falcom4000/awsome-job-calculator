@@ -1,7 +1,7 @@
 "use client";
 
 import { AlertTriangle, BarChart3, BriefcaseBusiness, ChevronRight, Gauge, LineChart, ShieldCheck } from "lucide-react";
-import type { ReactNode } from "react";
+import type { ReactNode, FormEvent } from "react";
 import { useState } from "react";
 
 import { cityBenchmarks, industryBenchmarks, roleBenchmarks } from "@/data/job-market";
@@ -344,27 +344,6 @@ function MultiSelectField({
   );
 }
 
-function TextAreaField({
-  label,
-  value,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-}) {
-  return (
-    <label className="grid gap-2 md:col-span-2">
-      <span className="text-sm font-medium text-stone-700">{label}</span>
-      <textarea
-        className="min-h-28 rounded-2xl border border-stone-200 bg-white px-4 py-3 text-base text-stone-950 shadow-sm outline-none"
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-      />
-    </label>
-  );
-}
-
 function RatingField({
   label,
   value,
@@ -488,14 +467,31 @@ function RadarChart({ values }: { values: Array<{ label: string; value: number }
 
 export default function JobCalculator() {
   const [inputs, setInputs] = useState<JobInputs>(defaultInputs);
-  const result = calculateJobScore(inputs);
+  const [submittedInputs, setSubmittedInputs] = useState<JobInputs | null>(null);
+  const [isCalculating, setIsCalculating] = useState(false);
+  const result = submittedInputs ? calculateJobScore(submittedInputs) : null;
   const setValue = <K extends keyof JobInputs>(key: K, value: JobInputs[K]) => {
     setInputs((current) => ({ ...current, [key]: value }));
   };
-  const radarValues = Object.entries(result.dimensions).map(([key, value]) => ({
-    label: dimensionLabels[key as keyof typeof dimensionLabels],
-    value,
-  }));
+  const radarValues = result
+    ? Object.entries(result.dimensions).map(([key, value]) => ({
+        label: dimensionLabels[key as keyof typeof dimensionLabels],
+        value,
+      }))
+    : [];
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsCalculating(true);
+    window.setTimeout(() => {
+      setSubmittedInputs(inputs);
+      setIsCalculating(false);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }, 1000);
+  };
+  const handleBack = () => {
+    setSubmittedInputs(null);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <main className="min-h-screen overflow-hidden bg-[#f4efe4] text-stone-950">
@@ -505,8 +501,9 @@ export default function JobCalculator() {
         <div className="absolute bottom-0 left-1/3 h-80 w-80 rounded-full bg-cyan-100 blur-3xl" />
       </div>
 
-      <div className="relative mx-auto grid max-w-7xl gap-6 px-5 py-8 lg:grid-cols-[minmax(0,1.05fr)_420px] lg:px-8">
-        <div className="space-y-6">
+      <div className="relative mx-auto max-w-5xl px-5 py-8 lg:px-8">
+        {!result ? (
+        <form className="space-y-6" onSubmit={handleSubmit}>
           <header className="rounded-[2.5rem] border border-stone-900/10 bg-stone-950 p-7 text-white shadow-xl">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] text-emerald-100">
@@ -517,20 +514,12 @@ export default function JobCalculator() {
                 本地计算，不上传数据
               </div>
             </div>
-            <div className="mt-8 grid gap-6 md:grid-cols-[1fr_220px]">
+            <div className="mt-8">
               <div>
                 <h1 className="max-w-3xl text-4xl font-black tracking-tight md:text-6xl">工作资产自动评分程序</h1>
                 <p className="mt-4 max-w-2xl text-base leading-8 text-stone-300">
                   把一份工作当作人力资本资产，综合当前收益、稳定性、持有成本、职业成长、流动性和个人匹配度，输出总分、评级、雷达图和行动建议。
                 </p>
-              </div>
-              <div className="rounded-[2rem] bg-white p-4 text-stone-950">
-                <p className="text-sm font-bold text-stone-500">当前评级</p>
-                <div className="mt-3 flex items-end gap-2">
-                  <span className="text-7xl font-black leading-none">{result.rating.grade}</span>
-                  <span className="pb-2 text-lg font-black">{result.rating.title}</span>
-                </div>
-                <p className="mt-3 text-sm leading-6 text-stone-600">{result.rating.description}</p>
               </div>
             </div>
           </header>
@@ -796,15 +785,56 @@ export default function JobCalculator() {
             ) : null}
           </Section>
 
-          {inputs.mode === "detailed" ? (
-            <Section eyebrow="08 / note" title="可选补充">
-              <TextAreaField label="补充说明（仅作为备注，不参与核心计算）" value={inputs.note} onChange={(value) => setValue("note", value)} />
-            </Section>
-          ) : null}
-        </div>
+          <div className="rounded-[2rem] border border-stone-900/10 bg-stone-950 p-5 text-white shadow-xl">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.24em] text-emerald-200">Ready</p>
+                <p className="mt-1 text-xl font-black">填写完成后生成评分结果</p>
+                <p className="mt-2 text-sm leading-6 text-stone-300">点击后会模拟 1 秒计算过程，再进入结果页。</p>
+              </div>
+              <button
+                className="rounded-2xl bg-emerald-300 px-8 py-4 text-base font-black text-stone-950 transition hover:bg-emerald-200 disabled:cursor-not-allowed disabled:opacity-70"
+                disabled={isCalculating}
+                type="submit"
+              >
+                {isCalculating ? "计算中..." : "计算"}
+              </button>
+            </div>
+          </div>
+        </form>
+        ) : (
+          <div className="space-y-6">
+            <header className="rounded-[2.5rem] border border-stone-900/10 bg-stone-950 p-7 text-white shadow-xl">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] text-emerald-100">
+                  <BriefcaseBusiness className="h-4 w-4" />
+                  Result
+                </div>
+                <button className="rounded-full bg-white px-4 py-2 text-sm font-black text-stone-950 transition hover:bg-emerald-100" type="button" onClick={handleBack}>
+                  返回修改
+                </button>
+              </div>
+              <div className="mt-8 grid gap-6 md:grid-cols-[1fr_240px]">
+                <div>
+                  <p className="text-sm font-bold uppercase tracking-[0.24em] text-emerald-200">计算结果</p>
+                  <h1 className="mt-2 max-w-3xl text-4xl font-black tracking-tight md:text-6xl">工作资产评分报告</h1>
+                  <p className="mt-4 max-w-2xl text-base leading-8 text-stone-300">
+                    结果基于你本次填写的信息生成，可返回修改输入后重新计算。
+                  </p>
+                </div>
+                <div className="rounded-[2rem] bg-white p-4 text-stone-950">
+                  <p className="text-sm font-bold text-stone-500">当前评级</p>
+                  <div className="mt-3 flex items-end gap-2">
+                    <span className="text-7xl font-black leading-none">{result.rating.grade}</span>
+                    <span className="pb-2 text-lg font-black">{result.rating.title}</span>
+                  </div>
+                  <p className="mt-3 text-sm leading-6 text-stone-600">{result.rating.description}</p>
+                </div>
+              </div>
+            </header>
 
-        <aside className="lg:sticky lg:top-6 lg:self-start">
-          <div className="space-y-4 rounded-[2.5rem] border border-stone-900/10 bg-white p-5 shadow-2xl">
+            <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_420px]">
+              <div className="space-y-4 rounded-[2.5rem] border border-stone-900/10 bg-white p-5 shadow-2xl">
             <div className="rounded-[2rem] bg-stone-950 p-5 text-white">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-bold text-stone-300">总得分</span>
@@ -917,8 +947,21 @@ export default function JobCalculator() {
                 ))}
               </div>
             </details>
+              </div>
+
+              <div className="rounded-[2.5rem] border border-stone-200 bg-white/85 p-5 shadow-sm backdrop-blur">
+                <p className="text-xs font-bold uppercase tracking-[0.24em] text-emerald-700">Next</p>
+                <h2 className="mt-1 text-xl font-black text-stone-950">重新评估</h2>
+                <p className="mt-3 text-sm leading-6 text-stone-600">
+                  如果结果和直觉差异很大，优先检查收入、工时、成长、流动性和个人匹配度这些高影响字段。
+                </p>
+                <button className="mt-5 w-full rounded-2xl bg-stone-950 px-5 py-4 text-sm font-black text-white transition hover:bg-emerald-900" type="button" onClick={handleBack}>
+                  返回修改输入
+                </button>
+              </div>
+            </div>
           </div>
-        </aside>
+        )}
       </div>
     </main>
   );
