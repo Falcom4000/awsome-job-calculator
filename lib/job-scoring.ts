@@ -121,19 +121,19 @@ export const dimensionLabels: Record<DimensionKey, string> = {
 
 export const scoringConfig = {
   weights: {
-    income: 0.25,
-    stability: 0.15,
-    holding: 0.2,
-    growth: 0.2,
-    liquidity: 0.15,
-    fit: 0.05,
+    income: 0.32,
+    stability: 0.16,
+    holding: 0.22,
+    growth: 0.16,
+    liquidity: 0.06,
+    fit: 0.08,
   } satisfies Record<DimensionKey, number>,
   subjectiveMap: {
-    1: 20,
-    2: 40,
-    3: 60,
-    4: 80,
-    5: 95,
+    1: 8,
+    2: 31,
+    3: 50,
+    4: 69,
+    5: 92,
   } satisfies Record<number, number>,
   healthPenalty: {
     "": 0,
@@ -180,7 +180,7 @@ export const scoringConfig = {
 };
 
 export const defaultInputs: JobInputs = {
-  mode: "",
+  mode: "brief",
   city: "",
   cityResident: "",
   annualCashIncome: 450000,

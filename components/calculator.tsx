@@ -423,10 +423,10 @@ function Section({
 }
 
 function RadarChart({ values }: { values: Array<{ label: string; value: number }> }) {
-  const size = 420;
+  const size = 560;
   const center = size / 2;
-  const radius = 120;
-  const labelRadius = 172;
+  const radius = 150;
+  const labelRadius = 230;
   const points = values.map((item, index) => {
     const angle = -Math.PI / 2 + (index * Math.PI * 2) / values.length;
     const itemRadius = (item.value / 100) * radius;
@@ -443,7 +443,7 @@ function RadarChart({ values }: { values: Array<{ label: string; value: number }
   const polygon = points.map((point) => `${point.x},${point.y}`).join(" ");
 
   return (
-    <svg className="h-auto w-full max-w-[520px] overflow-visible" viewBox={`0 0 ${size} ${size}`} role="img" aria-label="六维雷达图">
+    <svg className="h-auto w-full max-w-[560px]" viewBox={`0 0 ${size} ${size}`} role="img" aria-label="六维雷达图">
       {[0.25, 0.5, 0.75, 1].map((level) => {
         const ring = values
           .map((_, index) => {
@@ -467,7 +467,7 @@ function RadarChart({ values }: { values: Array<{ label: string; value: number }
             x={point.labelX}
             y={point.labelY}
           >
-            {point.label}
+            {point.label} {point.value}
           </text>
         </g>
       ))}
@@ -912,18 +912,6 @@ export default function JobCalculator() {
 
             <div className="flex justify-center rounded-[2rem] bg-stone-50 p-3">
               <RadarChart values={radarValues} />
-            </div>
-
-            <div className="grid gap-2">
-              {Object.entries(result.dimensions).map(([key, score]) => (
-                <div className="grid grid-cols-[92px_1fr_38px] items-center gap-3" key={key}>
-                  <span className="text-sm font-bold text-stone-700">{dimensionLabels[key as keyof typeof dimensionLabels]}</span>
-                  <div className="h-2 overflow-hidden rounded-full bg-stone-100">
-                    <div className="h-full rounded-full bg-emerald-800" style={{ width: `${score}%` }} />
-                  </div>
-                  <span className="text-right text-sm font-black">{score}</span>
-                </div>
-              ))}
             </div>
 
             <div className="rounded-[1.5rem] border border-stone-200 p-4">
