@@ -529,10 +529,6 @@ export default function JobCalculator() {
           <header className="relative overflow-hidden rounded-[2.5rem] border border-stone-900/10 bg-stone-950 p-7 text-white shadow-xl md:p-9">
             <div className="pointer-events-none absolute -right-24 -top-28 h-72 w-72 rounded-full bg-emerald-300/20 blur-3xl" />
             <div className="pointer-events-none absolute -bottom-20 left-1/3 h-44 w-44 rounded-full bg-amber-200/10 blur-2xl" />
-            <div className="relative mb-8 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] text-emerald-100">
-              <BriefcaseBusiness className="h-4 w-4" />
-              发疯报告
-            </div>
             <div className="relative flex flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-10">
               <h1 className="shrink-0 text-left text-[2.75rem] font-black tracking-tight md:text-[3.5rem]">打工哪有不疯的</h1>
               <p className="text-left text-[1.7rem] font-black leading-tight tracking-tight text-emerald-100 md:text-right md:text-[2.2rem]">
