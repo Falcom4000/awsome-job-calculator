@@ -624,7 +624,7 @@ export default function JobCalculator() {
               />
             ) : null}
             <p className="text-sm leading-6 text-stone-500 md:col-span-2">
-              快速评估可直接填税前总包；完整评估可拆成现金部分和股权、期权、股票的预计年化收益。
+              税前总包包括固定工资、现金奖金、现金补贴、股权、期权、股票等预计年化收益。
             </p>
           </Section>
 
@@ -785,13 +785,13 @@ export default function JobCalculator() {
                   发疯报告
                 </div>
               </div>
-              <div className="mt-8 grid gap-6 md:grid-cols-[minmax(0,1fr)_260px] md:items-center">
+              <div className="mt-5 grid gap-6 md:grid-cols-[minmax(0,1fr)_260px] md:items-center">
                 <div>
                   <div className="flex flex-wrap items-end gap-x-4 gap-y-2">
                     <span className="text-8xl font-black leading-none md:text-9xl">{result.rating.grade}</span>
                     <div className="pb-2">
                       <h1 className="text-3xl font-black tracking-tight md:text-5xl">{result.rating.title}</h1>
-                      <p className="mt-3 max-w-2xl text-base leading-8 text-stone-300">{result.rating.description}</p>
+                      <p className="mt-3 max-w-2xl text-lg leading-8 text-stone-300">{result.rating.description}</p>
                     </div>
                   </div>
                 </div>
