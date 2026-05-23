@@ -893,6 +893,12 @@ export default function JobCalculator() {
 
             <div className="grid gap-6">
               <div className="space-y-4 rounded-[2.5rem] border border-stone-900/10 bg-white p-5 shadow-2xl">
+            <div className="flex justify-center overflow-hidden rounded-[2rem] bg-stone-50 px-2 py-2 md:p-4">
+              <div className="-my-6 w-full max-w-[680px] md:-my-8">
+                <RadarChart values={radarValues} />
+              </div>
+            </div>
+
             <div className="grid gap-3 md:grid-cols-2">
               <div className="rounded-[2rem] bg-emerald-950 p-5 text-white">
                 <p className="text-sm font-bold text-emerald-100">综合收益</p>
@@ -909,12 +915,6 @@ export default function JobCalculator() {
                   <span className="pb-1 text-sm font-bold text-stone-500">/ 100</span>
                 </div>
                 <p className="mt-3 text-sm leading-6 text-stone-600">由稳定性、持有友好度、流动性和个人匹配度计算，分数越高代表成本越可控。</p>
-              </div>
-            </div>
-
-            <div className="flex justify-center overflow-hidden rounded-[2rem] bg-stone-50 px-2 py-2 md:p-4">
-              <div className="-my-10 w-full max-w-[680px] scale-y-[0.86] md:-my-12">
-                <RadarChart values={radarValues} />
               </div>
             </div>
 
