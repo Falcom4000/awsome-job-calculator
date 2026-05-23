@@ -19,7 +19,6 @@ import {
   type JobInputs,
   type JobLevelInput,
   type OfferParity,
-  type ResidentState,
   type RoleKey,
   type WeekendWork,
 } from "@/lib/job-scoring";
@@ -529,7 +528,7 @@ export default function JobCalculator() {
             <div className="mt-8">
               <div>
                 <h1 className="max-w-3xl text-4xl font-black tracking-tight md:text-6xl">打工哪有不疯的</h1>
-                <p className="mt-4 max-w-2xl text-base leading-8 text-stone-300">
+                <p className="mt-5 max-w-3xl text-3xl font-black leading-tight tracking-tight text-emerald-100 md:text-5xl">
                   测测这份工作疯得值不值
                 </p>
               </div>
@@ -568,32 +567,28 @@ export default function JobCalculator() {
               value={inputs.city}
               onChange={(value) => setValue("city", value)}
             />
+            <SelectField
+              label="行业"
+              options={Object.entries(industryBenchmarks).map(([value, item]) => ({ value: value as IndustryKey, label: item.label }))}
+              value={inputs.industry}
+              onChange={(value) => setValue("industry", value)}
+            />
+            <SelectField<JobLevelInput>
+              label="岗位层级"
+              options={jobLevelOptions}
+              value={inputs.jobLevel}
+              onChange={(value) => setValue("jobLevel", value)}
+            />
+            <SelectField
+              label="学历"
+              options={educationOptions.map((item) => ({ value: item, label: item }))}
+              value={inputs.education}
+              onChange={(value) => setValue("education", value)}
+            />
             {inputs.mode === "detailed" ? (
               <>
                 <NumberField label="年龄" suffix="岁" value={inputs.age} onChange={(value) => setValue("age", value)} />
                 <NumberField label="工作年限" suffix="年" value={inputs.experienceYears} onChange={(value) => setValue("experienceYears", value)} />
-                <SelectField
-                  label="学历"
-                  options={educationOptions.map((item) => ({ value: item, label: item }))}
-                  value={inputs.education}
-                  onChange={(value) => setValue("education", value)}
-                />
-                <SelectField<ResidentState>
-                  label="城市是否常驻"
-                  options={[
-                    { value: "yes", label: "是" },
-                    { value: "no", label: "否" },
-                    { value: "uncertain", label: "不确定" },
-                  ]}
-                  value={inputs.cityResident}
-                  onChange={(value) => setValue("cityResident", value)}
-                />
-                <SelectField
-                  label="行业"
-                  options={Object.entries(industryBenchmarks).map(([value, item]) => ({ value: value as IndustryKey, label: item.label }))}
-                  value={inputs.industry}
-                  onChange={(value) => setValue("industry", value)}
-                />
                 <SelectField
                   label="岗位"
                   options={Object.entries(roleBenchmarks).map(([value, item]) => ({ value: value as RoleKey, label: item.label }))}
@@ -606,17 +601,11 @@ export default function JobCalculator() {
                   value={inputs.enterpriseNature}
                   onChange={(value) => setValue("enterpriseNature", value)}
                 />
-                <SelectField<JobLevelInput>
-                  label="岗位层级"
-                  options={jobLevelOptions}
-                  value={inputs.jobLevel}
-                  onChange={(value) => setValue("jobLevel", value)}
-                />
               </>
             ) : null}
           </Section>
 
-          <Section eyebrow="第二步" title="当前收益">
+          <Section eyebrow="第二步" title="回报水平">
             <NumberField label="税前年现金收入" suffix="元/年" value={inputs.annualCashIncome} onChange={(value) => setValue("annualCashIncome", value)} />
             {inputs.mode === "detailed" ? (
               <NumberField
@@ -631,7 +620,7 @@ export default function JobCalculator() {
             </p>
           </Section>
 
-          <Section eyebrow="第三步" title="持有友好度">
+          <Section eyebrow="第三步" title="舒适度">
             <NumberField label="每周实际工作小时数" suffix="小时" value={inputs.weeklyHours} onChange={(value) => setValue("weeklyHours", value)} />
             <NumberField label="通勤单程时间" suffix="分钟" value={inputs.commuteMinutes} onChange={(value) => setValue("commuteMinutes", value)} />
             <RatingField label="工作压力" low="压力大" high="从容" copyKey="stress" value={inputs.stress} onChange={(value) => setValue("stress", value)} />
@@ -717,7 +706,7 @@ export default function JobCalculator() {
             ) : null}
           </Section>
 
-          <Section eyebrow="第五步" title="职业成长">
+          <Section eyebrow="第五步" title="成长性">
             <RatingField label="过去半年成长" low="停滞" high="变强很多" copyKey="pastGrowth" value={inputs.pastGrowth} onChange={(value) => setValue("pastGrowth", value)} />
             <RatingField label="未来一年成长预期" low="有限" high="空间大" copyKey="futureGrowth" value={inputs.futureGrowth} onChange={(value) => setValue("futureGrowth", value)} />
             {inputs.mode === "detailed" ? (
@@ -731,15 +720,6 @@ export default function JobCalculator() {
 
           <Section eyebrow="第六步" title="流动性">
             <RatingField label="最近外部机会情况" low="很少" high="很多" copyKey="externalOpportunities" value={inputs.externalOpportunities} onChange={(value) => setValue("externalOpportunities", value)} />
-            <SelectField
-              label="外部机会是否验证"
-              options={[
-                { value: "false", label: "未知 / 未验证" },
-                { value: "true", label: "已通过投递或沟通验证" },
-              ]}
-              value={inputs.externalKnown === "" ? "" : String(inputs.externalKnown)}
-              onChange={(value) => setValue("externalKnown", value === "" ? "" : value === "true")}
-            />
             {inputs.mode === "detailed" ? (
               <>
                 <RatingField label="外部 JD 匹配度" low="低" high="高" copyKey="jdMatch" value={inputs.jdMatch} onChange={(value) => setValue("jdMatch", value)} />
@@ -761,8 +741,8 @@ export default function JobCalculator() {
             ) : null}
           </Section>
 
-          <Section eyebrow="第七步" title="个人匹配度">
-            <RatingField label="个人匹配度 / 长期目标符合度" low="不适合" high="很匹配" copyKey="longTermFit" value={inputs.longTermFit} onChange={(value) => setValue("longTermFit", value)} />
+          <Section eyebrow="第七步" title="匹配度">
+            <RatingField label="匹配度 / 长期目标符合度" low="不适合" high="很匹配" copyKey="longTermFit" value={inputs.longTermFit} onChange={(value) => setValue("longTermFit", value)} />
             {inputs.mode === "detailed" ? (
               <>
                 <RatingField label="是否喜欢当前行业" low="不喜欢" high="喜欢" copyKey="industryLove" value={inputs.industryLove} onChange={(value) => setValue("industryLove", value)} />

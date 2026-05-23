@@ -17,7 +17,6 @@ export type WeekendWork = "" | "never" | "sometimes" | "often";
 export type BusinessState = "" | "good" | "average" | "bad" | "unknown";
 export type OfferParity = "" | "high" | "medium" | "low" | "unknown";
 export type CompanySize = "" | "large" | "medium" | "small" | "startup";
-export type ResidentState = "" | "yes" | "no" | "uncertain";
 export type EnterpriseNatureInput = "" | "state_owned" | "foreign" | "private_leading" | "private_general" | "unknown";
 export type JobLevelInput = "" | "senior_management" | "middle_manager" | "senior_staff" | "general_staff" | "unknown";
 type RatingValue = number | null;
@@ -25,7 +24,6 @@ type RatingValue = number | null;
 export type JobInputs = {
   mode: InputMode;
   city: CityKey | "";
-  cityResident: ResidentState;
   annualCashIncome: number;
   annualEquityIncome: number;
   weeklyHours: number;
@@ -50,7 +48,6 @@ export type JobInputs = {
   mentoring: RatingValue;
   resumeValue: RatingValue;
   externalOpportunities: RatingValue;
-  externalKnown: boolean | "";
   jdMatch: RatingValue;
   projectExplainability: RatingValue;
   companyTransferability: RatingValue;
@@ -108,12 +105,12 @@ type SalaryQuantiles = {
 };
 
 export const dimensionLabels: Record<DimensionKey, string> = {
-  income: "当前收益",
+  income: "回报水平",
   stability: "稳定性",
-  holding: "持有友好度",
-  growth: "职业成长",
+  holding: "舒适度",
+  growth: "成长性",
   liquidity: "流动性",
-  fit: "个人匹配度",
+  fit: "匹配度",
 };
 
 export const scoringConfig = {
@@ -165,7 +162,6 @@ export const scoringConfig = {
 export const defaultInputs: JobInputs = {
   mode: "brief",
   city: "",
-  cityResident: "",
   annualCashIncome: 450000,
   annualEquityIncome: 0,
   weeklyHours: 45,
@@ -190,7 +186,6 @@ export const defaultInputs: JobInputs = {
   mentoring: null,
   resumeValue: null,
   externalOpportunities: null,
-  externalKnown: "",
   jdMatch: null,
   projectExplainability: null,
   companyTransferability: null,
@@ -318,7 +313,7 @@ function calculateBenchmark(inputs: JobInputs) {
 function calculateIncome(inputs: JobInputs) {
   const benchmark = calculateBenchmark(inputs);
   const comparableIncome = inputs.annualCashIncome + (isDetailedMode(inputs) ? inputs.annualEquityIncome : 0);
-  const industry = isDetailedMode(inputs) ? getIndustryBenchmark(industryKey(inputs), inputs.experienceYears, industryBenchmarkOptions(inputs)) : null;
+  const industry = getIndustryBenchmark(industryKey(inputs), inputs.experienceYears, industryBenchmarkOptions(inputs));
   const fittedPercentile = fitLogNormalPercentile(comparableIncome, industry?.salaryQuantiles);
   const activeBenchmark = fittedPercentile === null ? benchmark : industry?.salaryQuantiles?.p50 ?? benchmark;
   const ratio = comparableIncome / activeBenchmark;
@@ -385,13 +380,13 @@ function calculateGrowth(inputs: JobInputs) {
 }
 
 function calculateLiquidity(inputs: JobInputs) {
-  if (!inputs.externalKnown && !isDetailedMode(inputs)) return clamp(subjective(inputs.externalOpportunities) - 8);
+  if (!isDetailedMode(inputs)) return clamp(subjective(inputs.externalOpportunities));
 
   const marketBase = isDetailedMode(inputs)
     ? (getIndustryBenchmark(industryKey(inputs), inputs.experienceYears, industryBenchmarkOptions(inputs)).demandScore + roleBenchmarks[roleKey(inputs)].liquidityScore) / 2
     : 60;
   const score = weighted([
-    [inputs.externalKnown ? subjective(inputs.externalOpportunities) : 52, 0.2],
+    [subjective(inputs.externalOpportunities), 0.2],
     [subjective(inputs.jdMatch), 0.2],
     [subjective(inputs.projectExplainability), 0.2],
     [subjective(inputs.companyTransferability), 0.14],
@@ -400,7 +395,7 @@ function calculateLiquidity(inputs: JobInputs) {
     [marketBase, 0.05],
   ]);
 
-  return clamp(inputs.externalKnown ? score : score - 6);
+  return clamp(score);
 }
 
 function calculateFit(inputs: JobInputs) {
@@ -444,26 +439,22 @@ function getDimensionReason(key: DimensionKey, score: number, inputs: JobInputs)
         ? "工时、通勤、压力和健康损耗整体可控。"
         : "工时、通勤、压力或健康损耗拉低了可持续性。",
     growth: !isDetailedMode(inputs) ? "主要依据过去半年成长和未来一年成长预期。" : "综合核心业务、成长速度、带教和简历价值判断。",
-    liquidity:
-      inputs.externalKnown
-        ? "已通过外部机会或沟通做过市场验证。"
-        : "外部机会尚未验证，市场接盘能力不确定。",
+    liquidity: "综合外部机会、JD 匹配、项目可讲程度和迁移能力判断。",
     fit: !isDetailedMode(inputs) ? "主要依据总体匹配度判断。" : "综合行业偏好、内容偏好、长期目标和额外学习意愿判断。",
   };
   return `${dimensionLabels[key]}：${reasons[key]}`;
 }
 
-function getConfidence(inputs: JobInputs, dimensions: Record<DimensionKey, number>): ScoreResult["confidence"] {
-  const briefReason = "简略模式缺少年龄、行业、岗位和经验等坐标系，使用城市与全国公开数据粗粒度基准。";
+function getConfidence(inputs: JobInputs): ScoreResult["confidence"] {
+  const briefIncomeReason = "已使用城市、行业和岗位层级；未填写企业性质时按民营普通口径兜底，未填写工作年限时按默认经验阶段兜底。";
   return {
-    income: isDetailedMode(inputs) ? { level: "中", reason: "已结合城市、行业、岗位、经验、企业性质和岗位层级基准；行业层级薪酬仍依赖报告分位和兜底规则。" } : { level: "中", reason: briefReason },
+    income: isDetailedMode(inputs) ? { level: "中", reason: "已结合城市、行业、岗位、经验、企业性质和岗位层级基准；行业层级薪酬仍依赖报告分位和兜底规则。" } : { level: "中", reason: briefIncomeReason },
     stability: isDetailedMode(inputs) ? { level: "中", reason: "已结合公司、团队、岗位风险和行业稳定性基准。" } : { level: "低", reason: "主要依赖未来一年安全感，结构性风险字段较少。" },
-    holding: { level: "高", reason: "工时、通勤、压力和所在城市通勤基准是持有成本的核心字段。" },
+    holding: { level: "高", reason: "工时、通勤、压力和所在城市通勤基准是舒适度的核心字段。" },
     growth: isDetailedMode(inputs) ? { level: "中", reason: "已提供核心业务、成长预期、带教和简历价值。" } : { level: "低", reason: "主要依赖过去成长和未来预期两个主观字段。" },
-    liquidity:
-      inputs.externalKnown && dimensions.liquidity >= 0
-        ? { level: isDetailedMode(inputs) ? "中" : "低", reason: "外部机会已做主观验证，但仍建议用投递和猎头沟通校准。" }
-        : { level: "低", reason: "流动性尚未验证，建议用简历投递或猎头反馈测试市场定价。" },
+    liquidity: isDetailedMode(inputs)
+      ? { level: "中", reason: "已结合外部机会、JD 匹配、项目表达和迁移能力。" }
+      : { level: "低", reason: "简略模式主要依赖外部机会主观评分。" },
     fit: isDetailedMode(inputs) ? { level: "中", reason: "已拆分行业、内容、长期目标和学习意愿。" } : { level: "低", reason: "简略模式只使用总体匹配度。" },
   };
 }
@@ -512,15 +503,14 @@ export function calculateJobScore(inputs: JobInputs): ScoreResult {
     if (score < 40) warnings.push(`${dimensionLabels[key as DimensionKey]}低于 40，属于高风险短板。`);
     else if (score < 60) warnings.push(`${dimensionLabels[key as DimensionKey]}低于 60，需要重点关注。`);
   });
-  if (dimensions.growth < 60 && dimensions.liquidity < 60) warnings.push("职业成长和流动性同时偏低，未来选择权不足。");
+  if (dimensions.growth < 60 && dimensions.liquidity < 60) warnings.push("成长性和流动性同时偏低，未来选择权不足。");
   if (dimensions.income >= 80 && dimensions.growth < 60 && dimensions.liquidity < 60) warnings.push("收益高但成长和流动性偏低，可能形成高现金流陷阱。");
-  if (dimensions.income >= 80 && dimensions.holding < 60) warnings.push("收益高但持有友好度偏低，存在高薪高消耗风险。");
-  if (!inputs.externalKnown) warnings.push("流动性尚未验证，建议通过简历、猎头沟通和小规模投递测试市场定价。");
-  if (!isDetailedMode(inputs)) warnings.push("当前为简略评估，未充分考虑年龄、工作年限、行业和岗位机会集。");
+  if (dimensions.income >= 80 && dimensions.holding < 60) warnings.push("回报高但舒适度偏低，存在高薪高消耗风险。");
+  if (!isDetailedMode(inputs)) warnings.push("当前为简略评估，未充分考虑年龄、工作年限、公司和团队风险。");
 
   const suggestions = [
     total >= 75 ? "整体值得继续持有，优先经营最低分维度。" : "不建议只看当前收入，应尽快验证替代机会和可改造空间。",
-    dimensions.holding < 60 ? "先处理工时、通勤、压力或健康损耗，否则收益不可持续。" : "持有成本目前可控，可以把精力放在成长和流动性经营上。",
+    dimensions.holding < 60 ? "先处理工时、通勤、压力或健康损耗，否则回报不可持续。" : "舒适度目前可控，可以把精力放在成长和流动性经营上。",
     dimensions.liquidity < 65 ? "未来 1-2 个月做一次市场测试，更新简历并验证外部报价。" : "保持外部机会温度，避免长期只积累公司专用经验。",
   ];
 
@@ -540,13 +530,13 @@ export function calculateJobScore(inputs: JobInputs): ScoreResult {
     strengthReasons,
     weaknessReasons,
     optionValueDescription: getOptionValueDescription(optionValue),
-    confidence: getConfidence(inputs, dimensions),
+    confidence: getConfidence(inputs),
     dataNotes: [
       `${cityBenchmarks[cityKey(inputs)].label}基准：${cityBenchmarks[cityKey(inputs)].source}，${cityBenchmarks[cityKey(inputs)].year}，${cityBenchmarks[cityKey(inputs)].note}`,
       `全国基准：${nationalBenchmark.source}，${nationalBenchmark.year}，${nationalBenchmark.note}`,
       isDetailedMode(inputs)
         ? `${activeIndustryBenchmark.label}行业基准：${activeIndustryBenchmark.source}，${activeIndustryBenchmark.year}，${activeIndustryBenchmark.note}`
-        : "简略模式未使用行业、岗位、年龄和学历细分基准。",
+        : `${activeIndustryBenchmark.label}行业 / 岗位层级基准：${activeIndustryBenchmark.source}，${activeIndustryBenchmark.year}，${activeIndustryBenchmark.note}`,
       isDetailedMode(inputs)
         ? `${roleBenchmarks[roleKey(inputs)].label}岗位基准：${roleBenchmarks[roleKey(inputs)].source}，${roleBenchmarks[roleKey(inputs)].year}，${roleBenchmarks[roleKey(inputs)].note}`
         : "当前版本已接入公开统计和报告数据；缺失细分字段会退化到全国或岗位大类基准。",
@@ -554,7 +544,7 @@ export function calculateJobScore(inputs: JobInputs): ScoreResult {
         ? `经验倍率：${activeExperienceFactor.label ?? `${inputs.experienceYears}年`}，${activeExperienceFactor.factor} 倍，${activeExperienceFactor.source}，${activeExperienceFactor.notes}`
         : "简略模式未使用经验倍率。",
       !isDetailedMode(inputs)
-        ? "简略模式未使用企业性质和岗位层级。"
+        ? "简略模式已使用行业和岗位层级；企业性质按民营普通口径兜底。"
         : !inputs.enterpriseNature || inputs.enterpriseNature === "unknown" || !inputs.jobLevel || inputs.jobLevel === "unknown"
         ? "未完整选择企业性质或岗位层级时，行业薪酬分位会按工作年限和民营普通企业口径兜底。"
         : "详细模式已使用企业性质和岗位层级校准行业薪酬分位。",
