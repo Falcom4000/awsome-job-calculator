@@ -488,7 +488,7 @@ export default function JobCalculator() {
   const [submittedInputs, setSubmittedInputs] = useState<JobInputs | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
   const [calculationProgress, setCalculationProgress] = useState(0);
-  const calculationFrameRef = useRef<number | null>(null);
+  const calculationTimerRef = useRef<number | null>(null);
   const result = submittedInputs ? calculateJobScore(submittedInputs) : null;
   const setValue = <K extends keyof JobInputs>(key: K, value: JobInputs[K]) => {
     setInputs((current) => ({ ...current, [key]: value }));
@@ -501,27 +501,22 @@ export default function JobCalculator() {
     : [];
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (calculationFrameRef.current !== null) {
-      window.cancelAnimationFrame(calculationFrameRef.current);
+    if (calculationTimerRef.current !== null) {
+      window.clearInterval(calculationTimerRef.current);
     }
     setIsCalculating(true);
     setCalculationProgress(0);
-    const startedAt = performance.now();
-    const duration = 1000;
+    const startedAt = Date.now();
+    const duration = 2000;
 
-    const tick = (now: number) => {
-      const progress = Math.min(((now - startedAt) / duration) * 100, 100);
+    calculationTimerRef.current = window.setInterval(() => {
+      const progress = Math.min(((Date.now() - startedAt) / duration) * 100, 99);
       setCalculationProgress(progress);
-      if (progress < 100) {
-        calculationFrameRef.current = window.requestAnimationFrame(tick);
-      }
-    };
-
-    calculationFrameRef.current = window.requestAnimationFrame(tick);
+    }, 50);
     window.setTimeout(() => {
-      if (calculationFrameRef.current !== null) {
-        window.cancelAnimationFrame(calculationFrameRef.current);
-        calculationFrameRef.current = null;
+      if (calculationTimerRef.current !== null) {
+        window.clearInterval(calculationTimerRef.current);
+        calculationTimerRef.current = null;
       }
       const score = calculateJobScore(inputs);
       void fetch("/api/job-submissions", {
@@ -566,8 +561,8 @@ export default function JobCalculator() {
                 </p>
                 <div className="mt-6 h-2 overflow-hidden rounded-full bg-white/10">
                   <div
-                    className="h-full rounded-full bg-emerald-300 transition-[width] duration-75 ease-out"
-                    style={{ width: `${calculationProgress}%` }}
+                    className="h-full rounded-full bg-emerald-300 shadow-[0_0_24px_rgba(110,231,183,0.55)] transition-[width] duration-100 ease-linear"
+                    style={{ width: `${Math.max(calculationProgress, 4)}%` }}
                   />
                 </div>
                 <p className="mt-3 text-center text-sm font-black text-emerald-200">{Math.round(calculationProgress)}%</p>
