@@ -808,16 +808,16 @@ export default function JobCalculator() {
             </div>
 
             <div className="grid gap-3 md:grid-cols-2">
-              <div className="rounded-[2rem] bg-emerald-950 p-5 text-white">
-                <p className="text-sm font-bold text-emerald-100">综合收益</p>
+              <div className="rounded-[2rem] border border-stone-200 bg-stone-50 p-5 text-stone-950">
+                <p className="text-sm font-bold text-stone-600">综合收益</p>
                 <div className="mt-4 flex items-end gap-2">
                   <span className="text-5xl font-black leading-none">{result.aggregateScores.benefit}</span>
-                  <span className="pb-1 text-sm font-bold text-emerald-100">/ 100</span>
+                  <span className="pb-1 text-sm font-bold text-stone-500">/ 100</span>
                 </div>
-                <p className="mt-3 text-sm leading-6 text-emerald-100">看钱和成长：现在给不给，未来涨不涨。</p>
+                <p className="mt-3 text-sm leading-6 text-stone-600">看钱和成长：现在给不给，未来涨不涨。</p>
               </div>
-              <div className="rounded-[2rem] bg-stone-100 p-5 text-stone-950">
-                <p className="text-sm font-bold text-stone-500">综合成本</p>
+              <div className="rounded-[2rem] border border-stone-200 bg-stone-50 p-5 text-stone-950">
+                <p className="text-sm font-bold text-stone-600">综合成本</p>
                 <div className="mt-4 flex items-end gap-2">
                   <span className="text-5xl font-black leading-none">{result.aggregateScores.cost}</span>
                   <span className="pb-1 text-sm font-bold text-stone-500">/ 100</span>
@@ -899,8 +899,8 @@ export default function JobCalculator() {
 
             </div>
 
-            <div className="rounded-[2rem] border border-stone-900/10 bg-white/85 p-5 text-center shadow-sm backdrop-blur">
-              <button className="rounded-2xl bg-stone-950 px-8 py-4 text-base font-black text-white transition hover:bg-emerald-900" type="button" onClick={handleBack}>
+            <div className="flex justify-center">
+              <button className="rounded-2xl border border-stone-950 px-8 py-4 text-base font-black text-stone-950 transition hover:bg-stone-950 hover:text-white" type="button" onClick={handleBack}>
                 返回重新输入
               </button>
             </div>
