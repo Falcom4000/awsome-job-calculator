@@ -8,6 +8,8 @@ import {
   nationalIncomeBenchmarks,
   roleLiquidityBenchmarks,
   roleSalaryBenchmarks,
+  type EnterpriseNature,
+  type JobLevel,
 } from "@/data/work-asset-datasets";
 
 export type CityKey =
@@ -60,6 +62,13 @@ export type MarketDatum = {
 export type IndustryDatum = {
   label: string;
   annualIncomeBenchmark: number;
+  salaryQuantiles?: {
+    p10: number;
+    p25: number;
+    p50: number;
+    p75: number;
+    p90: number;
+  };
   demandScore: number;
   stabilityScore: number;
   source: string;
@@ -74,6 +83,11 @@ export type RoleDatum = {
   source: string;
   year: number;
   note: string;
+};
+
+export type IndustryBenchmarkOptions = {
+  enterpriseNature?: EnterpriseNature | "unknown" | "";
+  jobLevel?: JobLevel | "unknown" | "";
 };
 
 function firstNumber(...values: Array<number | null | undefined>) {
@@ -123,17 +137,32 @@ function industrySalary(...keys: string[]) {
     .find((item) => item && firstNumber(item.annualSalaryAvg, item.annualSalaryMedian));
 }
 
-function jobLevelByExperience(experienceYears: number) {
+function jobLevelByExperience(experienceYears: number): JobLevel {
   return experienceYears <= 3 ? "general_staff" : "senior_staff";
 }
 
-function industryPositionSalary(experienceYears: number, ...keys: string[]) {
-  const preferredLevel = jobLevelByExperience(experienceYears);
+function usableEnterpriseNature(value?: EnterpriseNature | "unknown" | ""): EnterpriseNature {
+  return value && value !== "unknown" ? value : "private_general";
+}
+
+function usableJobLevel(value: JobLevel | "unknown" | "" | undefined, experienceYears: number): JobLevel {
+  return value && value !== "unknown" ? value : jobLevelByExperience(experienceYears);
+}
+
+function industryPositionSalary(experienceYears: number, options: IndustryBenchmarkOptions, ...keys: string[]) {
+  const preferredNature = usableEnterpriseNature(options.enterpriseNature);
+  const preferredLevel = usableJobLevel(options.jobLevel, experienceYears);
   return keys
-    .map((key) =>
-      industryPositionSalaryBenchmarks.find((item) => item.industryKey === key && item.enterpriseNature === "private_general" && item.jobLevel === preferredLevel)
-      ?? industryPositionSalaryBenchmarks.find((item) => item.industryKey === key && item.enterpriseNature === "private_general" && item.jobLevel === "senior_staff")
-    )
+    .map((key) => {
+      const records = industryPositionSalaryBenchmarks.filter((item) => item.industryKey === key);
+      return (
+        records.find((item) => item.enterpriseNature === preferredNature && item.jobLevel === preferredLevel)
+        ?? records.find((item) => item.enterpriseNature === preferredNature && item.jobLevel === jobLevelByExperience(experienceYears))
+        ?? records.find((item) => item.enterpriseNature === "private_general" && item.jobLevel === preferredLevel)
+        ?? records.find((item) => item.enterpriseNature === "private_general" && item.jobLevel === "senior_staff")
+        ?? records.find((item) => firstNumber(item.annualSalaryP50, item.annualSalaryP75))
+      );
+    })
     .find((item) => item && firstNumber(item.annualSalaryP50, item.annualSalaryP75));
 }
 
@@ -141,9 +170,9 @@ function industryStability(...keys: string[]) {
   return keys.map((key) => industryStabilityBenchmarks.find((item) => item.industryKey === key)).find(Boolean);
 }
 
-function industryDatum(label: string, fallbackDemand: number, experienceYears: number, ...keys: string[]): IndustryDatum {
+function industryDatum(label: string, fallbackDemand: number, experienceYears: number, options: IndustryBenchmarkOptions, ...keys: string[]): IndustryDatum {
   const salary = industrySalary(...keys);
-  const positionSalary = industryPositionSalary(experienceYears, ...keys);
+  const positionSalary = industryPositionSalary(experienceYears, options, ...keys);
   const stability = industryStability(...keys);
   const benchmark = salary && positionSalary
     ? salary.annualSalaryAvg && salary.annualSalaryAvg > positionSalary.annualSalaryP50 * 1.4
@@ -153,6 +182,15 @@ function industryDatum(label: string, fallbackDemand: number, experienceYears: n
   return {
     label,
     annualIncomeBenchmark: benchmark ?? nationalBenchmark.annualIncomeBenchmark,
+    salaryQuantiles: positionSalary
+      ? {
+          p10: positionSalary.annualSalaryP10,
+          p25: positionSalary.annualSalaryP25,
+          p50: positionSalary.annualSalaryP50,
+          p75: positionSalary.annualSalaryP75,
+          p90: positionSalary.annualSalaryP90,
+        }
+      : undefined,
     demandScore: firstNumber(stability?.growthScore, fallbackDemand) ?? fallbackDemand,
     stabilityScore: firstNumber(stability?.stabilityScore, stability?.layoffRiskScore, 60) ?? 60,
     source: salary && positionSalary ? `${salary.source}；${positionSalary.source}` : salary?.source ?? positionSalary?.source ?? "数据缺失，使用全国基准兜底",
@@ -175,9 +213,9 @@ const industryConfigs = {
   other: ["其他行业", 55, ["nbs_public_management_social_security"]],
 } satisfies Record<IndustryKey, [string, number, string[]]>;
 
-export function getIndustryBenchmark(industryKey: IndustryKey, experienceYears: number): IndustryDatum {
+export function getIndustryBenchmark(industryKey: IndustryKey, experienceYears: number, options: IndustryBenchmarkOptions = {}): IndustryDatum {
   const [label, fallbackDemand, keys] = industryConfigs[industryKey];
-  return industryDatum(label, fallbackDemand, experienceYears, ...keys);
+  return industryDatum(label, fallbackDemand, experienceYears, options, ...keys);
 }
 
 export function getExperienceIncomeFactor(experienceYears: number) {

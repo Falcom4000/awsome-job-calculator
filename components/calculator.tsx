@@ -13,10 +13,12 @@ import {
   type CityKey,
   type CompanySize,
   type BusinessState,
+  type EnterpriseNatureInput,
   type HealthImpact,
   type IndustryKey,
   type InputMode,
   type JobInputs,
+  type JobLevelInput,
   type OfferParity,
   type ResidentState,
   type RoleKey,
@@ -236,6 +238,20 @@ const ratingCopy: Record<RatingCopyKey, RatingOption[]> = {
 };
 
 const educationOptions = ["高中/中专", "大专", "本科", "硕士", "博士", "其他"];
+const enterpriseNatureOptions: Array<{ value: Exclude<EnterpriseNatureInput, "">; label: string }> = [
+  { value: "state_owned", label: "国有企业" },
+  { value: "foreign", label: "外资企业" },
+  { value: "private_leading", label: "民营龙头" },
+  { value: "private_general", label: "民营普通" },
+  { value: "unknown", label: "不清楚" },
+];
+const jobLevelOptions: Array<{ value: Exclude<JobLevelInput, "">; label: string }> = [
+  { value: "general_staff", label: "普通职员 / 执行岗" },
+  { value: "senior_staff", label: "高级职员 / 资深岗" },
+  { value: "middle_manager", label: "中层经理" },
+  { value: "senior_management", label: "高级管理" },
+  { value: "unknown", label: "不清楚" },
+];
 const workContentOptions = ["研究分析", "工程开发", "数据/回测", "业务运营", "客户/销售", "管理协调", "内部支持", "低价值维护"];
 const targetDirectionOptions = ["同岗位跳槽", "同岗位升档", "转管理", "转技术专家", "转产品/业务", "转行业", "创业/自由职业"];
 const longTermDirectionOptions = ["高收入", "稳定生活", "专业深耕", "管理路线", "行业影响力", "自由度", "低消耗"];
@@ -607,6 +623,18 @@ export default function JobCalculator() {
                   options={Object.entries(roleBenchmarks).map(([value, item]) => ({ value: value as RoleKey, label: item.label }))}
                   value={inputs.role}
                   onChange={(value) => setValue("role", value)}
+                />
+                <SelectField<EnterpriseNatureInput>
+                  label="企业性质"
+                  options={enterpriseNatureOptions}
+                  value={inputs.enterpriseNature}
+                  onChange={(value) => setValue("enterpriseNature", value)}
+                />
+                <SelectField<JobLevelInput>
+                  label="岗位层级"
+                  options={jobLevelOptions}
+                  value={inputs.jobLevel}
+                  onChange={(value) => setValue("jobLevel", value)}
                 />
               </>
             ) : null}

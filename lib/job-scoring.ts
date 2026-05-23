@@ -20,6 +20,8 @@ export type BusinessState = "" | "good" | "average" | "bad" | "unknown";
 export type OfferParity = "" | "high" | "medium" | "low" | "unknown";
 export type CompanySize = "" | "large" | "medium" | "small" | "startup";
 export type ResidentState = "" | "yes" | "no" | "uncertain";
+export type EnterpriseNatureInput = "" | "state_owned" | "foreign" | "private_leading" | "private_general" | "unknown";
+export type JobLevelInput = "" | "senior_management" | "middle_manager" | "senior_staff" | "general_staff" | "unknown";
 type RatingValue = number | null;
 
 export type JobInputs = {
@@ -75,6 +77,8 @@ export type JobInputs = {
   education: string;
   industry: IndustryKey | "";
   role: RoleKey | "";
+  enterpriseNature: EnterpriseNatureInput;
+  jobLevel: JobLevelInput;
   note: string;
 };
 
@@ -101,6 +105,14 @@ export type ScoreResult = {
   optionValueDescription: string;
   confidence: Record<DimensionKey, { level: "高" | "中" | "低"; reason: string }>;
   dataNotes: string[];
+};
+
+type SalaryQuantiles = {
+  p10: number;
+  p25: number;
+  p50: number;
+  p75: number;
+  p90: number;
 };
 
 export const dimensionLabels: Record<DimensionKey, string> = {
@@ -232,6 +244,8 @@ export const defaultInputs: JobInputs = {
   education: "",
   industry: "",
   role: "",
+  enterpriseNature: "",
+  jobLevel: "",
   note: "",
 };
 
@@ -260,6 +274,13 @@ function roleKey(inputs: JobInputs): RoleKey {
   return inputs.role || "other";
 }
 
+function industryBenchmarkOptions(inputs: JobInputs) {
+  return {
+    enterpriseNature: inputs.enterpriseNature,
+    jobLevel: inputs.jobLevel,
+  };
+}
+
 function weighted(items: Array<[number, number]>) {
   const totalWeight = items.reduce((sum, [, weight]) => sum + weight, 0);
   if (totalWeight === 0) return 60;
@@ -276,6 +297,48 @@ function scoreByRatio(ratio: number) {
   return clamp(92 + Math.min((ratio - 3) * 2, 8));
 }
 
+function erf(value: number) {
+  const sign = value < 0 ? -1 : 1;
+  const x = Math.abs(value);
+  const a1 = 0.254829592;
+  const a2 = -0.284496736;
+  const a3 = 1.421413741;
+  const a4 = -1.453152027;
+  const a5 = 1.061405429;
+  const p = 0.3275911;
+  const t = 1 / (1 + p * x);
+  const y = 1 - (((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t * Math.exp(-x * x));
+  return sign * y;
+}
+
+function normalCdf(value: number) {
+  return 0.5 * (1 + erf(value / Math.SQRT2));
+}
+
+function fitLogNormalPercentile(income: number, quantiles?: SalaryQuantiles) {
+  if (!quantiles || income <= 0) return null;
+  const points = [
+    { z: -1.281551565545, value: quantiles.p10 },
+    { z: -0.674489750196, value: quantiles.p25 },
+    { z: 0, value: quantiles.p50 },
+    { z: 0.674489750196, value: quantiles.p75 },
+    { z: 1.281551565545, value: quantiles.p90 },
+  ].filter((point) => Number.isFinite(point.value) && point.value > 0);
+
+  if (points.length < 2) return null;
+
+  const meanZ = points.reduce((sum, point) => sum + point.z, 0) / points.length;
+  const meanLogIncome = points.reduce((sum, point) => sum + Math.log(point.value), 0) / points.length;
+  const varianceZ = points.reduce((sum, point) => sum + (point.z - meanZ) ** 2, 0);
+  if (varianceZ <= 0) return null;
+
+  const sigma = points.reduce((sum, point) => sum + (point.z - meanZ) * (Math.log(point.value) - meanLogIncome), 0) / varianceZ;
+  if (!Number.isFinite(sigma) || sigma <= 0.01) return null;
+
+  const mu = meanLogIncome - sigma * meanZ;
+  return normalCdf((Math.log(income) - mu) / sigma);
+}
+
 function calculateBenchmark(inputs: JobInputs) {
   const city = cityBenchmarks[cityKey(inputs)];
   if (!isDetailedMode(inputs)) {
@@ -283,7 +346,7 @@ function calculateBenchmark(inputs: JobInputs) {
   }
 
   const experienceFactor = getExperienceIncomeFactor(inputs.experienceYears).factor;
-  const industry = getIndustryBenchmark(industryKey(inputs), inputs.experienceYears);
+  const industry = getIndustryBenchmark(industryKey(inputs), inputs.experienceYears, industryBenchmarkOptions(inputs));
   const role = roleBenchmarks[roleKey(inputs)];
   const roleIndustryBenchmark = (industry.annualIncomeBenchmark * 0.45 + role.annualIncomeBenchmark * 0.55) * experienceFactor;
   const backgroundBenchmark = nationalBenchmark.annualIncomeBenchmark * experienceFactor;
@@ -293,10 +356,18 @@ function calculateBenchmark(inputs: JobInputs) {
 
 function calculateIncome(inputs: JobInputs) {
   const benchmark = calculateBenchmark(inputs);
-  const annualIncome =
+  const comparableIncome = !isDetailedMode(inputs)
+    ? inputs.afterTaxIncome
+    : inputs.preTaxPackage > 0
+      ? inputs.preTaxPackage
+      : (inputs.afterTaxIncome + inputs.benefitsValue) / 0.72;
+  const cashIncome =
     !isDetailedMode(inputs) ? inputs.afterTaxIncome : Math.max(inputs.afterTaxIncome + inputs.benefitsValue, inputs.preTaxPackage * 0.72);
-  const ratio = annualIncome / benchmark;
-  let score = scoreByRatio(ratio);
+  const industry = isDetailedMode(inputs) ? getIndustryBenchmark(industryKey(inputs), inputs.experienceYears, industryBenchmarkOptions(inputs)) : null;
+  const fittedPercentile = fitLogNormalPercentile(comparableIncome, industry?.salaryQuantiles);
+  const activeBenchmark = fittedPercentile === null ? benchmark : industry?.salaryQuantiles?.p50 ?? benchmark;
+  const ratio = fittedPercentile === null ? cashIncome / activeBenchmark : comparableIncome / activeBenchmark;
+  let score = fittedPercentile === null ? scoreByRatio(cashIncome / benchmark) : fittedPercentile * 100;
   const raisePotential = inputs.raisePotential ?? 3;
 
   score += scoringConfig.incomeCertaintyPenalty[inputs.bonusCertainty];
@@ -306,7 +377,7 @@ function calculateIncome(inputs: JobInputs) {
     if (raisePotential <= 2) score -= 3;
   }
 
-  return { score: clamp(score), benchmark, ratio };
+  return { score: clamp(score), benchmark: activeBenchmark, ratio };
 }
 
 function calculateHolding(inputs: JobInputs) {
@@ -334,7 +405,7 @@ function calculateHolding(inputs: JobInputs) {
 
 function calculateStability(inputs: JobInputs) {
   if (!isDetailedMode(inputs)) return subjective(inputs.safetyFeeling);
-  const marketStability = getIndustryBenchmark(industryKey(inputs), inputs.experienceYears).stabilityScore;
+  const marketStability = getIndustryBenchmark(industryKey(inputs), inputs.experienceYears, industryBenchmarkOptions(inputs)).stabilityScore;
 
   return clamp(
     weighted([
@@ -370,7 +441,9 @@ function calculateGrowth(inputs: JobInputs) {
 function calculateLiquidity(inputs: JobInputs) {
   if (!inputs.externalKnown && !isDetailedMode(inputs)) return clamp(subjective(inputs.externalOpportunities) - 8);
 
-  const marketBase = isDetailedMode(inputs) ? (getIndustryBenchmark(industryKey(inputs), inputs.experienceYears).demandScore + roleBenchmarks[roleKey(inputs)].liquidityScore) / 2 : 60;
+  const marketBase = isDetailedMode(inputs)
+    ? (getIndustryBenchmark(industryKey(inputs), inputs.experienceYears, industryBenchmarkOptions(inputs)).demandScore + roleBenchmarks[roleKey(inputs)].liquidityScore) / 2
+    : 60;
   const score = weighted([
     [inputs.externalKnown ? subjective(inputs.externalOpportunities) : 52, 0.18],
     [subjective(inputs.jdMatch), 0.18],
@@ -437,7 +510,7 @@ function getDimensionReason(key: DimensionKey, score: number, inputs: JobInputs)
 function getConfidence(inputs: JobInputs, dimensions: Record<DimensionKey, number>): ScoreResult["confidence"] {
   const briefReason = "简略模式缺少年龄、行业、岗位和经验等坐标系，使用城市与全国公开数据粗粒度基准。";
   return {
-    income: isDetailedMode(inputs) ? { level: "中", reason: "已结合城市、行业、岗位和经验基准；城市和行业以公开统计数据为主，岗位和经验倍率仍含低置信估算。" } : { level: "中", reason: briefReason },
+    income: isDetailedMode(inputs) ? { level: "中", reason: "已结合城市、行业、岗位、经验、企业性质和岗位层级基准；行业层级薪酬仍依赖报告分位和兜底规则。" } : { level: "中", reason: briefReason },
     stability: isDetailedMode(inputs) ? { level: "中", reason: "已结合公司、团队、岗位风险和行业稳定性基准。" } : { level: "低", reason: "主要依赖未来一年安全感，结构性风险字段较少。" },
     holding: { level: "高", reason: "工时、通勤、压力和所在城市通勤基准是持有成本的核心字段。" },
     growth: isDetailedMode(inputs) ? { level: "中", reason: "已提供项目、核心业务、能力通用性和成长预期。" } : { level: "低", reason: "主要依赖过去成长和未来预期两个主观字段。" },
@@ -451,7 +524,7 @@ function getConfidence(inputs: JobInputs, dimensions: Record<DimensionKey, numbe
 
 export function calculateJobScore(inputs: JobInputs): ScoreResult {
   const income = calculateIncome(inputs);
-  const activeIndustryBenchmark = getIndustryBenchmark(industryKey(inputs), inputs.experienceYears);
+  const activeIndustryBenchmark = getIndustryBenchmark(industryKey(inputs), inputs.experienceYears, industryBenchmarkOptions(inputs));
   const activeExperienceFactor = getExperienceIncomeFactor(inputs.experienceYears);
   const dimensions: Record<DimensionKey, number> = {
     income: Math.round(income.score),
@@ -517,6 +590,11 @@ export function calculateJobScore(inputs: JobInputs): ScoreResult {
       isDetailedMode(inputs)
         ? `经验倍率：${activeExperienceFactor.label ?? `${inputs.experienceYears}年`}，${activeExperienceFactor.factor} 倍，${activeExperienceFactor.source}，${activeExperienceFactor.notes}`
         : "简略模式未使用经验倍率。",
+      !isDetailedMode(inputs)
+        ? "简略模式未使用企业性质和岗位层级。"
+        : !inputs.enterpriseNature || inputs.enterpriseNature === "unknown" || !inputs.jobLevel || inputs.jobLevel === "unknown"
+        ? "未完整选择企业性质或岗位层级时，行业薪酬分位会按工作年限和民营普通企业口径兜底。"
+        : "详细模式已使用企业性质和岗位层级校准行业薪酬分位。",
     ],
   };
 }
