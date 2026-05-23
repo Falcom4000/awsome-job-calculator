@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, BarChart3, BriefcaseBusiness, ChevronRight, Gauge, LineChart, ShieldCheck } from "lucide-react";
+import { AlertTriangle, BriefcaseBusiness, ChevronRight, Gauge, LineChart } from "lucide-react";
 import type { ReactNode, FormEvent } from "react";
 import { useState, useRef } from "react";
 
@@ -423,19 +423,22 @@ function Section({
 }
 
 function RadarChart({ values }: { values: Array<{ label: string; value: number }> }) {
-  const size = 560;
+  const size = 720;
   const center = size / 2;
-  const radius = 150;
-  const labelRadius = 230;
+  const radius = 170;
+  const labelRadius = 270;
   const points = values.map((item, index) => {
     const angle = -Math.PI / 2 + (index * Math.PI * 2) / values.length;
     const itemRadius = (item.value / 100) * radius;
+    const rawLabelX = center + Math.cos(angle) * labelRadius;
+    const labelAnchor: "end" | "start" | "middle" = rawLabelX < center - 12 ? "end" : rawLabelX > center + 12 ? "start" : "middle";
     return {
       ...item,
       x: center + Math.cos(angle) * itemRadius,
       y: center + Math.sin(angle) * itemRadius,
-      labelX: center + Math.cos(angle) * labelRadius,
+      labelX: labelAnchor === "end" ? Math.max(rawLabelX, 135) : labelAnchor === "start" ? Math.min(rawLabelX, size - 135) : rawLabelX,
       labelY: center + Math.sin(angle) * labelRadius,
+      labelAnchor,
       axisX: center + Math.cos(angle) * radius,
       axisY: center + Math.sin(angle) * radius,
     };
@@ -443,7 +446,7 @@ function RadarChart({ values }: { values: Array<{ label: string; value: number }
   const polygon = points.map((point) => `${point.x},${point.y}`).join(" ");
 
   return (
-    <svg className="h-auto w-full max-w-[560px]" viewBox={`0 0 ${size} ${size}`} role="img" aria-label="六维雷达图">
+    <svg className="h-auto w-full max-w-[680px]" viewBox={`0 0 ${size} ${size}`} role="img" aria-label="六维雷达图">
       {[0.25, 0.5, 0.75, 1].map((level) => {
         const ring = values
           .map((_, index) => {
@@ -461,13 +464,16 @@ function RadarChart({ values }: { values: Array<{ label: string; value: number }
         <g key={point.label}>
           <circle className="fill-emerald-900" cx={point.x} cy={point.y} r="4" />
           <text
-            className="fill-stone-700 text-[15px] font-black"
+            className="fill-stone-700 text-[18px] font-black"
             dominantBaseline="middle"
-            textAnchor={point.labelX < center - 12 ? "end" : point.labelX > center + 12 ? "start" : "middle"}
+            textAnchor={point.labelAnchor}
             x={point.labelX}
             y={point.labelY}
           >
-            {point.label} {point.value}
+            <tspan>{point.label}</tspan>
+            <tspan className="fill-emerald-900" dx="6">
+              {point.value}
+            </tspan>
           </text>
         </g>
       ))}
@@ -862,55 +868,37 @@ export default function JobCalculator() {
                   发疯报告
                 </div>
               </div>
-              <div className="mt-8 grid gap-6 md:grid-cols-[1fr_240px]">
+              <div className="mt-8 grid gap-6 md:grid-cols-[minmax(0,1fr)_260px]">
                 <div>
                   <p className="text-sm font-bold tracking-[0.24em] text-emerald-200">测完了</p>
-                  <h1 className="mt-2 max-w-3xl text-4xl font-black tracking-tight md:text-6xl">这份工作疯得值不值</h1>
-                  <p className="mt-4 max-w-2xl text-base leading-8 text-stone-300">
+                  <div className="mt-3 flex flex-wrap items-end gap-x-4 gap-y-2">
+                    <span className="text-8xl font-black leading-none md:text-9xl">{result.rating.grade}</span>
+                    <div className="pb-2">
+                      <h1 className="text-3xl font-black tracking-tight md:text-5xl">{result.rating.title}</h1>
+                      <p className="mt-3 max-w-2xl text-base leading-8 text-stone-300">{result.rating.description}</p>
+                    </div>
+                  </div>
+                  <p className="mt-5 text-sm leading-6 text-stone-400">
                     结果基于你本次填写的信息生成，可返回修改输入后重新测。
                   </p>
                 </div>
-                <div className="rounded-[2rem] bg-white p-4 text-stone-950">
-                  <p className="text-sm font-bold text-stone-500">上班档位</p>
-                  <div className="mt-3 flex items-end gap-2">
-                    <span className="text-7xl font-black leading-none">{result.rating.grade}</span>
-                    <span className="pb-2 text-lg font-black">{result.rating.title}</span>
+                <div className="rounded-[2rem] bg-white p-5 text-stone-950">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-bold text-stone-500">总得分</p>
+                    <Gauge className="h-5 w-5 text-emerald-800" />
                   </div>
-                  <p className="mt-3 text-sm leading-6 text-stone-600">{result.rating.description}</p>
+                  <div className="mt-4 flex items-end gap-2">
+                    <span className="text-7xl font-black leading-none">{result.total}</span>
+                    <span className="pb-2 text-xl font-bold text-stone-500">/ 100</span>
+                  </div>
+                  <p className="mt-3 text-sm font-black text-emerald-900">上班档位：{result.rating.grade} 档</p>
                 </div>
               </div>
             </header>
 
             <div className="grid gap-6">
               <div className="space-y-4 rounded-[2.5rem] border border-stone-900/10 bg-white p-5 shadow-2xl">
-            <div className="rounded-[2rem] bg-stone-950 p-5 text-white">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-bold text-stone-300">总得分</span>
-                <Gauge className="h-5 w-5 text-emerald-300" />
-              </div>
-              <div className="mt-4 flex items-end gap-2">
-                <span className="text-7xl font-black leading-none">{result.total}</span>
-                <span className="pb-2 text-xl font-bold text-stone-300">/ 100</span>
-              </div>
-              <p className="mt-3 text-sm leading-6 text-stone-300">
-                {result.rating.grade} 档：{result.rating.description}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-3xl bg-emerald-50 p-4">
-                <BarChart3 className="mb-3 h-5 w-5 text-emerald-800" />
-                <p className="text-xs font-bold text-emerald-900">收益评分</p>
-                <p className="mt-1 text-3xl font-black">{result.dimensions.income}</p>
-              </div>
-              <div className="rounded-3xl bg-amber-50 p-4">
-                <ShieldCheck className="mb-3 h-5 w-5 text-amber-800" />
-                <p className="text-xs font-bold text-amber-900">持有友好度</p>
-                <p className="mt-1 text-3xl font-black">{result.dimensions.holding}</p>
-              </div>
-            </div>
-
-            <div className="flex justify-center rounded-[2rem] bg-stone-50 p-3">
+            <div className="flex justify-center rounded-[2rem] bg-stone-50 px-2 py-4 md:p-6">
               <RadarChart values={radarValues} />
             </div>
 
