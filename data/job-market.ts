@@ -1,7 +1,9 @@
 import {
   cityCommuteBenchmarks,
   cityIncomeBenchmarks,
+  experienceIncomeFactors,
   industrySalaryBenchmarks,
+  industryPositionSalaryBenchmarks,
   industryStabilityBenchmarks,
   nationalIncomeBenchmarks,
   roleLiquidityBenchmarks,
@@ -59,6 +61,7 @@ export type IndustryDatum = {
   label: string;
   annualIncomeBenchmark: number;
   demandScore: number;
+  stabilityScore: number;
   source: string;
   year: number;
   note: string;
@@ -120,21 +123,69 @@ function industrySalary(...keys: string[]) {
     .find((item) => item && firstNumber(item.annualSalaryAvg, item.annualSalaryMedian));
 }
 
-function stabilityDemand(industryKey: string, fallback: number) {
-  const stability = industryStabilityBenchmarks.find((item) => item.industryKey === industryKey);
-  return firstNumber(stability?.growthScore, stability?.stabilityScore, fallback) ?? fallback;
+function jobLevelByExperience(experienceYears: number) {
+  return experienceYears <= 3 ? "general_staff" : "senior_staff";
 }
 
-function industryDatum(label: string, fallbackDemand: number, ...keys: string[]): IndustryDatum {
+function industryPositionSalary(experienceYears: number, ...keys: string[]) {
+  const preferredLevel = jobLevelByExperience(experienceYears);
+  return keys
+    .map((key) =>
+      industryPositionSalaryBenchmarks.find((item) => item.industryKey === key && item.enterpriseNature === "private_general" && item.jobLevel === preferredLevel)
+      ?? industryPositionSalaryBenchmarks.find((item) => item.industryKey === key && item.enterpriseNature === "private_general" && item.jobLevel === "senior_staff")
+    )
+    .find((item) => item && firstNumber(item.annualSalaryP50, item.annualSalaryP75));
+}
+
+function industryStability(...keys: string[]) {
+  return keys.map((key) => industryStabilityBenchmarks.find((item) => item.industryKey === key)).find(Boolean);
+}
+
+function industryDatum(label: string, fallbackDemand: number, experienceYears: number, ...keys: string[]): IndustryDatum {
   const salary = industrySalary(...keys);
+  const positionSalary = industryPositionSalary(experienceYears, ...keys);
+  const stability = industryStability(...keys);
+  const benchmark = salary && positionSalary
+    ? salary.annualSalaryAvg && salary.annualSalaryAvg > positionSalary.annualSalaryP50 * 1.4
+      ? salary.annualSalaryAvg * 0.65 + positionSalary.annualSalaryP50 * 0.35
+      : firstNumber(salary.annualSalaryAvg, salary.annualSalaryMedian, positionSalary.annualSalaryP50)
+    : firstNumber(salary?.annualSalaryAvg, salary?.annualSalaryMedian, positionSalary?.annualSalaryP50, nationalBenchmark.annualIncomeBenchmark);
   return {
     label,
-    annualIncomeBenchmark: firstNumber(salary?.annualSalaryAvg, salary?.annualSalaryMedian, nationalBenchmark.annualIncomeBenchmark) ?? nationalBenchmark.annualIncomeBenchmark,
-    demandScore: stabilityDemand(keys[0] ?? "other", fallbackDemand),
-    source: salary?.source ?? "数据缺失，使用全国基准兜底",
-    year: salary?.year ?? nationalBenchmark.year,
-    note: salary ? `${salary.methodology === "official_salary" ? "官方行业工资" : "招聘薪资"}口径；${salary.notes}` : "未匹配行业薪酬数据，使用全国基准退化计算。",
+    annualIncomeBenchmark: benchmark ?? nationalBenchmark.annualIncomeBenchmark,
+    demandScore: firstNumber(stability?.growthScore, fallbackDemand) ?? fallbackDemand,
+    stabilityScore: firstNumber(stability?.stabilityScore, stability?.layoffRiskScore, 60) ?? 60,
+    source: salary && positionSalary ? `${salary.source}；${positionSalary.source}` : salary?.source ?? positionSalary?.source ?? "数据缺失，使用全国基准兜底",
+    year: Math.max(salary?.year ?? 0, positionSalary?.year ?? 0, nationalBenchmark.year),
+    note: [
+      salary ? `${salary.methodology === "official_salary" ? "官方行业工资" : "招聘薪资"}口径；${salary.notes}` : null,
+      positionSalary ? `薪酬调研分位：${positionSalary.enterpriseNatureName}${positionSalary.jobLevelName} P50 ${positionSalary.annualSalaryP50} / P75 ${positionSalary.annualSalaryP75}；${positionSalary.notes}` : null,
+    ].filter(Boolean).join("；") || "未匹配行业薪酬数据，使用全国基准退化计算。",
   };
+}
+
+const industryConfigs = {
+  internet: ["互联网 / 软件", 58, ["nbs_information_software_it", "salary_survey_software_system_integration", "salary_survey_it_manufacturing", "internet"]],
+  finance: ["金融 / 量化", 74, ["nbs_finance", "fund_securities_futures_investment", "banking"]],
+  manufacturing: ["制造业 / 硬件", 70, ["nbs_manufacturing", "salary_survey_mechanical_manufacturing", "salary_survey_it_manufacturing", "energy_mining_metallurgy"]],
+  consumer: ["消费 / 零售", 58, ["nbs_wholesale_retail", "nbs_accommodation_catering"]],
+  education: ["教育 / 培训", 42, ["nbs_education", "salary_survey_education_training", "education"]],
+  healthcare: ["医疗健康", 68, ["nbs_health_social_work"]],
+  public: ["公共部门 / 国企", 48, ["nbs_public_management_social_security", "salary_survey_public_management_social_security"]],
+  other: ["其他行业", 55, ["nbs_public_management_social_security"]],
+} satisfies Record<IndustryKey, [string, number, string[]]>;
+
+export function getIndustryBenchmark(industryKey: IndustryKey, experienceYears: number): IndustryDatum {
+  const [label, fallbackDemand, keys] = industryConfigs[industryKey];
+  return industryDatum(label, fallbackDemand, experienceYears, ...keys);
+}
+
+export function getExperienceIncomeFactor(experienceYears: number) {
+  return (
+    experienceIncomeFactors.find((item) => experienceYears >= item.experienceMin && (item.experienceMax === null || experienceYears < item.experienceMax))
+    ?? experienceIncomeFactors.find((item) => item.id === "exp_3_5")
+    ?? { label: `${experienceYears}年`, factor: 1, source: "默认经验倍率", year: nationalBenchmark.year, notes: "经验数据缺失，使用1倍兜底。" }
+  );
 }
 
 function roleSalary(...keys: string[]) {
@@ -195,14 +246,14 @@ export const cityBenchmarks: Record<CityKey, MarketDatum> = {
 };
 
 export const industryBenchmarks: Record<IndustryKey, IndustryDatum> = {
-  internet: industryDatum("互联网 / 软件", 58, "nbs_information_software_it", "internet"),
-  finance: industryDatum("金融 / 量化", 74, "nbs_finance", "fund_securities_futures_investment", "banking"),
-  manufacturing: industryDatum("制造业 / 硬件", 70, "nbs_manufacturing", "energy_mining_metallurgy"),
-  consumer: industryDatum("消费 / 零售", 58, "nbs_wholesale_retail", "nbs_accommodation_catering"),
-  education: industryDatum("教育 / 培训", 42, "nbs_education", "education"),
-  healthcare: industryDatum("医疗健康", 68, "nbs_health_social_work"),
-  public: industryDatum("公共部门 / 国企", 48, "nbs_public_management_social_security"),
-  other: industryDatum("其他行业", 55, "nbs_public_management_social_security"),
+  internet: getIndustryBenchmark("internet", 5),
+  finance: getIndustryBenchmark("finance", 5),
+  manufacturing: getIndustryBenchmark("manufacturing", 5),
+  consumer: getIndustryBenchmark("consumer", 5),
+  education: getIndustryBenchmark("education", 5),
+  healthcare: getIndustryBenchmark("healthcare", 5),
+  public: getIndustryBenchmark("public", 5),
+  other: getIndustryBenchmark("other", 5),
 };
 
 export const roleBenchmarks: Record<RoleKey, RoleDatum> = {

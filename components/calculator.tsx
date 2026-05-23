@@ -236,7 +236,6 @@ const ratingCopy: Record<RatingCopyKey, RatingOption[]> = {
 };
 
 const educationOptions = ["高中/中专", "大专", "本科", "硕士", "博士", "其他"];
-const skillOptions = ["软件工程", "数据分析", "AI / 算法", "金融 / 量化", "产品 / 项目", "运营 / 增长", "设计 / 创意", "销售 / 商务", "其他"];
 const workContentOptions = ["研究分析", "工程开发", "数据/回测", "业务运营", "客户/销售", "管理协调", "内部支持", "低价值维护"];
 const targetDirectionOptions = ["同岗位跳槽", "同岗位升档", "转管理", "转技术专家", "转产品/业务", "转行业", "创业/自由职业"];
 const longTermDirectionOptions = ["高收入", "稳定生活", "专业深耕", "管理路线", "行业影响力", "自由度", "低消耗"];
@@ -283,9 +282,9 @@ function SelectField<T extends string>({
   onChange,
 }: {
   label: string;
-  value: T;
+  value: T | "";
   options: Array<{ value: T; label: string }>;
-  onChange: (value: T) => void;
+  onChange: (value: T | "") => void;
 }) {
   return (
     <label className="grid gap-2">
@@ -295,6 +294,7 @@ function SelectField<T extends string>({
         value={value}
         onChange={(event) => onChange(event.target.value as T)}
       >
+        <option value="">请选择</option>
         {options.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}
@@ -353,7 +353,7 @@ function RatingField({
   onChange,
 }: {
   label: string;
-  value: number;
+  value: number | null;
   low: string;
   high: string;
   copyKey?: RatingCopyKey;
@@ -608,7 +608,6 @@ export default function JobCalculator() {
                   value={inputs.role}
                   onChange={(value) => setValue("role", value)}
                 />
-                <MultiSelectField label="专业 / 技能方向" options={skillOptions} value={inputs.skillDirections} onChange={(value) => setValue("skillDirections", value)} />
               </>
             ) : null}
           </Section>
@@ -767,8 +766,8 @@ export default function JobCalculator() {
                 { value: "false", label: "未知 / 未验证" },
                 { value: "true", label: "已通过投递或沟通验证" },
               ]}
-              value={String(inputs.externalKnown)}
-              onChange={(value) => setValue("externalKnown", value === "true")}
+              value={inputs.externalKnown === "" ? "" : String(inputs.externalKnown)}
+              onChange={(value) => setValue("externalKnown", value === "" ? "" : value === "true")}
             />
             {inputs.mode === "detailed" ? (
               <>
