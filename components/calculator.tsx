@@ -526,47 +526,14 @@ export default function JobCalculator() {
           </div>
         ) : !result ? (
         <form className="space-y-6" onSubmit={handleSubmit}>
-          <header className="relative overflow-hidden rounded-[2.5rem] border border-stone-900/10 bg-stone-950 p-7 text-white shadow-xl">
-            <div className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-emerald-300/20 blur-3xl" />
-            <div className="pointer-events-none absolute bottom-0 right-28 h-40 w-40 rounded-full bg-amber-200/10 blur-2xl" />
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] text-emerald-100">
-                <BriefcaseBusiness className="h-4 w-4" />
-                打工哪有不疯的
-              </div>
-            </div>
-            <div className="relative mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-end">
-              <div>
-                <h1 className="max-w-3xl text-5xl font-black tracking-tight md:text-7xl">打工哪有不疯的</h1>
-                <p className="mt-5 max-w-2xl text-2xl font-black leading-tight tracking-tight text-emerald-100 md:text-4xl">
-                  测测这份工作疯得值不值
-                </p>
-                <p className="mt-5 max-w-xl text-sm leading-7 text-stone-300 md:text-base">
-                  把工资、工时、稳定性、成长和退路放在一起算，看看这份班到底是香，还是只是在硬扛。
-                </p>
-              </div>
-              <div className="rounded-[2rem] border border-white/10 bg-white p-5 text-stone-950 shadow-2xl">
-                <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-800">Sample Result</p>
-                <div className="mt-5 flex items-end justify-between gap-4">
-                  <div>
-                    <p className="text-sm font-bold text-stone-500">上班档位</p>
-                    <p className="mt-1 text-5xl font-black">B 档</p>
-                  </div>
-                  <div className="rounded-2xl bg-emerald-100 px-4 py-3 text-right">
-                    <p className="text-xs font-bold text-emerald-900">参考总分</p>
-                    <p className="text-3xl font-black text-emerald-950">72</p>
-                  </div>
-                </div>
-                <p className="mt-5 text-lg font-black">这班先上着</p>
-                <div className="mt-4 grid gap-2 text-sm text-stone-600">
-                  {["回报够不够", "消耗扛不扛得住", "以后走不走得掉"].map((item) => (
-                    <div className="flex items-center justify-between rounded-2xl bg-stone-100 px-3 py-2" key={item}>
-                      <span>{item}</span>
-                      <span className="font-black text-stone-950">一起算</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+          <header className="relative overflow-hidden rounded-[2.5rem] border border-stone-900/10 bg-stone-950 p-7 text-white shadow-xl md:p-9">
+            <div className="pointer-events-none absolute -right-24 -top-28 h-72 w-72 rounded-full bg-emerald-300/20 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-20 left-1/3 h-44 w-44 rounded-full bg-amber-200/10 blur-2xl" />
+            <div className="relative grid gap-5">
+              <h1 className="text-left text-4xl font-black tracking-tight md:text-5xl">打工哪有不疯的</h1>
+              <p className="w-full text-right text-2xl font-black leading-tight tracking-tight text-emerald-100 md:text-3xl">
+                测测这份工作疯得值不值
+              </p>
             </div>
           </header>
 
