@@ -116,10 +116,6 @@ export const dimensionLabels: Record<DimensionKey, string> = {
 };
 
 export const scoringConfig = {
-  totalDistribution: {
-    mean: 70,
-    standardDeviation: 10,
-  },
   weights: {
     income: 0.32,
     stability: 0.16,
@@ -134,6 +130,13 @@ export const scoringConfig = {
     3: 70,
     4: 84,
     5: 96,
+  } satisfies Record<number, number>,
+  subjectivePrior: {
+    1: 0.1,
+    2: 0.2,
+    3: 0.4,
+    4: 0.2,
+    5: 0.1,
   } satisfies Record<number, number>,
   companySizeScore: {
     "": 55,
@@ -434,10 +437,31 @@ function calculateFit(inputs: JobInputs) {
   );
 }
 
+function getSubjectivePercentileAnchors() {
+  let cumulative = 0;
+  return Object.entries(scoringConfig.subjectivePrior).map(([choice, probability]) => {
+    const score = scoringConfig.subjectiveMap[Number(choice) as keyof typeof scoringConfig.subjectiveMap];
+    const percentile = (cumulative + probability / 2) * 100;
+    cumulative += probability;
+    return { score, percentile };
+  });
+}
+
 function getTotalPercentile(total: number) {
-  const { mean, standardDeviation } = scoringConfig.totalDistribution;
-  const percentile = normalCdf((total - mean) / standardDeviation) * 100;
-  return clamp(Math.round(percentile), 1, 99);
+  const anchors = getSubjectivePercentileAnchors();
+  if (total <= anchors[0].score) return Math.max(1, Math.round((total / anchors[0].score) * anchors[0].percentile));
+
+  for (let index = 1; index < anchors.length; index += 1) {
+    const previous = anchors[index - 1];
+    const current = anchors[index];
+    if (total <= current.score) {
+      const ratio = (total - previous.score) / (current.score - previous.score);
+      return clamp(Math.round(previous.percentile + (current.percentile - previous.percentile) * ratio), 1, 99);
+    }
+  }
+
+  const last = anchors[anchors.length - 1];
+  return clamp(Math.round(last.percentile + ((total - last.score) / (100 - last.score)) * (99 - last.percentile)), 1, 99);
 }
 
 function getRating(total: number) {
