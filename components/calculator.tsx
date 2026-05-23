@@ -507,7 +507,7 @@ export default function JobCalculator() {
     setIsCalculating(true);
     setCalculationProgress(0);
     const startedAt = Date.now();
-    const duration = 2000;
+    const duration = 1500;
 
     calculationTimerRef.current = window.setInterval(() => {
       const progress = Math.min(((Date.now() - startedAt) / duration) * 100, 99);
