@@ -21,6 +21,9 @@ export const metadata: Metadata = {
     template: "%s | 打工哪有不疯的",
   },
   description: "测测这份工作疯得值不值，输出总分、上班档位、雷达图、优势短板和建议。",
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
