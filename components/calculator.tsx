@@ -415,9 +415,10 @@ function Section({
 }
 
 function RadarChart({ values }: { values: Array<{ label: string; value: number }> }) {
-  const size = 300;
+  const size = 420;
   const center = size / 2;
-  const radius = 108;
+  const radius = 120;
+  const labelRadius = 172;
   const points = values.map((item, index) => {
     const angle = -Math.PI / 2 + (index * Math.PI * 2) / values.length;
     const itemRadius = (item.value / 100) * radius;
@@ -425,8 +426,8 @@ function RadarChart({ values }: { values: Array<{ label: string; value: number }
       ...item,
       x: center + Math.cos(angle) * itemRadius,
       y: center + Math.sin(angle) * itemRadius,
-      labelX: center + Math.cos(angle) * (radius + 26),
-      labelY: center + Math.sin(angle) * (radius + 26),
+      labelX: center + Math.cos(angle) * labelRadius,
+      labelY: center + Math.sin(angle) * labelRadius,
       axisX: center + Math.cos(angle) * radius,
       axisY: center + Math.sin(angle) * radius,
     };
@@ -434,7 +435,7 @@ function RadarChart({ values }: { values: Array<{ label: string; value: number }
   const polygon = points.map((point) => `${point.x},${point.y}`).join(" ");
 
   return (
-    <svg className="h-auto w-full max-w-[360px]" viewBox={`0 0 ${size} ${size}`} role="img" aria-label="六维雷达图">
+    <svg className="h-auto w-full max-w-[520px] overflow-visible" viewBox={`0 0 ${size} ${size}`} role="img" aria-label="六维雷达图">
       {[0.25, 0.5, 0.75, 1].map((level) => {
         const ring = values
           .map((_, index) => {
@@ -452,8 +453,9 @@ function RadarChart({ values }: { values: Array<{ label: string; value: number }
         <g key={point.label}>
           <circle className="fill-emerald-900" cx={point.x} cy={point.y} r="4" />
           <text
-            className="fill-stone-700 text-[10px] font-bold"
-            textAnchor={point.labelX < center - 8 ? "end" : point.labelX > center + 8 ? "start" : "middle"}
+            className="fill-stone-700 text-[15px] font-black"
+            dominantBaseline="middle"
+            textAnchor={point.labelX < center - 12 ? "end" : point.labelX > center + 12 ? "start" : "middle"}
             x={point.labelX}
             y={point.labelY}
           >
@@ -502,7 +504,25 @@ export default function JobCalculator() {
       </div>
 
       <div className="relative mx-auto max-w-5xl px-5 py-8 lg:px-8">
-        {!result ? (
+        {isCalculating ? (
+          <div className="flex min-h-[70vh] items-center justify-center">
+            <div className="relative overflow-hidden rounded-[2.5rem] border border-stone-900/10 bg-stone-950 p-8 text-white shadow-2xl">
+              <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-emerald-300/30 blur-2xl" />
+              <div className="absolute -bottom-16 left-8 h-44 w-44 rounded-full bg-amber-300/20 blur-2xl" />
+              <div className="relative">
+                <div className="mx-auto h-16 w-16 animate-spin rounded-full border-4 border-white/20 border-t-emerald-300" />
+                <p className="mt-6 text-center text-xs font-bold uppercase tracking-[0.24em] text-emerald-200">Calculating</p>
+                <h1 className="mt-2 text-center text-3xl font-black">正在计算工作资产评分</h1>
+                <p className="mt-3 max-w-md text-center text-sm leading-6 text-stone-300">
+                  正在汇总收益、持有成本、稳定性、成长、流动性和匹配度。
+                </p>
+                <div className="mt-6 h-2 overflow-hidden rounded-full bg-white/10">
+                  <div className="h-full w-2/3 animate-pulse rounded-full bg-emerald-300" />
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : !result ? (
         <form className="space-y-6" onSubmit={handleSubmit}>
           <header className="rounded-[2.5rem] border border-stone-900/10 bg-stone-950 p-7 text-white shadow-xl">
             <div className="flex flex-wrap items-center justify-between gap-4">
@@ -810,9 +830,6 @@ export default function JobCalculator() {
                   <BriefcaseBusiness className="h-4 w-4" />
                   Result
                 </div>
-                <button className="rounded-full bg-white px-4 py-2 text-sm font-black text-stone-950 transition hover:bg-emerald-100" type="button" onClick={handleBack}>
-                  返回修改
-                </button>
               </div>
               <div className="mt-8 grid gap-6 md:grid-cols-[1fr_240px]">
                 <div>
@@ -833,7 +850,7 @@ export default function JobCalculator() {
               </div>
             </header>
 
-            <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_420px]">
+            <div className="grid gap-6">
               <div className="space-y-4 rounded-[2.5rem] border border-stone-900/10 bg-white p-5 shadow-2xl">
             <div className="rounded-[2rem] bg-stone-950 p-5 text-white">
               <div className="flex items-center justify-between">
@@ -949,16 +966,12 @@ export default function JobCalculator() {
             </details>
               </div>
 
-              <div className="rounded-[2.5rem] border border-stone-200 bg-white/85 p-5 shadow-sm backdrop-blur">
-                <p className="text-xs font-bold uppercase tracking-[0.24em] text-emerald-700">Next</p>
-                <h2 className="mt-1 text-xl font-black text-stone-950">重新评估</h2>
-                <p className="mt-3 text-sm leading-6 text-stone-600">
-                  如果结果和直觉差异很大，优先检查收入、工时、成长、流动性和个人匹配度这些高影响字段。
-                </p>
-                <button className="mt-5 w-full rounded-2xl bg-stone-950 px-5 py-4 text-sm font-black text-white transition hover:bg-emerald-900" type="button" onClick={handleBack}>
-                  返回修改输入
-                </button>
-              </div>
+            </div>
+
+            <div className="rounded-[2rem] border border-stone-900/10 bg-white/85 p-5 text-center shadow-sm backdrop-blur">
+              <button className="rounded-2xl bg-stone-950 px-8 py-4 text-base font-black text-white transition hover:bg-emerald-900" type="button" onClick={handleBack}>
+                返回重新输入
+              </button>
             </div>
           </div>
         )}
