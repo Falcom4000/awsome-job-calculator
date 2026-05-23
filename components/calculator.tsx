@@ -531,7 +531,7 @@ export default function JobCalculator() {
       setSubmittedInputs(inputs);
       setIsCalculating(false);
       window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 1000);
+    }, duration);
   };
   const handleBack = () => {
     setSubmittedInputs(null);
