@@ -14,8 +14,6 @@ export type { CityKey, IndustryKey, RoleKey } from "@/data/job-market";
 export type InputMode = "" | "brief" | "detailed";
 export type Certainty = "" | "high" | "medium" | "low" | "unknown";
 export type WeekendWork = "" | "never" | "sometimes" | "often";
-export type HealthImpact = "" | "none" | "minor" | "clear" | "severe";
-export type TriState = "" | "yes" | "average" | "no";
 export type BusinessState = "" | "good" | "average" | "bad" | "unknown";
 export type OfferParity = "" | "high" | "medium" | "low" | "unknown";
 export type CompanySize = "" | "large" | "medium" | "small" | "startup";
@@ -29,14 +27,15 @@ export type JobInputs = {
   city: CityKey | "";
   cityResident: ResidentState;
   annualCashIncome: number;
+  annualEquityIncome: number;
   weeklyHours: number;
   commuteMinutes: number;
   stress: RatingValue;
   weekendWork: WeekendWork;
   atmosphere: RatingValue;
   peopleHealth: RatingValue;
-  healthImpact: HealthImpact;
-  lifeAndLearningTime: TriState;
+  healthImpact: RatingValue;
+  lifeAndLearningTime: RatingValue;
   safetyFeeling: RatingValue;
   companySize: CompanySize;
   companyBusiness: BusinessState;
@@ -44,16 +43,12 @@ export type JobInputs = {
   teamStability: Certainty;
   roleCore: RatingValue;
   replacementDifficulty: RatingValue;
-  layoffRisk: Certainty;
+  layoffRisk: RatingValue;
   pastGrowth: RatingValue;
   futureGrowth: RatingValue;
-  mainWorkContent: string[];
   closeToCoreBusiness: RatingValue;
-  qualityProjects: RatingValue;
-  skillGenerality: RatingValue;
   mentoring: RatingValue;
   resumeValue: RatingValue;
-  targetDirections: string[];
   externalOpportunities: RatingValue;
   externalKnown: boolean | "";
   jdMatch: RatingValue;
@@ -61,12 +56,10 @@ export type JobInputs = {
   companyTransferability: RatingValue;
   industryTransferability: RatingValue;
   offerParity: OfferParity;
-  jobSearchDifficulty: RatingValue;
   industryLove: RatingValue;
   contentLove: RatingValue;
   longTermFit: RatingValue;
   extraLearningWillingness: RatingValue;
-  longTermDirections: string[];
   age: number;
   experienceYears: number;
   education: string;
@@ -139,13 +132,6 @@ export const scoringConfig = {
     4: 69,
     5: 92,
   } satisfies Record<number, number>,
-  healthPenalty: {
-    "": 0,
-    none: 0,
-    minor: -5,
-    clear: -15,
-    severe: -30,
-  } satisfies Record<HealthImpact, number>,
   companySizeScore: {
     "": 55,
     large: 82,
@@ -167,13 +153,6 @@ export const scoringConfig = {
     low: 38,
     unknown: 55,
   } satisfies Record<Certainty, number>,
-  layoffRiskScore: {
-    "": 55,
-    high: 32,
-    medium: 58,
-    low: 84,
-    unknown: 55,
-  } satisfies Record<Certainty, number>,
   offerParityScore: {
     "": 55,
     high: 86,
@@ -188,14 +167,15 @@ export const defaultInputs: JobInputs = {
   city: "",
   cityResident: "",
   annualCashIncome: 450000,
+  annualEquityIncome: 0,
   weeklyHours: 45,
   commuteMinutes: 35,
   stress: null,
   weekendWork: "",
   atmosphere: null,
   peopleHealth: null,
-  healthImpact: "",
-  lifeAndLearningTime: "",
+  healthImpact: null,
+  lifeAndLearningTime: null,
   safetyFeeling: null,
   companySize: "",
   companyBusiness: "",
@@ -203,16 +183,12 @@ export const defaultInputs: JobInputs = {
   teamStability: "",
   roleCore: null,
   replacementDifficulty: null,
-  layoffRisk: "",
+  layoffRisk: null,
   pastGrowth: null,
   futureGrowth: null,
-  mainWorkContent: [],
   closeToCoreBusiness: null,
-  qualityProjects: null,
-  skillGenerality: null,
   mentoring: null,
   resumeValue: null,
-  targetDirections: [],
   externalOpportunities: null,
   externalKnown: "",
   jdMatch: null,
@@ -220,12 +196,10 @@ export const defaultInputs: JobInputs = {
   companyTransferability: null,
   industryTransferability: null,
   offerParity: "",
-  jobSearchDifficulty: null,
   industryLove: null,
   contentLove: null,
   longTermFit: null,
   extraLearningWillingness: null,
-  longTermDirections: [],
   age: 28,
   experienceYears: 5,
   education: "",
@@ -343,7 +317,7 @@ function calculateBenchmark(inputs: JobInputs) {
 
 function calculateIncome(inputs: JobInputs) {
   const benchmark = calculateBenchmark(inputs);
-  const comparableIncome = inputs.annualCashIncome;
+  const comparableIncome = inputs.annualCashIncome + (isDetailedMode(inputs) ? inputs.annualEquityIncome : 0);
   const industry = isDetailedMode(inputs) ? getIndustryBenchmark(industryKey(inputs), inputs.experienceYears, industryBenchmarkOptions(inputs)) : null;
   const fittedPercentile = fitLogNormalPercentile(comparableIncome, industry?.salaryQuantiles);
   const activeBenchmark = fittedPercentile === null ? benchmark : industry?.salaryQuantiles?.p50 ?? benchmark;
@@ -364,14 +338,14 @@ function calculateHolding(inputs: JobInputs) {
   if (inputs.commuteMinutes >= cityCommute + 15) score -= 5;
   if (inputs.commuteMinutes >= cityCommute + 30) score -= 6;
 
-  score += (subjective(inputs.stress) - 60) * 0.18;
+  score += (subjective(inputs.stress) - 50) * 0.18;
   if (isDetailedMode(inputs)) {
     if (inputs.weekendWork === "sometimes") score -= 5;
     if (inputs.weekendWork === "often") score -= 14;
-    score += (subjective(inputs.atmosphere) - 60) * 0.14;
-    score += (subjective(inputs.peopleHealth) - 60) * 0.12;
-    score += inputs.lifeAndLearningTime === "yes" ? 5 : inputs.lifeAndLearningTime === "no" ? -8 : 0;
-    score += scoringConfig.healthPenalty[inputs.healthImpact];
+    score += (subjective(inputs.atmosphere) - 50) * 0.14;
+    score += (subjective(inputs.peopleHealth) - 50) * 0.12;
+    score += (subjective(inputs.healthImpact) - 50) * 0.24;
+    score += (subjective(inputs.lifeAndLearningTime) - 50) * 0.18;
   }
   return clamp(score);
 }
@@ -388,7 +362,7 @@ function calculateStability(inputs: JobInputs) {
       [scoringConfig.certaintyScore[inputs.teamStability], 0.15],
       [subjective(inputs.roleCore), 0.12],
       [subjective(inputs.replacementDifficulty), 0.08],
-      [scoringConfig.layoffRiskScore[inputs.layoffRisk], 0.08],
+      [subjective(inputs.layoffRisk), 0.08],
       [subjective(inputs.safetyFeeling), 0.12],
     ])
   );
@@ -402,11 +376,10 @@ function calculateGrowth(inputs: JobInputs) {
   return clamp(
     weighted([
       [subjective(inputs.closeToCoreBusiness), 0.2],
-      [subjective(inputs.skillGenerality), 0.22],
-      [subjective(inputs.qualityProjects), 0.18],
-      [subjective(inputs.pastGrowth), 0.15],
-      [subjective(inputs.futureGrowth), 0.18],
-      [weighted([[subjective(inputs.mentoring), 0.5], [subjective(inputs.resumeValue), 0.5]]), 0.07],
+      [subjective(inputs.pastGrowth), 0.24],
+      [subjective(inputs.futureGrowth), 0.28],
+      [subjective(inputs.mentoring), 0.14],
+      [subjective(inputs.resumeValue), 0.14],
     ])
   );
 }
@@ -418,13 +391,12 @@ function calculateLiquidity(inputs: JobInputs) {
     ? (getIndustryBenchmark(industryKey(inputs), inputs.experienceYears, industryBenchmarkOptions(inputs)).demandScore + roleBenchmarks[roleKey(inputs)].liquidityScore) / 2
     : 60;
   const score = weighted([
-    [inputs.externalKnown ? subjective(inputs.externalOpportunities) : 52, 0.18],
-    [subjective(inputs.jdMatch), 0.18],
-    [subjective(inputs.projectExplainability), 0.18],
-    [subjective(inputs.companyTransferability), 0.13],
-    [subjective(inputs.industryTransferability), 0.13],
-    [scoringConfig.offerParityScore[inputs.offerParity], 0.1],
-    [100 - subjective(inputs.jobSearchDifficulty) + 20, 0.05],
+    [inputs.externalKnown ? subjective(inputs.externalOpportunities) : 52, 0.2],
+    [subjective(inputs.jdMatch), 0.2],
+    [subjective(inputs.projectExplainability), 0.2],
+    [subjective(inputs.companyTransferability), 0.14],
+    [subjective(inputs.industryTransferability), 0.14],
+    [scoringConfig.offerParityScore[inputs.offerParity], 0.07],
     [marketBase, 0.05],
   ]);
 
@@ -444,11 +416,11 @@ function calculateFit(inputs: JobInputs) {
 }
 
 function getRating(total: number) {
-  if (total >= 85) return { grade: "S", title: "这班真能上", description: "收益、消耗、成长和选择权都在线，疯得比较值。" };
-  if (total >= 75) return { grade: "A", title: "这班可以上", description: "整体是划算的，继续上班可以，但别忘了修补短板。" };
-  if (total >= 65) return { grade: "B", title: "这班先上着", description: "有一些性价比，但不适合闭眼上，最低分维度要盯住。" };
-  if (total >= 55) return { grade: "C", title: "这班边上边看", description: "能上，但别太上头，建议同步看机会和改造空间。" };
-  return { grade: "D", title: "这班就上到这里吧", description: "疯得不太值，除非有明确短期目的，否则该准备退路。" };
+  if (total >= 85) return { grade: "S", title: "这班真能上", description: "钱、成长、消耗都在线，疯得很值。" };
+  if (total >= 75) return { grade: "A", title: "这班可以上", description: "整体划算，短板补一补还能更香。" };
+  if (total >= 65) return { grade: "B", title: "这班先上着", description: "不是梦中情班，但也不算亏。" };
+  if (total >= 55) return { grade: "C", title: "这班边上边看", description: "能上，但别太上头，边干边找解法。" };
+  return { grade: "D", title: "这班就上到这里吧", description: "疯得不太值，建议开始准备退路。" };
 }
 
 function getOptionValueDescription(score: number) {
@@ -460,17 +432,18 @@ function getOptionValueDescription(score: number) {
 
 function getDimensionReason(key: DimensionKey, score: number, inputs: JobInputs) {
   const level = score >= 80 ? "优势" : score >= 60 ? "中性" : "短板";
+  const income = calculateIncome(inputs);
   const reasons: Record<DimensionKey, string> = {
     income:
       level === "优势"
-        ? `当前收入约为基准 ${calculateIncome(inputs).ratio.toFixed(2)} 倍。`
-        : `当前收入约为基准 ${calculateIncome(inputs).ratio.toFixed(2)} 倍，现金流优势不明显。`,
+        ? `当前年化收入约为基准 ${income.ratio.toFixed(2)} 倍。`
+        : `当前年化收入约为基准 ${income.ratio.toFixed(2)} 倍，收益优势不明显。`,
     stability: !isDetailedMode(inputs) ? "主要依据未来一年安全感判断。" : "综合公司经营、行业景气、团队稳定、岗位核心度和裁员风险判断。",
     holding:
       level === "优势"
         ? "工时、通勤、压力和健康损耗整体可控。"
         : "工时、通勤、压力或健康损耗拉低了可持续性。",
-    growth: !isDetailedMode(inputs) ? "主要依据过去半年成长和未来一年成长预期。" : "综合核心业务、高质量项目、通用能力、带教和简历价值判断。",
+    growth: !isDetailedMode(inputs) ? "主要依据过去半年成长和未来一年成长预期。" : "综合核心业务、成长速度、带教和简历价值判断。",
     liquidity:
       inputs.externalKnown
         ? "已通过外部机会或沟通做过市场验证。"
@@ -486,7 +459,7 @@ function getConfidence(inputs: JobInputs, dimensions: Record<DimensionKey, numbe
     income: isDetailedMode(inputs) ? { level: "中", reason: "已结合城市、行业、岗位、经验、企业性质和岗位层级基准；行业层级薪酬仍依赖报告分位和兜底规则。" } : { level: "中", reason: briefReason },
     stability: isDetailedMode(inputs) ? { level: "中", reason: "已结合公司、团队、岗位风险和行业稳定性基准。" } : { level: "低", reason: "主要依赖未来一年安全感，结构性风险字段较少。" },
     holding: { level: "高", reason: "工时、通勤、压力和所在城市通勤基准是持有成本的核心字段。" },
-    growth: isDetailedMode(inputs) ? { level: "中", reason: "已提供项目、核心业务、能力通用性和成长预期。" } : { level: "低", reason: "主要依赖过去成长和未来预期两个主观字段。" },
+    growth: isDetailedMode(inputs) ? { level: "中", reason: "已提供核心业务、成长预期、带教和简历价值。" } : { level: "低", reason: "主要依赖过去成长和未来预期两个主观字段。" },
     liquidity:
       inputs.externalKnown && dimensions.liquidity >= 0
         ? { level: isDetailedMode(inputs) ? "中" : "低", reason: "外部机会已做主观验证，但仍建议用投递和猎头沟通校准。" }
@@ -557,7 +530,7 @@ export function calculateJobScore(inputs: JobInputs): ScoreResult {
     dimensions,
     aggregateScores,
     optionValue,
-    unitHourlyIncome: Math.round(inputs.annualCashIncome / Math.max(inputs.weeklyHours * 52, 1)),
+    unitHourlyIncome: Math.round((inputs.annualCashIncome + (isDetailedMode(inputs) ? inputs.annualEquityIncome : 0)) / Math.max(inputs.weeklyHours * 52, 1)),
     benchmarkIncome: Math.round(income.benchmark),
     incomeRatio: Number(income.ratio.toFixed(2)),
     strengths,
