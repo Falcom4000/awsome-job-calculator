@@ -244,6 +244,7 @@ function weighted(items: Array<[number, number]>) {
 }
 
 function scoreByRatio(ratio: number) {
+  if (ratio <= 0) return 0;
   if (ratio < 0.8) return 30 + (ratio / 0.8) * 10;
   if (ratio < 1) return 40 + ((ratio - 0.8) / 0.2) * 10;
   if (ratio < 1.3) return 50 + ((ratio - 1) / 0.3) * 10;
@@ -314,6 +315,9 @@ function calculateIncome(inputs: JobInputs) {
   const benchmark = calculateBenchmark(inputs);
   const comparableIncome = inputs.annualCashIncome + (isDetailedMode(inputs) ? inputs.annualEquityIncome : 0);
   const industry = getIndustryBenchmark(industryKey(inputs), inputs.experienceYears, industryBenchmarkOptions(inputs));
+  if (comparableIncome <= 0) {
+    return { score: 0, benchmark, ratio: 0 };
+  }
   const fittedPercentile = fitLogNormalPercentile(comparableIncome, industry?.salaryQuantiles);
   const activeBenchmark = fittedPercentile === null ? benchmark : industry?.salaryQuantiles?.p50 ?? benchmark;
   const ratio = comparableIncome / activeBenchmark;

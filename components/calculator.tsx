@@ -900,7 +900,7 @@ export default function JobCalculator() {
             </div>
 
             <div className="flex justify-center">
-              <button className="rounded-2xl border border-stone-950 px-8 py-4 text-base font-black text-stone-950 transition hover:bg-stone-950 hover:text-white" type="button" onClick={handleBack}>
+              <button className="rounded-2xl bg-stone-950 px-8 py-4 text-base font-black text-white transition hover:bg-emerald-900" type="button" onClick={handleBack}>
                 返回重新输入
               </button>
             </div>
