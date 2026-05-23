@@ -17,10 +17,10 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: {
-    default: "工作资产自动评分程序",
-    template: "%s | 工作资产自动评分程序",
+    default: "工作资产评估",
+    template: "%s | 工作资产评估",
   },
-  description: "前端本地计算的工作资产评分工具，输出总分、评级、雷达图和建议。",
+  description: "本地计算的工作资产评估工具，输出总分、评级、雷达图、优势短板和建议。",
 };
 
 export default function RootLayout({

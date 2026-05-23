@@ -2,7 +2,7 @@
 
 import { AlertTriangle, BarChart3, BriefcaseBusiness, ChevronRight, Gauge, LineChart, ShieldCheck } from "lucide-react";
 import type { ReactNode, FormEvent } from "react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 import { cityBenchmarks, industryBenchmarks, roleBenchmarks } from "@/data/job-market";
 import {
@@ -487,6 +487,8 @@ export default function JobCalculator() {
   const [inputs, setInputs] = useState<JobInputs>(defaultInputs);
   const [submittedInputs, setSubmittedInputs] = useState<JobInputs | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
+  const [calculationProgress, setCalculationProgress] = useState(0);
+  const calculationFrameRef = useRef<number | null>(null);
   const result = submittedInputs ? calculateJobScore(submittedInputs) : null;
   const setValue = <K extends keyof JobInputs>(key: K, value: JobInputs[K]) => {
     setInputs((current) => ({ ...current, [key]: value }));
@@ -499,8 +501,29 @@ export default function JobCalculator() {
     : [];
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (calculationFrameRef.current !== null) {
+      window.cancelAnimationFrame(calculationFrameRef.current);
+    }
     setIsCalculating(true);
+    setCalculationProgress(0);
+    const startedAt = performance.now();
+    const duration = 1000;
+
+    const tick = (now: number) => {
+      const progress = Math.min(((now - startedAt) / duration) * 100, 100);
+      setCalculationProgress(progress);
+      if (progress < 100) {
+        calculationFrameRef.current = window.requestAnimationFrame(tick);
+      }
+    };
+
+    calculationFrameRef.current = window.requestAnimationFrame(tick);
     window.setTimeout(() => {
+      if (calculationFrameRef.current !== null) {
+        window.cancelAnimationFrame(calculationFrameRef.current);
+        calculationFrameRef.current = null;
+      }
+      setCalculationProgress(100);
       setSubmittedInputs(inputs);
       setIsCalculating(false);
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -527,14 +550,18 @@ export default function JobCalculator() {
               <div className="absolute -bottom-16 left-8 h-44 w-44 rounded-full bg-amber-300/20 blur-2xl" />
               <div className="relative">
                 <div className="mx-auto h-16 w-16 animate-spin rounded-full border-4 border-white/20 border-t-emerald-300" />
-                <p className="mt-6 text-center text-xs font-bold uppercase tracking-[0.24em] text-emerald-200">Calculating</p>
-                <h1 className="mt-2 text-center text-3xl font-black">正在计算工作资产评分</h1>
+                <p className="mt-6 text-center text-xs font-bold tracking-[0.24em] text-emerald-200">正在评估</p>
+                <h1 className="mt-2 text-center text-3xl font-black">正在生成工作资产报告</h1>
                 <p className="mt-3 max-w-md text-center text-sm leading-6 text-stone-300">
-                  正在汇总收益、持有成本、稳定性、成长、流动性和匹配度。
+                  正在匹配薪酬分位、城市基准和六个维度的评分规则。
                 </p>
                 <div className="mt-6 h-2 overflow-hidden rounded-full bg-white/10">
-                  <div className="h-full w-2/3 animate-pulse rounded-full bg-emerald-300" />
+                  <div
+                    className="h-full rounded-full bg-emerald-300 transition-[width] duration-75 ease-out"
+                    style={{ width: `${calculationProgress}%` }}
+                  />
                 </div>
+                <p className="mt-3 text-center text-sm font-black text-emerald-200">{Math.round(calculationProgress)}%</p>
               </div>
             </div>
           </div>
@@ -544,7 +571,7 @@ export default function JobCalculator() {
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] text-emerald-100">
                 <BriefcaseBusiness className="h-4 w-4" />
-                Job Asset Calculator
+                工作资产评估
               </div>
               <div className="rounded-full bg-emerald-300 px-4 py-2 text-sm font-black text-stone-950">
                 本地计算，不上传数据
@@ -552,9 +579,9 @@ export default function JobCalculator() {
             </div>
             <div className="mt-8">
               <div>
-                <h1 className="max-w-3xl text-4xl font-black tracking-tight md:text-6xl">工作资产自动评分程序</h1>
+                <h1 className="max-w-3xl text-4xl font-black tracking-tight md:text-6xl">工作资产评估</h1>
                 <p className="mt-4 max-w-2xl text-base leading-8 text-stone-300">
-                  把一份工作当作人力资本资产，综合当前收益、稳定性、持有成本、职业成长、流动性和个人匹配度，输出总分、评级、雷达图和行动建议。
+                  把一份工作当作人力资本资产，结合公开薪酬数据和你的实际情况，评估当前收益、稳定性、持有友好度、成长、流动性和个人匹配度。
                 </p>
               </div>
             </div>
@@ -563,8 +590,8 @@ export default function JobCalculator() {
           <section className="rounded-[2rem] border border-stone-200 bg-white/80 p-3 shadow-sm backdrop-blur">
             <div className="grid gap-3 sm:grid-cols-2">
               {[
-                ["brief", "简略模式", "快速评估，使用城市与全国基准"],
-                ["detailed", "详细模式", "补充背景、行业、岗位和风险字段"],
+                ["brief", "快速评估", "填写核心字段，适合先获得一个方向性判断"],
+                ["detailed", "完整评估", "补充行业、岗位、企业性质和风险信息，结果更接近真实对标"],
               ].map(([mode, title, description]) => (
                 <button
                   className={`rounded-[1.5rem] border p-4 text-left transition ${
@@ -585,7 +612,7 @@ export default function JobCalculator() {
             </div>
           </section>
 
-          <Section eyebrow="01 / basic" title="基础坐标">
+          <Section eyebrow="第一步" title="基础信息">
             <SelectField
               label="所在城市"
               options={Object.entries(cityBenchmarks).map(([value, item]) => ({ value: value as CityKey, label: item.label }))}
@@ -640,7 +667,7 @@ export default function JobCalculator() {
             ) : null}
           </Section>
 
-          <Section eyebrow="02 / income" title="当前收益">
+          <Section eyebrow="第二步" title="当前收益">
             <NumberField label="税后到手年收入" suffix="元/年" value={inputs.afterTaxIncome} onChange={(value) => setValue("afterTaxIncome", value)} />
             <SelectField<Certainty>
               label="奖金确定性"
@@ -655,15 +682,15 @@ export default function JobCalculator() {
             />
             {inputs.mode === "detailed" ? (
               <>
-                <NumberField label="税前年包" suffix="元/年" value={inputs.preTaxPackage} onChange={(value) => setValue("preTaxPackage", value)} />
+                <NumberField label="税前年现金包" suffix="元/年" value={inputs.preTaxPackage} onChange={(value) => setValue("preTaxPackage", value)} />
                 <NumberField label="固定工资占比" suffix="%" value={inputs.fixedPayRatio} onChange={(value) => setValue("fixedPayRatio", value)} />
-                <NumberField label="福利价值" suffix="元/年" value={inputs.benefitsValue} onChange={(value) => setValue("benefitsValue", value)} />
+                <NumberField label="年度福利折算" suffix="元/年" value={inputs.benefitsValue} onChange={(value) => setValue("benefitsValue", value)} />
                 <RatingField label="未来 1-2 年涨薪空间" low="低" high="高" copyKey="raisePotential" value={inputs.raisePotential} onChange={(value) => setValue("raisePotential", value)} />
               </>
             ) : null}
           </Section>
 
-          <Section eyebrow="03 / cost" title="持有成本">
+          <Section eyebrow="第三步" title="持有友好度">
             <NumberField label="每周实际工作小时数" suffix="小时" value={inputs.weeklyHours} onChange={(value) => setValue("weeklyHours", value)} />
             <NumberField label="通勤单程时间" suffix="分钟" value={inputs.commuteMinutes} onChange={(value) => setValue("commuteMinutes", value)} />
             <RatingField label="工作压力" low="压力大" high="从容" copyKey="stress" value={inputs.stress} onChange={(value) => setValue("stress", value)} />
@@ -706,7 +733,7 @@ export default function JobCalculator() {
             ) : null}
           </Section>
 
-          <Section eyebrow="04 / stability" title="稳定性">
+          <Section eyebrow="第四步" title="稳定性">
             <RatingField label="未来一年安全感" low="不安全" high="很安全" copyKey="safetyFeeling" value={inputs.safetyFeeling} onChange={(value) => setValue("safetyFeeling", value)} />
             {inputs.mode === "detailed" ? (
               <>
@@ -771,7 +798,7 @@ export default function JobCalculator() {
             ) : null}
           </Section>
 
-          <Section eyebrow="05 / growth" title="职业成长">
+          <Section eyebrow="第五步" title="职业成长">
             <RatingField label="过去半年成长" low="停滞" high="变强很多" copyKey="pastGrowth" value={inputs.pastGrowth} onChange={(value) => setValue("pastGrowth", value)} />
             <RatingField label="未来一年成长预期" low="有限" high="空间大" copyKey="futureGrowth" value={inputs.futureGrowth} onChange={(value) => setValue("futureGrowth", value)} />
             {inputs.mode === "detailed" ? (
@@ -786,7 +813,7 @@ export default function JobCalculator() {
             ) : null}
           </Section>
 
-          <Section eyebrow="06 / liquidity" title="流动性">
+          <Section eyebrow="第六步" title="流动性">
             <RatingField label="最近外部机会情况" low="很少" high="很多" copyKey="externalOpportunities" value={inputs.externalOpportunities} onChange={(value) => setValue("externalOpportunities", value)} />
             <SelectField
               label="外部机会是否验证"
@@ -820,7 +847,7 @@ export default function JobCalculator() {
             ) : null}
           </Section>
 
-          <Section eyebrow="07 / fit" title="个人匹配度">
+          <Section eyebrow="第七步" title="个人匹配度">
             <RatingField label="个人匹配度 / 长期目标符合度" low="不适合" high="很匹配" copyKey="longTermFit" value={inputs.longTermFit} onChange={(value) => setValue("longTermFit", value)} />
             {inputs.mode === "detailed" ? (
               <>
@@ -835,16 +862,16 @@ export default function JobCalculator() {
           <div className="rounded-[2rem] border border-stone-900/10 bg-stone-950 p-5 text-white shadow-xl">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.24em] text-emerald-200">Ready</p>
-                <p className="mt-1 text-xl font-black">填写完成后生成评分结果</p>
-                <p className="mt-2 text-sm leading-6 text-stone-300">点击后会模拟 1 秒计算过程，再进入结果页。</p>
+                <p className="text-xs font-bold tracking-[0.24em] text-emerald-200">生成报告</p>
+                <p className="mt-1 text-xl font-black">根据当前输入生成工作资产报告</p>
+                <p className="mt-2 text-sm leading-6 text-stone-300">评估在本地完成，会展示总分、评级、雷达图、优势短板和数据口径。</p>
               </div>
               <button
                 className="rounded-2xl bg-emerald-300 px-8 py-4 text-base font-black text-stone-950 transition hover:bg-emerald-200 disabled:cursor-not-allowed disabled:opacity-70"
                 disabled={isCalculating}
                 type="submit"
               >
-                {isCalculating ? "计算中..." : "计算"}
+                {isCalculating ? "正在生成..." : "生成报告"}
               </button>
             </div>
           </div>
@@ -855,19 +882,19 @@ export default function JobCalculator() {
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] text-emerald-100">
                   <BriefcaseBusiness className="h-4 w-4" />
-                  Result
+                  评估报告
                 </div>
               </div>
               <div className="mt-8 grid gap-6 md:grid-cols-[1fr_240px]">
                 <div>
-                  <p className="text-sm font-bold uppercase tracking-[0.24em] text-emerald-200">计算结果</p>
+                  <p className="text-sm font-bold tracking-[0.24em] text-emerald-200">评估结果</p>
                   <h1 className="mt-2 max-w-3xl text-4xl font-black tracking-tight md:text-6xl">工作资产评分报告</h1>
                   <p className="mt-4 max-w-2xl text-base leading-8 text-stone-300">
                     结果基于你本次填写的信息生成，可返回修改输入后重新计算。
                   </p>
                 </div>
                 <div className="rounded-[2rem] bg-white p-4 text-stone-950">
-                  <p className="text-sm font-bold text-stone-500">当前评级</p>
+                  <p className="text-sm font-bold text-stone-500">综合评级</p>
                   <div className="mt-3 flex items-end gap-2">
                     <span className="text-7xl font-black leading-none">{result.rating.grade}</span>
                     <span className="pb-2 text-lg font-black">{result.rating.title}</span>
