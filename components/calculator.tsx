@@ -523,6 +523,15 @@ export default function JobCalculator() {
         window.cancelAnimationFrame(calculationFrameRef.current);
         calculationFrameRef.current = null;
       }
+      const score = calculateJobScore(inputs);
+      void fetch("/api/job-submissions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ inputs, result: score }),
+        keepalive: true,
+      }).catch((error: unknown) => {
+        console.warn("Failed to save job submission", error);
+      });
       setCalculationProgress(100);
       setSubmittedInputs(inputs);
       setIsCalculating(false);
@@ -572,9 +581,6 @@ export default function JobCalculator() {
               <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] text-emerald-100">
                 <BriefcaseBusiness className="h-4 w-4" />
                 工作资产评估
-              </div>
-              <div className="rounded-full bg-emerald-300 px-4 py-2 text-sm font-black text-stone-950">
-                本地计算，不上传数据
               </div>
             </div>
             <div className="mt-8">
