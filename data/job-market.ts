@@ -203,14 +203,14 @@ function industryDatum(label: string, fallbackDemand: number, experienceYears: n
 }
 
 const industryConfigs = {
-  internet: ["互联网 / 软件", 58, ["nbs_information_software_it", "salary_survey_software_system_integration", "salary_survey_it_manufacturing", "internet"]],
-  finance: ["金融 / 量化", 74, ["nbs_finance", "fund_securities_futures_investment", "banking"]],
-  manufacturing: ["制造业 / 硬件", 70, ["nbs_manufacturing", "salary_survey_mechanical_manufacturing", "salary_survey_it_manufacturing", "energy_mining_metallurgy"]],
-  consumer: ["消费 / 零售", 58, ["nbs_wholesale_retail", "nbs_accommodation_catering"]],
+  internet: ["互联网 / 软件", 58, ["nbs_information_software_it", "internet", "salary_survey_ecommerce", "salary_survey_software_system_integration", "salary_survey_it_manufacturing"]],
+  finance: ["金融 / 量化", 74, ["nbs_finance", "finance", "fund_securities_futures_investment", "banking"]],
+  manufacturing: ["制造业 / 硬件", 70, ["nbs_manufacturing", "salary_survey_it_manufacturing", "salary_survey_mechanical_manufacturing", "salary_survey_processing_manufacturing", "salary_survey_nonferrous_metals", "salary_survey_petroleum_chemical", "energy_mining_metallurgy"]],
+  consumer: ["消费 / 零售", 58, ["nbs_wholesale_retail", "salary_survey_fast_moving_consumer_goods", "salary_survey_durable_consumer_goods", "salary_survey_wholesale_retail", "salary_survey_accommodation_catering", "nbs_accommodation_catering"]],
   education: ["教育 / 培训", 42, ["nbs_education", "salary_survey_education_training", "education"]],
-  healthcare: ["医疗健康", 68, ["nbs_health_social_work"]],
-  public: ["公共部门 / 国企", 48, ["nbs_public_management_social_security", "salary_survey_public_management_social_security"]],
-  other: ["其他行业", 55, ["nbs_public_management_social_security"]],
+  healthcare: ["医疗健康", 68, ["nbs_health_social_work", "salary_survey_medicine", "salary_survey_health_social_work"]],
+  public: ["公共部门 / 国企", 48, ["nbs_public_management_social_security", "salary_survey_public_management_social_security", "salary_survey_water_environment_public_facilities", "salary_survey_international_organizations"]],
+  other: ["其他行业", 55, ["salary_survey_scientific_research_technical_services", "salary_survey_leasing_business_services", "salary_survey_resident_repair_other_services", "salary_survey_culture_media", "salary_survey_film_television", "nbs_public_management_social_security"]],
 } satisfies Record<IndustryKey, [string, number, string[]]>;
 
 export function getIndustryBenchmark(industryKey: IndustryKey, experienceYears: number, options: IndustryBenchmarkOptions = {}): IndustryDatum {
