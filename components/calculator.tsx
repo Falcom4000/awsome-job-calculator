@@ -12,17 +12,24 @@ import {
   type Certainty,
   type CityKey,
   type CompanySize,
+  type BusinessState,
   type HealthImpact,
   type IndustryKey,
   type InputMode,
   type JobInputs,
   type OfferParity,
+  type ResidentState,
   type RoleKey,
   type TriState,
   type WeekendWork,
 } from "@/lib/job-scoring";
 
 const scoreOptions = [1, 2, 3, 4, 5];
+const educationOptions = ["高中/中专", "大专", "本科", "硕士", "博士", "其他"];
+const skillOptions = ["软件工程", "数据分析", "AI / 算法", "金融 / 量化", "产品 / 项目", "运营 / 增长", "设计 / 创意", "销售 / 商务", "其他"];
+const workContentOptions = ["研究分析", "工程开发", "数据/回测", "业务运营", "客户/销售", "管理协调", "内部支持", "低价值维护"];
+const targetDirectionOptions = ["同岗位跳槽", "同岗位升档", "转管理", "转技术专家", "转产品/业务", "转行业", "创业/自由职业"];
+const longTermDirectionOptions = ["高收入", "稳定生活", "专业深耕", "管理路线", "行业影响力", "自由度", "低消耗"];
 
 function formatMoney(value: number) {
   if (value >= 10000) return `${Math.round(value / 10000)} 万`;
@@ -84,6 +91,66 @@ function SelectField<T extends string>({
           </option>
         ))}
       </select>
+    </label>
+  );
+}
+
+function MultiSelectField({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: string[];
+  options: string[];
+  onChange: (value: string[]) => void;
+}) {
+  const toggle = (option: string) => {
+    onChange(value.includes(option) ? value.filter((item) => item !== option) : [...value, option]);
+  };
+
+  return (
+    <div className="grid gap-2 md:col-span-2">
+      <span className="text-sm font-medium text-stone-700">{label}</span>
+      <div className="flex flex-wrap gap-2">
+        {options.map((option) => {
+          const selected = value.includes(option);
+          return (
+            <button
+              className={`rounded-full border px-3 py-2 text-sm font-bold transition ${
+                selected ? "border-emerald-900 bg-emerald-900 text-white" : "border-stone-200 bg-white text-stone-600 hover:border-emerald-300"
+              }`}
+              key={option}
+              type="button"
+              onClick={() => toggle(option)}
+            >
+              {option}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function TextAreaField({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <label className="grid gap-2 md:col-span-2">
+      <span className="text-sm font-medium text-stone-700">{label}</span>
+      <textarea
+        className="min-h-28 rounded-2xl border border-stone-200 bg-white px-4 py-3 text-base text-stone-950 shadow-sm outline-none"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+      />
     </label>
   );
 }
@@ -274,33 +341,33 @@ export default function JobCalculator() {
             </div>
           </section>
 
-          <Section eyebrow="01 / basic" title="基础坐标与收益">
+          <Section eyebrow="01 / basic" title="基础坐标">
             <SelectField
               label="所在城市"
               options={Object.entries(cityBenchmarks).map(([value, item]) => ({ value: value as CityKey, label: item.label }))}
               value={inputs.city}
               onChange={(value) => setValue("city", value)}
             />
-            <NumberField label="税后到手年收入" suffix="元/年" value={inputs.afterTaxIncome} onChange={(value) => setValue("afterTaxIncome", value)} />
-            <SelectField<Certainty>
-              label="奖金确定性"
-              options={[
-                { value: "high", label: "高" },
-                { value: "medium", label: "中" },
-                { value: "low", label: "低" },
-                { value: "unknown", label: "不清楚" },
-              ]}
-              value={inputs.bonusCertainty}
-              onChange={(value) => setValue("bonusCertainty", value)}
-            />
-            <RatingField label="未来 1-2 年涨薪空间" low="低" high="高" value={inputs.raisePotential} onChange={(value) => setValue("raisePotential", value)} />
             {inputs.mode === "detailed" ? (
               <>
-                <NumberField label="税前年包" suffix="元/年" value={inputs.preTaxPackage} onChange={(value) => setValue("preTaxPackage", value)} />
-                <NumberField label="固定工资占比" suffix="%" value={inputs.fixedPayRatio} onChange={(value) => setValue("fixedPayRatio", value)} />
-                <NumberField label="福利价值" suffix="元/年" value={inputs.benefitsValue} onChange={(value) => setValue("benefitsValue", value)} />
                 <NumberField label="年龄" suffix="岁" value={inputs.age} onChange={(value) => setValue("age", value)} />
                 <NumberField label="工作年限" suffix="年" value={inputs.experienceYears} onChange={(value) => setValue("experienceYears", value)} />
+                <SelectField
+                  label="学历"
+                  options={educationOptions.map((item) => ({ value: item, label: item }))}
+                  value={inputs.education}
+                  onChange={(value) => setValue("education", value)}
+                />
+                <SelectField<ResidentState>
+                  label="城市是否常驻"
+                  options={[
+                    { value: "yes", label: "是" },
+                    { value: "no", label: "否" },
+                    { value: "uncertain", label: "不确定" },
+                  ]}
+                  value={inputs.cityResident}
+                  onChange={(value) => setValue("cityResident", value)}
+                />
                 <SelectField
                   label="行业"
                   options={Object.entries(industryBenchmarks).map(([value, item]) => ({ value: value as IndustryKey, label: item.label }))}
@@ -313,26 +380,50 @@ export default function JobCalculator() {
                   value={inputs.role}
                   onChange={(value) => setValue("role", value)}
                 />
+                <MultiSelectField label="专业 / 技能方向" options={skillOptions} value={inputs.skillDirections} onChange={(value) => setValue("skillDirections", value)} />
               </>
             ) : null}
           </Section>
 
-          <Section eyebrow="02 / cost" title="持有成本">
-            <NumberField label="每周实际工作小时数" suffix="小时" value={inputs.weeklyHours} onChange={(value) => setValue("weeklyHours", value)} />
-            <NumberField label="通勤单程时间" suffix="分钟" value={inputs.commuteMinutes} onChange={(value) => setValue("commuteMinutes", value)} />
-            <RatingField label="工作压力" low="压力大" high="从容" value={inputs.stress} onChange={(value) => setValue("stress", value)} />
-            <SelectField<WeekendWork>
-              label="是否经常周末工作"
+          <Section eyebrow="02 / income" title="当前收益">
+            <NumberField label="税后到手年收入" suffix="元/年" value={inputs.afterTaxIncome} onChange={(value) => setValue("afterTaxIncome", value)} />
+            <SelectField<Certainty>
+              label="奖金确定性"
               options={[
-                { value: "never", label: "从不" },
-                { value: "sometimes", label: "偶尔" },
-                { value: "often", label: "经常" },
+                { value: "high", label: "高" },
+                { value: "medium", label: "中" },
+                { value: "low", label: "低" },
+                { value: "unknown", label: "不清楚" },
               ]}
-              value={inputs.weekendWork}
-              onChange={(value) => setValue("weekendWork", value)}
+              value={inputs.bonusCertainty}
+              onChange={(value) => setValue("bonusCertainty", value)}
             />
             {inputs.mode === "detailed" ? (
               <>
+                <NumberField label="税前年包" suffix="元/年" value={inputs.preTaxPackage} onChange={(value) => setValue("preTaxPackage", value)} />
+                <NumberField label="固定工资占比" suffix="%" value={inputs.fixedPayRatio} onChange={(value) => setValue("fixedPayRatio", value)} />
+                <NumberField label="福利价值" suffix="元/年" value={inputs.benefitsValue} onChange={(value) => setValue("benefitsValue", value)} />
+                <RatingField label="未来 1-2 年涨薪空间" low="低" high="高" value={inputs.raisePotential} onChange={(value) => setValue("raisePotential", value)} />
+              </>
+            ) : null}
+          </Section>
+
+          <Section eyebrow="03 / cost" title="持有成本">
+            <NumberField label="每周实际工作小时数" suffix="小时" value={inputs.weeklyHours} onChange={(value) => setValue("weeklyHours", value)} />
+            <NumberField label="通勤单程时间" suffix="分钟" value={inputs.commuteMinutes} onChange={(value) => setValue("commuteMinutes", value)} />
+            <RatingField label="工作压力" low="压力大" high="从容" value={inputs.stress} onChange={(value) => setValue("stress", value)} />
+            {inputs.mode === "detailed" ? (
+              <>
+                <SelectField<WeekendWork>
+                  label="是否经常周末工作"
+                  options={[
+                    { value: "never", label: "从不" },
+                    { value: "sometimes", label: "偶尔" },
+                    { value: "often", label: "经常" },
+                  ]}
+                  value={inputs.weekendWork}
+                  onChange={(value) => setValue("weekendWork", value)}
+                />
                 <RatingField label="工作氛围" low="消耗" high="舒服" value={inputs.atmosphere} onChange={(value) => setValue("atmosphere", value)} />
                 <RatingField label="老板同事正常程度" low="不正常" high="正常" value={inputs.peopleHealth} onChange={(value) => setValue("peopleHealth", value)} />
                 <SelectField<HealthImpact>
@@ -360,21 +451,8 @@ export default function JobCalculator() {
             ) : null}
           </Section>
 
-          <Section eyebrow="03 / risk & upside" title="稳定性、成长和流动性">
+          <Section eyebrow="04 / stability" title="稳定性">
             <RatingField label="未来一年安全感" low="不安全" high="很安全" value={inputs.safetyFeeling} onChange={(value) => setValue("safetyFeeling", value)} />
-            <RatingField label="过去半年成长" low="停滞" high="变强很多" value={inputs.pastGrowth} onChange={(value) => setValue("pastGrowth", value)} />
-            <RatingField label="未来一年成长预期" low="有限" high="空间大" value={inputs.futureGrowth} onChange={(value) => setValue("futureGrowth", value)} />
-            <RatingField label="最近外部机会情况" low="很少" high="很多" value={inputs.externalOpportunities} onChange={(value) => setValue("externalOpportunities", value)} />
-            <SelectField
-              label="外部机会是否验证"
-              options={[
-                { value: "false", label: "未知 / 未验证" },
-                { value: "true", label: "已通过投递或沟通验证" },
-              ]}
-              value={String(inputs.externalKnown)}
-              onChange={(value) => setValue("externalKnown", value === "true")}
-            />
-            <RatingField label="个人匹配度 / 长期目标符合度" low="不适合" high="很匹配" value={inputs.longTermFit} onChange={(value) => setValue("longTermFit", value)} />
             {inputs.mode === "detailed" ? (
               <>
                 <SelectField<CompanySize>
@@ -388,11 +466,89 @@ export default function JobCalculator() {
                   value={inputs.companySize}
                   onChange={(value) => setValue("companySize", value)}
                 />
+                <SelectField<BusinessState>
+                  label="公司经营情况"
+                  options={[
+                    { value: "good", label: "好" },
+                    { value: "average", label: "一般" },
+                    { value: "bad", label: "差" },
+                    { value: "unknown", label: "不清楚" },
+                  ]}
+                  value={inputs.companyBusiness}
+                  onChange={(value) => setValue("companyBusiness", value)}
+                />
+                <SelectField<BusinessState>
+                  label="行业景气度"
+                  options={[
+                    { value: "good", label: "好" },
+                    { value: "average", label: "一般" },
+                    { value: "bad", label: "差" },
+                    { value: "unknown", label: "不清楚" },
+                  ]}
+                  value={inputs.industryOutlook}
+                  onChange={(value) => setValue("industryOutlook", value)}
+                />
+                <SelectField<Certainty>
+                  label="团队稳定性"
+                  options={[
+                    { value: "high", label: "高" },
+                    { value: "medium", label: "中" },
+                    { value: "low", label: "低" },
+                    { value: "unknown", label: "不清楚" },
+                  ]}
+                  value={inputs.teamStability}
+                  onChange={(value) => setValue("teamStability", value)}
+                />
                 <RatingField label="岗位核心度" low="边缘" high="核心" value={inputs.roleCore} onChange={(value) => setValue("roleCore", value)} />
-                <RatingField label="能力通用性" low="公司专用" high="高度通用" value={inputs.skillGenerality} onChange={(value) => setValue("skillGenerality", value)} />
-                <RatingField label="高质量项目" low="少" high="多" value={inputs.qualityProjects} onChange={(value) => setValue("qualityProjects", value)} />
-                <RatingField label="简历项目可表达性" low="难讲" high="好讲" value={inputs.projectExplainability} onChange={(value) => setValue("projectExplainability", value)} />
+                <RatingField label="被替代难度" low="容易替代" high="很难替代" value={inputs.replacementDifficulty} onChange={(value) => setValue("replacementDifficulty", value)} />
+                <SelectField<Certainty>
+                  label="裁员 / 优化风险"
+                  options={[
+                    { value: "high", label: "高" },
+                    { value: "medium", label: "中" },
+                    { value: "low", label: "低" },
+                    { value: "unknown", label: "不清楚" },
+                  ]}
+                  value={inputs.layoffRisk}
+                  onChange={(value) => setValue("layoffRisk", value)}
+                />
+              </>
+            ) : null}
+          </Section>
+
+          <Section eyebrow="05 / growth" title="职业成长">
+            <RatingField label="过去半年成长" low="停滞" high="变强很多" value={inputs.pastGrowth} onChange={(value) => setValue("pastGrowth", value)} />
+            <RatingField label="未来一年成长预期" low="有限" high="空间大" value={inputs.futureGrowth} onChange={(value) => setValue("futureGrowth", value)} />
+            {inputs.mode === "detailed" ? (
+              <>
+                <MultiSelectField label="主要工作内容" options={workContentOptions} value={inputs.mainWorkContent} onChange={(value) => setValue("mainWorkContent", value)} />
+                <RatingField label="是否接近核心业务" low="边缘" high="核心" value={inputs.closeToCoreBusiness} onChange={(value) => setValue("closeToCoreBusiness", value)} />
+                <RatingField label="是否有高质量项目" low="少" high="多" value={inputs.qualityProjects} onChange={(value) => setValue("qualityProjects", value)} />
+                <RatingField label="技术 / 能力通用性" low="公司专用" high="高度通用" value={inputs.skillGenerality} onChange={(value) => setValue("skillGenerality", value)} />
+                <RatingField label="是否有人带 / 能学到东西" low="没人带" high="学得快" value={inputs.mentoring} onChange={(value) => setValue("mentoring", value)} />
+                <RatingField label="这段经历对简历加分程度" low="弱" high="强" value={inputs.resumeValue} onChange={(value) => setValue("resumeValue", value)} />
+              </>
+            ) : null}
+          </Section>
+
+          <Section eyebrow="06 / liquidity" title="流动性">
+            <RatingField label="最近外部机会情况" low="很少" high="很多" value={inputs.externalOpportunities} onChange={(value) => setValue("externalOpportunities", value)} />
+            <SelectField
+              label="外部机会是否验证"
+              options={[
+                { value: "false", label: "未知 / 未验证" },
+                { value: "true", label: "已通过投递或沟通验证" },
+              ]}
+              value={String(inputs.externalKnown)}
+              onChange={(value) => setValue("externalKnown", value === "true")}
+            />
+            {inputs.mode === "detailed" ? (
+              <>
+                <MultiSelectField label="目标跳槽方向" options={targetDirectionOptions} value={inputs.targetDirections} onChange={(value) => setValue("targetDirections", value)} />
                 <RatingField label="外部 JD 匹配度" low="低" high="高" value={inputs.jdMatch} onChange={(value) => setValue("jdMatch", value)} />
+                <RatingField label="简历项目对外可讲程度" low="难讲" high="好讲" value={inputs.projectExplainability} onChange={(value) => setValue("projectExplainability", value)} />
+                <RatingField label="技能跨公司迁移能力" low="弱" high="强" value={inputs.companyTransferability} onChange={(value) => setValue("companyTransferability", value)} />
+                <RatingField label="技能跨行业迁移能力" low="弱" high="强" value={inputs.industryTransferability} onChange={(value) => setValue("industryTransferability", value)} />
                 <SelectField<OfferParity>
                   label="能否拿到接近当前收入 offer"
                   options={[
@@ -404,10 +560,28 @@ export default function JobCalculator() {
                   value={inputs.offerParity}
                   onChange={(value) => setValue("offerParity", value)}
                 />
-                <RatingField label="是否喜欢当前工作内容" low="不喜欢" high="喜欢" value={inputs.contentLove} onChange={(value) => setValue("contentLove", value)} />
+                <RatingField label="裸辞找工作难度" low="容易" high="很难" value={inputs.jobSearchDifficulty} onChange={(value) => setValue("jobSearchDifficulty", value)} />
               </>
             ) : null}
           </Section>
+
+          <Section eyebrow="07 / fit" title="个人匹配度">
+            <RatingField label="个人匹配度 / 长期目标符合度" low="不适合" high="很匹配" value={inputs.longTermFit} onChange={(value) => setValue("longTermFit", value)} />
+            {inputs.mode === "detailed" ? (
+              <>
+                <RatingField label="是否喜欢当前行业" low="不喜欢" high="喜欢" value={inputs.industryLove} onChange={(value) => setValue("industryLove", value)} />
+                <RatingField label="是否喜欢当前工作内容" low="不喜欢" high="喜欢" value={inputs.contentLove} onChange={(value) => setValue("contentLove", value)} />
+                <RatingField label="是否愿意额外投入学习" low="不愿意" high="很愿意" value={inputs.extraLearningWillingness} onChange={(value) => setValue("extraLearningWillingness", value)} />
+                <MultiSelectField label="长期目标方向" options={longTermDirectionOptions} value={inputs.longTermDirections} onChange={(value) => setValue("longTermDirections", value)} />
+              </>
+            ) : null}
+          </Section>
+
+          {inputs.mode === "detailed" ? (
+            <Section eyebrow="08 / note" title="可选补充">
+              <TextAreaField label="补充说明（仅作为备注，不参与核心计算）" value={inputs.note} onChange={(value) => setValue("note", value)} />
+            </Section>
+          ) : null}
         </div>
 
         <aside className="lg:sticky lg:top-6 lg:self-start">
@@ -463,11 +637,24 @@ export default function JobCalculator() {
               <div className="mt-3 grid gap-2 text-sm leading-6 text-stone-600">
                 <p>最大优势：{result.strengths.join("、")}。</p>
                 <p>最大短板：{result.weaknesses.join("、")}。</p>
-                <p>未来选择权分：{result.optionValue} / 100。</p>
+                <p>
+                  未来选择权分：{result.optionValue} / 100，{result.optionValueDescription}
+                </p>
                 <p>
                   收入基准约 {formatMoney(result.benchmarkIncome)}，当前约为基准 {result.incomeRatio} 倍；单位时间收入约{" "}
                   {result.unitHourlyIncome.toLocaleString("zh-CN")} 元/小时。
                 </p>
+              </div>
+            </div>
+
+            <div className="rounded-[1.5rem] bg-emerald-50 p-4">
+              <p className="text-sm font-black text-emerald-950">优势与短板原因</p>
+              <div className="mt-3 space-y-2">
+                {[...result.strengthReasons, ...result.weaknessReasons].map((reason) => (
+                  <p className="text-sm leading-6 text-emerald-900" key={reason}>
+                    {reason}
+                  </p>
+                ))}
               </div>
             </div>
 
