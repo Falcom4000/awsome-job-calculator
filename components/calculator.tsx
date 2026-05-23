@@ -270,7 +270,8 @@ function NumberField({
           className="min-w-0 flex-1 bg-transparent px-4 py-3 text-base font-semibold text-stone-950 outline-none"
           min={min}
           type="number"
-          value={value}
+          placeholder="0"
+          value={value === 0 ? "" : value}
           onChange={(event) => onChange(Number(event.target.value))}
         />
         {suffix ? <span className="flex items-center bg-stone-100 px-3 text-sm text-stone-500">{suffix}</span> : null}
@@ -608,17 +609,22 @@ export default function JobCalculator() {
           </Section>
 
           <Section eyebrow="第二步" title="回报水平">
-            <NumberField label="税前年现金收入" suffix="元/年" value={inputs.annualCashIncome} onChange={(value) => setValue("annualCashIncome", value)} />
+            <NumberField
+              label={inputs.mode === "detailed" ? "税前总包：现金部分" : "税前总包"}
+              suffix="元/年"
+              value={inputs.annualCashIncome}
+              onChange={(value) => setValue("annualCashIncome", value)}
+            />
             {inputs.mode === "detailed" ? (
               <NumberField
-                label="股权/期权年化收益"
+                label="税前总包：股权/期权年化"
                 suffix="元/年"
                 value={inputs.annualEquityIncome}
                 onChange={(value) => setValue("annualEquityIncome", value)}
               />
             ) : null}
             <p className="text-sm leading-6 text-stone-500 md:col-span-2">
-              固定工资、现金奖金和现金补贴都算现金收入；股权、期权、股票按预计年化收益填。
+              快速评估可直接填税前总包；完整评估可拆成现金部分和股权、期权、股票的预计年化收益。
             </p>
           </Section>
 
@@ -779,7 +785,7 @@ export default function JobCalculator() {
                   发疯报告
                 </div>
               </div>
-              <div className="mt-8 grid gap-6 md:grid-cols-[minmax(0,1fr)_260px]">
+              <div className="mt-8 grid gap-6 md:grid-cols-[minmax(0,1fr)_260px] md:items-center">
                 <div>
                   <div className="flex flex-wrap items-end gap-x-4 gap-y-2">
                     <span className="text-8xl font-black leading-none md:text-9xl">{result.rating.grade}</span>
