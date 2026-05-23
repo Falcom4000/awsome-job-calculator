@@ -162,7 +162,7 @@ export const scoringConfig = {
 export const defaultInputs: JobInputs = {
   mode: "brief",
   city: "",
-  annualCashIncome: 450000,
+  annualCashIncome: 0,
   annualEquityIncome: 0,
   weeklyHours: 45,
   commuteMinutes: 35,

@@ -528,7 +528,7 @@ export default function JobCalculator() {
             <div className="mt-8">
               <div>
                 <h1 className="max-w-3xl text-4xl font-black tracking-tight md:text-6xl">打工哪有不疯的</h1>
-                <p className="mt-5 max-w-3xl text-3xl font-black leading-tight tracking-tight text-emerald-100 md:text-5xl">
+                <p className="mt-5 max-w-3xl text-2xl font-black leading-tight tracking-tight text-emerald-100 md:text-4xl">
                   测测这份工作疯得值不值
                 </p>
               </div>
