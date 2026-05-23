@@ -31,6 +31,7 @@ type RatingOption = {
 
 type RatingCopyKey =
   | "stress"
+  | "benefitsLevel"
   | "atmosphere"
   | "peopleHealth"
   | "healthImpact"
@@ -70,6 +71,13 @@ const ratingCopy: Record<RatingCopyKey, RatingOption[]> = {
     { score: 4, title: "压力较小", description: "大多数时候比较从容。" },
     { score: 5, title: "压力很低", description: "节奏舒适，几乎不内耗。" },
   ],
+  benefitsLevel: [
+    { score: 1, title: "几乎没有", description: "五险一金、假期、补贴等明显不足。" },
+    { score: 2, title: "偏少", description: "基础保障有，但整体福利偏弱。" },
+    { score: 3, title: "一般", description: "常规水平，不拖后腿也不明显加分。" },
+    { score: 4, title: "较好", description: "福利比较完整，有实际补贴或假期优势。" },
+    { score: 5, title: "很好", description: "保障和补贴都扎实，能明显提升工作体验。" },
+  ],
   atmosphere: [
     { score: 1, title: "氛围很差", description: "有明显 PUA、甩锅、内斗或不尊重。" },
     { score: 2, title: "氛围偏差", description: "沟通成本高，人际关系消耗明显。" },
@@ -78,11 +86,11 @@ const ratingCopy: Record<RatingCopyKey, RatingOption[]> = {
     { score: 5, title: "很好", description: "氛围舒服，信任度高，沟通成本低。" },
   ],
   peopleHealth: [
-    { score: 1, title: "很不正常", description: "频繁甩锅、压榨、失信或情绪化管理。" },
-    { score: 2, title: "偏不正常", description: "沟通和协作经常消耗精力。" },
-    { score: 3, title: "普通", description: "有摩擦，但没有明显恶性问题。" },
-    { score: 4, title: "较正常", description: "大多数沟通直接、稳定、可预期。" },
-    { score: 5, title: "很正常", description: "尊重边界，合作省心，信任成本低。" },
+    { score: 1, title: "很消耗", description: "甩锅、内斗、失信或情绪化管理明显。" },
+    { score: 2, title: "偏消耗", description: "沟通和协作经常消耗精力。" },
+    { score: 3, title: "一般", description: "有摩擦，但没有明显恶性问题。" },
+    { score: 4, title: "较舒服", description: "大多数沟通直接、稳定、可预期。" },
+    { score: 5, title: "很舒服", description: "尊重边界，合作省心，信任成本低。" },
   ],
   healthImpact: [
     { score: 1, title: "很伤身", description: "已经明显影响睡眠、情绪或身体状态。" },
@@ -624,6 +632,7 @@ export default function JobCalculator() {
             <NumberField label="每周实际工作小时数" suffix="小时" value={inputs.weeklyHours} onChange={(value) => setValue("weeklyHours", value)} />
             <NumberField label="通勤单程时间" suffix="分钟" value={inputs.commuteMinutes} onChange={(value) => setValue("commuteMinutes", value)} />
             <RatingField label="工作压力" low="压力大" high="从容" copyKey="stress" value={inputs.stress} onChange={(value) => setValue("stress", value)} />
+            <RatingField label="福利水平" low="弱" high="好" copyKey="benefitsLevel" value={inputs.benefitsLevel} onChange={(value) => setValue("benefitsLevel", value)} />
             {inputs.mode === "detailed" ? (
               <>
                 <SelectField<WeekendWork>
@@ -637,7 +646,7 @@ export default function JobCalculator() {
                   onChange={(value) => setValue("weekendWork", value)}
                 />
                 <RatingField label="工作氛围" low="消耗" high="舒服" copyKey="atmosphere" value={inputs.atmosphere} onChange={(value) => setValue("atmosphere", value)} />
-                <RatingField label="老板同事正常程度" low="不正常" high="正常" copyKey="peopleHealth" value={inputs.peopleHealth} onChange={(value) => setValue("peopleHealth", value)} />
+                <RatingField label="人际关系" low="消耗" high="舒服" copyKey="peopleHealth" value={inputs.peopleHealth} onChange={(value) => setValue("peopleHealth", value)} />
                 <RatingField label="健康影响" low="伤身" high="健康" copyKey="healthImpact" value={inputs.healthImpact} onChange={(value) => setValue("healthImpact", value)} />
                 <RatingField
                   label="是否有时间学习和生活"
@@ -652,7 +661,6 @@ export default function JobCalculator() {
           </Section>
 
           <Section eyebrow="第四步" title="稳定性">
-            <RatingField label="未来一年安全感" low="不安全" high="很安全" copyKey="safetyFeeling" value={inputs.safetyFeeling} onChange={(value) => setValue("safetyFeeling", value)} />
             <SelectField<CompanySize>
               label="公司规模"
               options={[
@@ -704,6 +712,7 @@ export default function JobCalculator() {
                 <RatingField label="裁员 / 优化风险" low="风险高" high="安全" copyKey="layoffRisk" value={inputs.layoffRisk} onChange={(value) => setValue("layoffRisk", value)} />
               </>
             ) : null}
+            <RatingField label="未来一年安全感" low="不安全" high="很安全" copyKey="safetyFeeling" value={inputs.safetyFeeling} onChange={(value) => setValue("safetyFeeling", value)} />
           </Section>
 
           <Section eyebrow="第五步" title="成长性">

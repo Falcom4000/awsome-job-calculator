@@ -29,6 +29,7 @@ export type JobInputs = {
   weeklyHours: number;
   commuteMinutes: number;
   stress: RatingValue;
+  benefitsLevel: RatingValue;
   weekendWork: WeekendWork;
   atmosphere: RatingValue;
   peopleHealth: RatingValue;
@@ -167,6 +168,7 @@ export const defaultInputs: JobInputs = {
   weeklyHours: 45,
   commuteMinutes: 35,
   stress: null,
+  benefitsLevel: null,
   weekendWork: "",
   atmosphere: null,
   peopleHealth: null,
@@ -338,13 +340,14 @@ function calculateHolding(inputs: JobInputs) {
   if (inputs.commuteMinutes >= cityCommute + 30) score -= 6;
 
   score += (subjective(inputs.stress) - 50) * 0.18;
+  score += (subjective(inputs.benefitsLevel) - 50) * 0.1;
   if (isDetailedMode(inputs)) {
     if (inputs.weekendWork === "sometimes") score -= 5;
     if (inputs.weekendWork === "often") score -= 14;
     score += (subjective(inputs.atmosphere) - 50) * 0.14;
     score += (subjective(inputs.peopleHealth) - 50) * 0.12;
     score += (subjective(inputs.healthImpact) - 50) * 0.24;
-    score += (subjective(inputs.lifeAndLearningTime) - 50) * 0.18;
+    score += (subjective(inputs.lifeAndLearningTime) - 50) * 0.16;
   }
   return clamp(score);
 }
@@ -449,11 +452,11 @@ function getDimensionReason(key: DimensionKey, score: number, inputs: JobInputs)
       level === "优势"
         ? `当前年化收入约为基准 ${income.ratio.toFixed(2)} 倍。`
         : `当前年化收入约为基准 ${income.ratio.toFixed(2)} 倍，收益优势不明显。`,
-    stability: !isDetailedMode(inputs) ? "主要依据未来一年安全感判断。" : "综合公司经营、行业景气、团队稳定、岗位核心度和裁员风险判断。",
+    stability: !isDetailedMode(inputs) ? "主要依据公司规模、经营情况和未来一年安全感判断。" : "综合公司经营、行业景气、团队稳定、岗位核心度和裁员风险判断。",
     holding:
       level === "优势"
-        ? "工时、通勤、压力和健康损耗整体可控。"
-        : "工时、通勤、压力或健康损耗拉低了可持续性。",
+        ? "工时、通勤、压力、福利和健康损耗整体可控。"
+        : "工时、通勤、压力、福利或健康损耗拉低了可持续性。",
     growth: !isDetailedMode(inputs) ? "主要依据过去半年成长和未来一年成长预期。" : "综合核心业务、成长速度、带教和简历价值判断。",
     liquidity: "综合外部机会、JD 匹配、项目可讲程度和迁移能力判断。",
     fit: !isDetailedMode(inputs) ? "主要依据总体匹配度判断。" : "综合行业偏好、内容偏好、长期目标和额外学习意愿判断。",
@@ -466,7 +469,7 @@ function getConfidence(inputs: JobInputs): ScoreResult["confidence"] {
   return {
     income: isDetailedMode(inputs) ? { level: "中", reason: "已结合城市、行业、岗位、经验、企业性质和岗位层级基准；行业层级薪酬仍依赖报告分位和兜底规则。" } : { level: "中", reason: briefIncomeReason },
     stability: isDetailedMode(inputs) ? { level: "中", reason: "已结合公司、团队、岗位风险和行业稳定性基准。" } : { level: "低", reason: "主要依赖公司规模、经营情况和未来一年安全感。" },
-    holding: { level: "高", reason: "工时、通勤、压力和所在城市通勤基准是舒适度的核心字段。" },
+    holding: { level: "高", reason: "工时、通勤、压力、福利水平和所在城市通勤基准是舒适度的核心字段。" },
     growth: isDetailedMode(inputs) ? { level: "中", reason: "已提供核心业务、成长预期、带教和简历价值。" } : { level: "低", reason: "主要依赖核心业务、过去成长和未来预期。" },
     liquidity: isDetailedMode(inputs)
       ? { level: "中", reason: "已结合外部机会、JD 匹配、项目表达和迁移能力。" }
