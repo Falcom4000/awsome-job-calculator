@@ -87,6 +87,10 @@ export type ScoreResult = {
     description: string;
   };
   dimensions: Record<DimensionKey, number>;
+  aggregateScores: {
+    benefit: number;
+    cost: number;
+  };
   optionValue: number;
   unitHourlyIncome: number;
   benchmarkIncome: number;
@@ -507,6 +511,22 @@ export function calculateJobScore(inputs: JobInputs): ScoreResult {
   const total = Math.round(
     Object.entries(scoringConfig.weights).reduce((sum, [key, weight]) => sum + dimensions[key as DimensionKey] * weight, 0)
   );
+  const aggregateScores = {
+    benefit: Math.round(
+      weighted([
+        [dimensions.income, scoringConfig.weights.income],
+        [dimensions.growth, scoringConfig.weights.growth],
+      ])
+    ),
+    cost: Math.round(
+      weighted([
+        [dimensions.stability, scoringConfig.weights.stability],
+        [dimensions.holding, scoringConfig.weights.holding],
+        [dimensions.liquidity, scoringConfig.weights.liquidity],
+        [dimensions.fit, scoringConfig.weights.fit],
+      ])
+    ),
+  };
   const optionValue = Math.round(dimensions.growth * 0.5 + dimensions.liquidity * 0.5);
   const sorted = Object.entries(dimensions).sort((a, b) => b[1] - a[1]) as Array<[DimensionKey, number]>;
   const strengths = sorted.slice(0, 2).map(([key]) => dimensionLabels[key]);
@@ -535,6 +555,7 @@ export function calculateJobScore(inputs: JobInputs): ScoreResult {
     total,
     rating: getRating(total),
     dimensions,
+    aggregateScores,
     optionValue,
     unitHourlyIncome: Math.round(inputs.annualCashIncome / Math.max(inputs.weeklyHours * 52, 1)),
     benchmarkIncome: Math.round(income.benchmark),

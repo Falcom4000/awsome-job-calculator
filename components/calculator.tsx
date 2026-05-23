@@ -887,15 +887,35 @@ export default function JobCalculator() {
                     <span className="text-7xl font-black leading-none">{result.total}</span>
                     <span className="pb-2 text-xl font-bold text-stone-500">/ 100</span>
                   </div>
-                  <p className="mt-3 text-sm font-black text-emerald-900">上班档位：{result.rating.grade} 档</p>
                 </div>
               </div>
             </header>
 
             <div className="grid gap-6">
               <div className="space-y-4 rounded-[2.5rem] border border-stone-900/10 bg-white p-5 shadow-2xl">
-            <div className="flex justify-center rounded-[2rem] bg-stone-50 px-2 py-4 md:p-6">
-              <RadarChart values={radarValues} />
+            <div className="grid gap-3 md:grid-cols-2">
+              <div className="rounded-[2rem] bg-emerald-950 p-5 text-white">
+                <p className="text-sm font-bold text-emerald-100">综合收益</p>
+                <div className="mt-4 flex items-end gap-2">
+                  <span className="text-5xl font-black leading-none">{result.aggregateScores.benefit}</span>
+                  <span className="pb-1 text-sm font-bold text-emerald-100">/ 100</span>
+                </div>
+                <p className="mt-3 text-sm leading-6 text-emerald-100">由当前收益和职业成长计算，代表这份工作给你的现金流和升值空间。</p>
+              </div>
+              <div className="rounded-[2rem] bg-stone-100 p-5 text-stone-950">
+                <p className="text-sm font-bold text-stone-500">综合成本</p>
+                <div className="mt-4 flex items-end gap-2">
+                  <span className="text-5xl font-black leading-none">{result.aggregateScores.cost}</span>
+                  <span className="pb-1 text-sm font-bold text-stone-500">/ 100</span>
+                </div>
+                <p className="mt-3 text-sm leading-6 text-stone-600">由稳定性、持有友好度、流动性和个人匹配度计算，分数越高代表成本越可控。</p>
+              </div>
+            </div>
+
+            <div className="flex justify-center overflow-hidden rounded-[2rem] bg-stone-50 px-2 py-2 md:p-4">
+              <div className="-my-10 w-full max-w-[680px] scale-y-[0.86] md:-my-12">
+                <RadarChart values={radarValues} />
+              </div>
             </div>
 
             <div className="rounded-[1.5rem] border border-stone-200 p-4">
