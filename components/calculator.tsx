@@ -339,7 +339,7 @@ function RatingField({
           const selected = value === option.score;
           return (
             <button
-              className={`rounded-2xl border p-3 text-left transition ${
+              className={`flex min-h-[148px] flex-col rounded-2xl border p-3 text-left transition ${
                 selected
                   ? "border-emerald-900 bg-emerald-900 text-white shadow-sm"
                   : "border-stone-200 bg-white text-stone-700 hover:border-emerald-300"
@@ -348,9 +348,9 @@ function RatingField({
               type="button"
               onClick={() => onChange(option.score)}
             >
-              <span className={`block text-lg font-black ${selected ? "text-white" : "text-stone-950"}`}>{option.score}</span>
-              <span className={`mt-1 block text-sm font-black ${selected ? "text-emerald-50" : "text-stone-800"}`}>{option.title}</span>
-              <span className={`mt-1 block text-xs leading-5 ${selected ? "text-emerald-100" : "text-stone-500"}`}>{option.description}</span>
+              <span className={`block h-7 text-lg font-black leading-7 ${selected ? "text-white" : "text-stone-950"}`}>{option.score}</span>
+              <span className={`mt-2 block min-h-5 text-sm font-black leading-5 ${selected ? "text-emerald-50" : "text-stone-800"}`}>{option.title}</span>
+              <span className={`mt-2 block text-xs leading-5 ${selected ? "text-emerald-100" : "text-stone-500"}`}>{option.description}</span>
             </button>
           );
         })}
