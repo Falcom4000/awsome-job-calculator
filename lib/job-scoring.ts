@@ -431,17 +431,17 @@ function calculateFit(inputs: JobInputs) {
 
 function getRating(total: number) {
   if (total >= 85) return { grade: "S", title: "这班真能上", description: "钱、成长、消耗都在线，疯得很值。" };
-  if (total >= 75) return { grade: "A", title: "这班可以上", description: "整体划算，短板补一补还能更香。" };
-  if (total >= 65) return { grade: "B", title: "这班先上着", description: "不是梦中情班，但也不算亏。" };
+  if (total >= 75) return { grade: "A", title: "这班可以上", description: "整体划算，有短板但不影响大局。" };
+  if (total >= 65) return { grade: "B", title: "这班先上着", description: "不是梦中情班，但暂时不算亏。" };
   if (total >= 55) return { grade: "C", title: "这班边上边看", description: "能上，但别太上头，边干边找解法。" };
-  return { grade: "D", title: "这班就上到这里吧", description: "疯得不太值，建议开始准备退路。" };
+  return { grade: "D", title: "这班就上到这里吧", description: "疯得不太值，该认真准备退路了。" };
 }
 
 function getOptionValueDescription(score: number) {
-  if (score >= 80) return "未来选择权很强，越做越自由。";
-  if (score >= 60) return "未来选择权还不错，但需要持续经营。";
-  if (score >= 40) return "当前可以持有，但未来自由度不足。";
-  return "未来可能被锁死或专用化，需要优先处理成长和流动性。";
+  if (score >= 80) return "退路很宽，越做越自由。";
+  if (score >= 60) return "退路还可以，但要持续经营。";
+  if (score >= 40) return "现在能上，但退路不算宽。";
+  return "有点容易被锁住，要先补成长和流动性。";
 }
 
 function getDimensionReason(key: DimensionKey, score: number, inputs: JobInputs) {
@@ -519,18 +519,18 @@ export function calculateJobScore(inputs: JobInputs): ScoreResult {
   const warnings: string[] = [];
 
   Object.entries(dimensions).forEach(([key, score]) => {
-    if (score < 40) warnings.push(`${dimensionLabels[key as DimensionKey]}低于 40，属于高风险短板。`);
-    else if (score < 60) warnings.push(`${dimensionLabels[key as DimensionKey]}低于 60，需要重点关注。`);
+    if (score < 40) warnings.push(`${dimensionLabels[key as DimensionKey]}低于 40，是高风险短板。`);
+    else if (score < 60) warnings.push(`${dimensionLabels[key as DimensionKey]}低于 60，需要盯紧。`);
   });
-  if (dimensions.growth < 60 && dimensions.liquidity < 60) warnings.push("成长性和流动性同时偏低，未来选择权不足。");
-  if (dimensions.income >= 80 && dimensions.growth < 60 && dimensions.liquidity < 60) warnings.push("收益高但成长和流动性偏低，可能形成高现金流陷阱。");
-  if (dimensions.income >= 80 && dimensions.holding < 60) warnings.push("回报高但舒适度偏低，存在高薪高消耗风险。");
-  if (!isDetailedMode(inputs)) warnings.push("当前为简略评估，未充分考虑年龄、工作年限、公司和团队风险。");
+  if (dimensions.growth < 60 && dimensions.liquidity < 60) warnings.push("成长性和流动性都偏低，后面可能不好换。");
+  if (dimensions.income >= 80 && dimensions.growth < 60 && dimensions.liquidity < 60) warnings.push("钱给得不错，但成长和退路偏弱，警惕高薪陷阱。");
+  if (dimensions.income >= 80 && dimensions.holding < 60) warnings.push("回报高但舒适度低，可能是高薪高消耗。");
+  if (!isDetailedMode(inputs)) warnings.push("当前是快速评估，结果适合先看方向。");
 
   const suggestions = [
-    total >= 75 ? "整体值得继续持有，优先经营最低分维度。" : "不建议只看当前收入，应尽快验证替代机会和可改造空间。",
-    dimensions.holding < 60 ? "先处理工时、通勤、压力或健康损耗，否则回报不可持续。" : "舒适度目前可控，可以把精力放在成长和流动性经营上。",
-    dimensions.liquidity < 65 ? "未来 1-2 个月做一次市场测试，更新简历并验证外部报价。" : "保持外部机会温度，避免长期只积累公司专用经验。",
+    total >= 75 ? "先继续上，把最低分那一项补起来。" : "别只看工资，先验证外面有没有更好的解法。",
+    dimensions.holding < 60 ? "先处理工时、通勤、压力、福利或健康损耗，不然很难长期扛。" : "舒适度还可以，把精力放到成长和退路上。",
+    dimensions.liquidity < 65 ? "未来 1-2 个月投一轮简历，看看市场真实反馈。" : "保持外部机会不断线，别只攒公司内部经验。",
   ];
 
   return {

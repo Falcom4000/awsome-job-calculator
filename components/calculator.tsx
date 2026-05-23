@@ -56,27 +56,27 @@ type RatingCopyKey =
   | "extraLearningWillingness";
 
 const genericRatingOptions: RatingOption[] = [
-  { score: 1, title: "很差", description: "明显负面，已经形成主要短板。" },
-  { score: 2, title: "偏差", description: "有明显不足，需要主动处理。" },
-  { score: 3, title: "中等", description: "普通水平，有好有坏但总体可接受。" },
-  { score: 4, title: "较好", description: "明显优于平均，是当前工作的加分项。" },
-  { score: 5, title: "很好", description: "非常优秀，是这份工作的核心优势。" },
+  { score: 1, title: "很拉胯", description: "已经是明显短板。" },
+  { score: 2, title: "有点拖", description: "不算灾难，但会消耗。" },
+  { score: 3, title: "还行", description: "普通水平，先不加戏。" },
+  { score: 4, title: "挺加分", description: "比平均好，能撑起体验。" },
+  { score: 5, title: "很能打", description: "这是这份工作的核心优势。" },
 ];
 
 const ratingCopy: Record<RatingCopyKey, RatingOption[]> = {
   stress: [
-    { score: 1, title: "压力很大", description: "经常焦虑，明显影响情绪或生活。" },
-    { score: 2, title: "压力偏大", description: "经常需要硬撑，恢复成本较高。" },
-    { score: 3, title: "压力一般", description: "有忙的时候，但总体可接受。" },
-    { score: 4, title: "压力较小", description: "大多数时候比较从容。" },
-    { score: 5, title: "压力很低", description: "节奏舒适，几乎不内耗。" },
+    { score: 1, title: "很窒息", description: "经常焦虑，下班也缓不过来。" },
+    { score: 2, title: "偏顶", description: "能扛，但恢复成本不低。" },
+    { score: 3, title: "还行", description: "忙归忙，总体还能接受。" },
+    { score: 4, title: "比较稳", description: "大多数时候节奏可控。" },
+    { score: 5, title: "很松弛", description: "压力低，基本不内耗。" },
   ],
   benefitsLevel: [
-    { score: 1, title: "几乎没有", description: "五险一金、假期、补贴等明显不足。" },
-    { score: 2, title: "偏少", description: "基础保障有，但整体福利偏弱。" },
-    { score: 3, title: "一般", description: "常规水平，不拖后腿也不明显加分。" },
-    { score: 4, title: "较好", description: "福利比较完整，有实际补贴或假期优势。" },
-    { score: 5, title: "很好", description: "保障和补贴都扎实，能明显提升工作体验。" },
+    { score: 1, title: "几乎裸奔", description: "保障、假期、补贴都明显不足。" },
+    { score: 2, title: "偏少", description: "基础有一点，但整体不香。" },
+    { score: 3, title: "正常", description: "常规配置，不拖后腿。" },
+    { score: 4, title: "挺舒服", description: "保障完整，还有一些实用福利。" },
+    { score: 5, title: "很香", description: "福利扎实，确实能提升体验。" },
   ],
   atmosphere: [
     { score: 1, title: "氛围很差", description: "有明显 PUA、甩锅、内斗或不尊重。" },
@@ -107,11 +107,11 @@ const ratingCopy: Record<RatingCopyKey, RatingOption[]> = {
     { score: 5, title: "很充足", description: "工作之外仍有明显自主时间。" },
   ],
   safetyFeeling: [
-    { score: 1, title: "很不安全", description: "随时可能出问题。" },
-    { score: 2, title: "偏不安全", description: "有明显组织、业务或岗位风险。" },
-    { score: 3, title: "一般", description: "有风险但可接受。" },
-    { score: 4, title: "比较安全", description: "短中期问题不大。" },
-    { score: 5, title: "很安全", description: "公司、团队和岗位都比较稳。" },
+    { score: 1, title: "很悬", description: "随时可能出问题。" },
+    { score: 2, title: "不太稳", description: "组织、业务或岗位有明显风险。" },
+    { score: 3, title: "一般", description: "有风险，但还没到警报级别。" },
+    { score: 4, title: "比较稳", description: "短中期看问题不大。" },
+    { score: 5, title: "很稳", description: "公司、团队和岗位都比较稳。" },
   ],
   roleCore: [
     { score: 1, title: "很边缘", description: "主要做杂活、支持、低价值维护。" },
@@ -509,10 +509,10 @@ export default function JobCalculator() {
               <div className="absolute -bottom-16 left-8 h-44 w-44 rounded-full bg-amber-300/20 blur-2xl" />
               <div className="relative">
                 <div className="mx-auto h-16 w-16 animate-spin rounded-full border-4 border-white/20 border-t-emerald-300" />
-                <p className="mt-6 text-center text-xs font-bold tracking-[0.24em] text-emerald-200">正在评估</p>
-                <h1 className="mt-2 text-center text-3xl font-black">正在判断这班疯得值不值</h1>
+                <p className="mt-6 text-center text-xs font-bold tracking-[0.24em] text-emerald-200">正在计算</p>
+                <h1 className="mt-2 text-center text-3xl font-black">正在算这班值不值</h1>
                 <p className="mt-3 max-w-md text-center text-sm leading-6 text-stone-300">
-                  正在匹配薪酬分位、城市基准和六个维度的评分规则。
+                  正在匹配薪酬分位、城市基准和六维评分。
                 </p>
                 <div className="mt-6 h-2 overflow-hidden rounded-full bg-white/10">
                   <div
@@ -546,8 +546,8 @@ export default function JobCalculator() {
           <section className="rounded-[2rem] border border-stone-200 bg-white/80 p-3 shadow-sm backdrop-blur">
             <div className="grid gap-3 sm:grid-cols-2">
               {[
-                ["brief", "快速评估", "填写核心字段，适合先获得一个方向性判断"],
-                ["detailed", "完整评估", "补充行业、岗位、企业性质和风险信息，结果更接近真实对标"],
+                ["brief", "快速评估", "少填一点，先看大方向"],
+                ["detailed", "完整评估", "多填一点，对标更细"],
               ].map(([mode, title, description]) => (
                 <button
                   className={`rounded-[1.5rem] border p-4 text-left transition ${
@@ -624,7 +624,7 @@ export default function JobCalculator() {
               />
             ) : null}
             <p className="text-sm leading-6 text-stone-500 md:col-span-2">
-              现金收入包括固定工资、现金奖金和现金补贴；完整评估可把股权、期权、股票按预计年化收益填入。
+              固定工资、现金奖金和现金补贴都算现金收入；股权、期权、股票按预计年化收益填。
             </p>
           </Section>
 
@@ -636,7 +636,7 @@ export default function JobCalculator() {
             {inputs.mode === "detailed" ? (
               <>
                 <SelectField<WeekendWork>
-                  label="是否经常周末工作"
+                  label="周末工作频率"
                   options={[
                     { value: "never", label: "从不" },
                     { value: "sometimes", label: "偶尔" },
@@ -718,11 +718,11 @@ export default function JobCalculator() {
           <Section eyebrow="第五步" title="成长性">
             <RatingField label="过去半年成长" low="停滞" high="变强很多" copyKey="pastGrowth" value={inputs.pastGrowth} onChange={(value) => setValue("pastGrowth", value)} />
             <RatingField label="未来一年成长预期" low="有限" high="空间大" copyKey="futureGrowth" value={inputs.futureGrowth} onChange={(value) => setValue("futureGrowth", value)} />
-            <RatingField label="是否接近核心业务" low="边缘" high="核心" copyKey="closeToCoreBusiness" value={inputs.closeToCoreBusiness} onChange={(value) => setValue("closeToCoreBusiness", value)} />
+                <RatingField label="离核心业务有多近" low="边缘" high="核心" copyKey="closeToCoreBusiness" value={inputs.closeToCoreBusiness} onChange={(value) => setValue("closeToCoreBusiness", value)} />
             {inputs.mode === "detailed" ? (
               <>
-                <RatingField label="是否有人带 / 能学到东西" low="没人带" high="学得快" copyKey="mentoring" value={inputs.mentoring} onChange={(value) => setValue("mentoring", value)} />
-                <RatingField label="这段经历对简历加分程度" low="弱" high="强" copyKey="resumeValue" value={inputs.resumeValue} onChange={(value) => setValue("resumeValue", value)} />
+                <RatingField label="有人带、能学到东西吗" low="没人带" high="学得快" copyKey="mentoring" value={inputs.mentoring} onChange={(value) => setValue("mentoring", value)} />
+                <RatingField label="这段经历简历加分吗" low="弱" high="强" copyKey="resumeValue" value={inputs.resumeValue} onChange={(value) => setValue("resumeValue", value)} />
               </>
             ) : null}
           </Section>
@@ -751,12 +751,12 @@ export default function JobCalculator() {
           </Section>
 
           <Section eyebrow="第七步" title="匹配度">
-            <RatingField label="匹配度 / 长期目标符合度" low="不适合" high="很匹配" copyKey="longTermFit" value={inputs.longTermFit} onChange={(value) => setValue("longTermFit", value)} />
-            <RatingField label="是否喜欢当前行业" low="不喜欢" high="喜欢" copyKey="industryLove" value={inputs.industryLove} onChange={(value) => setValue("industryLove", value)} />
-            <RatingField label="是否喜欢当前工作内容" low="不喜欢" high="喜欢" copyKey="contentLove" value={inputs.contentLove} onChange={(value) => setValue("contentLove", value)} />
+            <RatingField label="长期目标符合度" low="不适合" high="很匹配" copyKey="longTermFit" value={inputs.longTermFit} onChange={(value) => setValue("longTermFit", value)} />
+            <RatingField label="喜欢当前行业吗" low="不喜欢" high="喜欢" copyKey="industryLove" value={inputs.industryLove} onChange={(value) => setValue("industryLove", value)} />
+            <RatingField label="喜欢当前工作内容吗" low="不喜欢" high="喜欢" copyKey="contentLove" value={inputs.contentLove} onChange={(value) => setValue("contentLove", value)} />
             {inputs.mode === "detailed" ? (
               <>
-                <RatingField label="是否愿意额外投入学习" low="不愿意" high="很愿意" copyKey="extraLearningWillingness" value={inputs.extraLearningWillingness} onChange={(value) => setValue("extraLearningWillingness", value)} />
+                <RatingField label="愿意额外投入学习吗" low="不愿意" high="很愿意" copyKey="extraLearningWillingness" value={inputs.extraLearningWillingness} onChange={(value) => setValue("extraLearningWillingness", value)} />
               </>
             ) : null}
           </Section>
@@ -764,14 +764,14 @@ export default function JobCalculator() {
           <div className="rounded-[2rem] border border-stone-900/10 bg-stone-950 p-5 text-white shadow-xl">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div>
-                <p className="mt-1 text-xl font-black">生成这份工作的发疯性价比报告</p>
+                <p className="mt-1 text-xl font-black">生成发疯性价比报告</p>
               </div>
               <button
                 className="rounded-2xl bg-emerald-300 px-8 py-4 text-base font-black text-stone-950 transition hover:bg-emerald-200 disabled:cursor-not-allowed disabled:opacity-70"
                 disabled={isCalculating}
                 type="submit"
               >
-                {isCalculating ? "正在生成..." : "生成报告"}
+                {isCalculating ? "计算中..." : "开始计算"}
               </button>
             </div>
           </div>
@@ -823,7 +823,7 @@ export default function JobCalculator() {
                   <span className="text-5xl font-black leading-none">{result.aggregateScores.benefit}</span>
                   <span className="pb-1 text-sm font-bold text-stone-500">/ 100</span>
                 </div>
-                <p className="mt-3 text-sm leading-6 text-stone-600">看钱和成长：现在给不给，未来涨不涨。</p>
+                <p className="mt-3 text-sm leading-6 text-stone-600">看钱和成长：现在值钱吗，以后还能涨吗。</p>
               </div>
               <div className="rounded-[2rem] border border-stone-200 bg-stone-50 p-5 text-stone-950">
                 <p className="text-sm font-bold text-stone-600">综合成本</p>
@@ -831,18 +831,18 @@ export default function JobCalculator() {
                   <span className="text-5xl font-black leading-none">{result.aggregateScores.cost}</span>
                   <span className="pb-1 text-sm font-bold text-stone-500">/ 100</span>
                 </div>
-                <p className="mt-3 text-sm leading-6 text-stone-600">看消耗和退路：累不累、稳不稳、走不走得掉。</p>
+                <p className="mt-3 text-sm leading-6 text-stone-600">看消耗和退路：累不累、稳不稳、想走能不能走。</p>
               </div>
             </div>
 
             <div className="rounded-[1.5rem] border border-stone-200 p-4">
               <div className="flex items-center gap-2 text-sm font-black">
                 <LineChart className="h-4 w-4 text-emerald-800" />
-                一句话结论
+                先看结论
               </div>
               <div className="mt-3 grid gap-2 text-sm leading-6 text-stone-600">
-                <p>最能打：{result.strengths.join("、")}。</p>
-                <p>最拖后腿：{result.weaknesses.join("、")}。</p>
+                <p>最能打的是：{result.strengths.join("、")}。</p>
+                <p>最拖后腿的是：{result.weaknesses.join("、")}。</p>
                 <p>
                   退路指数：{result.optionValue} / 100，{result.optionValueDescription}
                 </p>
@@ -854,7 +854,7 @@ export default function JobCalculator() {
             </div>
 
             <div className="rounded-[1.5rem] bg-emerald-50 p-4">
-              <p className="text-sm font-black text-emerald-950">为什么这么判</p>
+              <p className="text-sm font-black text-emerald-950">为什么是这个档</p>
               <div className="mt-3 space-y-2">
                 {[...result.strengthReasons, ...result.weaknessReasons].map((reason) => (
                   <p className="text-sm leading-6 text-emerald-900" key={reason}>
@@ -867,7 +867,7 @@ export default function JobCalculator() {
             <div className="rounded-[1.5rem] bg-orange-50 p-4">
               <div className="flex items-center gap-2 text-sm font-black text-orange-950">
                 <AlertTriangle className="h-4 w-4" />
-                需要留意
+                别忽略这些
               </div>
               <div className="mt-3 space-y-2">
                 {result.warnings.slice(0, 4).map((warning) => (
@@ -880,7 +880,7 @@ export default function JobCalculator() {
             </div>
 
             <div className="rounded-[1.5rem] bg-stone-50 p-4">
-              <p className="text-sm font-black">下一步</p>
+              <p className="text-sm font-black">接下来怎么做</p>
               <div className="mt-3 space-y-2">
                 {result.suggestions.map((suggestion) => (
                   <p className="text-sm leading-6 text-stone-600" key={suggestion}>
