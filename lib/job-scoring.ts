@@ -346,7 +346,15 @@ function calculateHolding(inputs: JobInputs) {
 }
 
 function calculateStability(inputs: JobInputs) {
-  if (!isDetailedMode(inputs)) return subjective(inputs.safetyFeeling);
+  if (!isDetailedMode(inputs)) {
+    return clamp(
+      weighted([
+        [scoringConfig.companySizeScore[inputs.companySize], 0.35],
+        [scoringConfig.businessScore[inputs.companyBusiness], 0.35],
+        [subjective(inputs.safetyFeeling), 0.3],
+      ])
+    );
+  }
   const marketStability = getIndustryBenchmark(industryKey(inputs), inputs.experienceYears, industryBenchmarkOptions(inputs)).stabilityScore;
 
   return clamp(
@@ -365,7 +373,7 @@ function calculateStability(inputs: JobInputs) {
 
 function calculateGrowth(inputs: JobInputs) {
   if (!isDetailedMode(inputs)) {
-    return clamp(weighted([[subjective(inputs.pastGrowth), 0.45], [subjective(inputs.futureGrowth), 0.55]]));
+    return clamp(weighted([[subjective(inputs.closeToCoreBusiness), 0.25], [subjective(inputs.pastGrowth), 0.35], [subjective(inputs.futureGrowth), 0.4]]));
   }
 
   return clamp(
@@ -380,7 +388,9 @@ function calculateGrowth(inputs: JobInputs) {
 }
 
 function calculateLiquidity(inputs: JobInputs) {
-  if (!isDetailedMode(inputs)) return clamp(subjective(inputs.externalOpportunities));
+  if (!isDetailedMode(inputs)) {
+    return clamp(weighted([[subjective(inputs.externalOpportunities), 0.4], [subjective(inputs.jdMatch), 0.3], [subjective(inputs.projectExplainability), 0.3]]));
+  }
 
   const marketBase = isDetailedMode(inputs)
     ? (getIndustryBenchmark(industryKey(inputs), inputs.experienceYears, industryBenchmarkOptions(inputs)).demandScore + roleBenchmarks[roleKey(inputs)].liquidityScore) / 2
@@ -399,7 +409,9 @@ function calculateLiquidity(inputs: JobInputs) {
 }
 
 function calculateFit(inputs: JobInputs) {
-  if (!isDetailedMode(inputs)) return subjective(inputs.longTermFit);
+  if (!isDetailedMode(inputs)) {
+    return clamp(weighted([[subjective(inputs.industryLove), 0.33], [subjective(inputs.contentLove), 0.33], [subjective(inputs.longTermFit), 0.34]]));
+  }
   return clamp(
     weighted([
       [subjective(inputs.industryLove), 0.25],
@@ -449,13 +461,13 @@ function getConfidence(inputs: JobInputs): ScoreResult["confidence"] {
   const briefIncomeReason = "已使用城市、行业和岗位层级；未填写企业性质时按民营普通口径兜底，未填写工作年限时按默认经验阶段兜底。";
   return {
     income: isDetailedMode(inputs) ? { level: "中", reason: "已结合城市、行业、岗位、经验、企业性质和岗位层级基准；行业层级薪酬仍依赖报告分位和兜底规则。" } : { level: "中", reason: briefIncomeReason },
-    stability: isDetailedMode(inputs) ? { level: "中", reason: "已结合公司、团队、岗位风险和行业稳定性基准。" } : { level: "低", reason: "主要依赖未来一年安全感，结构性风险字段较少。" },
+    stability: isDetailedMode(inputs) ? { level: "中", reason: "已结合公司、团队、岗位风险和行业稳定性基准。" } : { level: "低", reason: "主要依赖公司规模、经营情况和未来一年安全感。" },
     holding: { level: "高", reason: "工时、通勤、压力和所在城市通勤基准是舒适度的核心字段。" },
-    growth: isDetailedMode(inputs) ? { level: "中", reason: "已提供核心业务、成长预期、带教和简历价值。" } : { level: "低", reason: "主要依赖过去成长和未来预期两个主观字段。" },
+    growth: isDetailedMode(inputs) ? { level: "中", reason: "已提供核心业务、成长预期、带教和简历价值。" } : { level: "低", reason: "主要依赖核心业务、过去成长和未来预期。" },
     liquidity: isDetailedMode(inputs)
       ? { level: "中", reason: "已结合外部机会、JD 匹配、项目表达和迁移能力。" }
-      : { level: "低", reason: "简略模式主要依赖外部机会主观评分。" },
-    fit: isDetailedMode(inputs) ? { level: "中", reason: "已拆分行业、内容、长期目标和学习意愿。" } : { level: "低", reason: "简略模式只使用总体匹配度。" },
+      : { level: "低", reason: "主要依赖外部机会、JD 匹配和项目可讲程度。" },
+    fit: isDetailedMode(inputs) ? { level: "中", reason: "已拆分行业、内容、长期目标和学习意愿。" } : { level: "低", reason: "主要依赖行业偏好、内容偏好和长期目标。" },
   };
 }
 

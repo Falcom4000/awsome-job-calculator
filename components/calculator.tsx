@@ -579,14 +579,14 @@ export default function JobCalculator() {
               value={inputs.jobLevel}
               onChange={(value) => setValue("jobLevel", value)}
             />
-            <SelectField
-              label="学历"
-              options={educationOptions.map((item) => ({ value: item, label: item }))}
-              value={inputs.education}
-              onChange={(value) => setValue("education", value)}
-            />
             {inputs.mode === "detailed" ? (
               <>
+                <SelectField
+                  label="学历"
+                  options={educationOptions.map((item) => ({ value: item, label: item }))}
+                  value={inputs.education}
+                  onChange={(value) => setValue("education", value)}
+                />
                 <NumberField label="年龄" suffix="岁" value={inputs.age} onChange={(value) => setValue("age", value)} />
                 <NumberField label="工作年限" suffix="年" value={inputs.experienceYears} onChange={(value) => setValue("experienceYears", value)} />
                 <SelectField
@@ -653,30 +653,30 @@ export default function JobCalculator() {
 
           <Section eyebrow="第四步" title="稳定性">
             <RatingField label="未来一年安全感" low="不安全" high="很安全" copyKey="safetyFeeling" value={inputs.safetyFeeling} onChange={(value) => setValue("safetyFeeling", value)} />
+            <SelectField<CompanySize>
+              label="公司规模"
+              options={[
+                { value: "large", label: "大公司 / 平台型" },
+                { value: "medium", label: "中型公司" },
+                { value: "small", label: "小公司" },
+                { value: "startup", label: "早期团队" },
+              ]}
+              value={inputs.companySize}
+              onChange={(value) => setValue("companySize", value)}
+            />
+            <SelectField<BusinessState>
+              label="公司经营情况"
+              options={[
+                { value: "good", label: "好" },
+                { value: "average", label: "一般" },
+                { value: "bad", label: "差" },
+                { value: "unknown", label: "不清楚" },
+              ]}
+              value={inputs.companyBusiness}
+              onChange={(value) => setValue("companyBusiness", value)}
+            />
             {inputs.mode === "detailed" ? (
               <>
-                <SelectField<CompanySize>
-                  label="公司规模"
-                  options={[
-                    { value: "large", label: "大公司 / 平台型" },
-                    { value: "medium", label: "中型公司" },
-                    { value: "small", label: "小公司" },
-                    { value: "startup", label: "早期团队" },
-                  ]}
-                  value={inputs.companySize}
-                  onChange={(value) => setValue("companySize", value)}
-                />
-                <SelectField<BusinessState>
-                  label="公司经营情况"
-                  options={[
-                    { value: "good", label: "好" },
-                    { value: "average", label: "一般" },
-                    { value: "bad", label: "差" },
-                    { value: "unknown", label: "不清楚" },
-                  ]}
-                  value={inputs.companyBusiness}
-                  onChange={(value) => setValue("companyBusiness", value)}
-                />
                 <SelectField<BusinessState>
                   label="行业景气度"
                   options={[
@@ -709,9 +709,9 @@ export default function JobCalculator() {
           <Section eyebrow="第五步" title="成长性">
             <RatingField label="过去半年成长" low="停滞" high="变强很多" copyKey="pastGrowth" value={inputs.pastGrowth} onChange={(value) => setValue("pastGrowth", value)} />
             <RatingField label="未来一年成长预期" low="有限" high="空间大" copyKey="futureGrowth" value={inputs.futureGrowth} onChange={(value) => setValue("futureGrowth", value)} />
+            <RatingField label="是否接近核心业务" low="边缘" high="核心" copyKey="closeToCoreBusiness" value={inputs.closeToCoreBusiness} onChange={(value) => setValue("closeToCoreBusiness", value)} />
             {inputs.mode === "detailed" ? (
               <>
-                <RatingField label="是否接近核心业务" low="边缘" high="核心" copyKey="closeToCoreBusiness" value={inputs.closeToCoreBusiness} onChange={(value) => setValue("closeToCoreBusiness", value)} />
                 <RatingField label="是否有人带 / 能学到东西" low="没人带" high="学得快" copyKey="mentoring" value={inputs.mentoring} onChange={(value) => setValue("mentoring", value)} />
                 <RatingField label="这段经历对简历加分程度" low="弱" high="强" copyKey="resumeValue" value={inputs.resumeValue} onChange={(value) => setValue("resumeValue", value)} />
               </>
@@ -720,10 +720,10 @@ export default function JobCalculator() {
 
           <Section eyebrow="第六步" title="流动性">
             <RatingField label="最近外部机会情况" low="很少" high="很多" copyKey="externalOpportunities" value={inputs.externalOpportunities} onChange={(value) => setValue("externalOpportunities", value)} />
+            <RatingField label="外部 JD 匹配度" low="低" high="高" copyKey="jdMatch" value={inputs.jdMatch} onChange={(value) => setValue("jdMatch", value)} />
+            <RatingField label="简历项目对外可讲程度" low="难讲" high="好讲" copyKey="projectExplainability" value={inputs.projectExplainability} onChange={(value) => setValue("projectExplainability", value)} />
             {inputs.mode === "detailed" ? (
               <>
-                <RatingField label="外部 JD 匹配度" low="低" high="高" copyKey="jdMatch" value={inputs.jdMatch} onChange={(value) => setValue("jdMatch", value)} />
-                <RatingField label="简历项目对外可讲程度" low="难讲" high="好讲" copyKey="projectExplainability" value={inputs.projectExplainability} onChange={(value) => setValue("projectExplainability", value)} />
                 <RatingField label="技能跨公司迁移能力" low="弱" high="强" copyKey="companyTransferability" value={inputs.companyTransferability} onChange={(value) => setValue("companyTransferability", value)} />
                 <RatingField label="技能跨行业迁移能力" low="弱" high="强" copyKey="industryTransferability" value={inputs.industryTransferability} onChange={(value) => setValue("industryTransferability", value)} />
                 <SelectField<OfferParity>
@@ -743,10 +743,10 @@ export default function JobCalculator() {
 
           <Section eyebrow="第七步" title="匹配度">
             <RatingField label="匹配度 / 长期目标符合度" low="不适合" high="很匹配" copyKey="longTermFit" value={inputs.longTermFit} onChange={(value) => setValue("longTermFit", value)} />
+            <RatingField label="是否喜欢当前行业" low="不喜欢" high="喜欢" copyKey="industryLove" value={inputs.industryLove} onChange={(value) => setValue("industryLove", value)} />
+            <RatingField label="是否喜欢当前工作内容" low="不喜欢" high="喜欢" copyKey="contentLove" value={inputs.contentLove} onChange={(value) => setValue("contentLove", value)} />
             {inputs.mode === "detailed" ? (
               <>
-                <RatingField label="是否喜欢当前行业" low="不喜欢" high="喜欢" copyKey="industryLove" value={inputs.industryLove} onChange={(value) => setValue("industryLove", value)} />
-                <RatingField label="是否喜欢当前工作内容" low="不喜欢" high="喜欢" copyKey="contentLove" value={inputs.contentLove} onChange={(value) => setValue("contentLove", value)} />
                 <RatingField label="是否愿意额外投入学习" low="不愿意" high="很愿意" copyKey="extraLearningWillingness" value={inputs.extraLearningWillingness} onChange={(value) => setValue("extraLearningWillingness", value)} />
               </>
             ) : null}
