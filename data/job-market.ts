@@ -1,4 +1,30 @@
-export type CityKey = "beijing" | "shanghai" | "shenzhen" | "guangzhou" | "hangzhou" | "chengdu" | "wuhan" | "other";
+import {
+  cityCommuteBenchmarks,
+  cityIncomeBenchmarks,
+  industrySalaryBenchmarks,
+  industryStabilityBenchmarks,
+  nationalIncomeBenchmarks,
+  roleLiquidityBenchmarks,
+  roleSalaryBenchmarks,
+} from "@/data/work-asset-datasets";
+
+export type CityKey =
+  | "beijing"
+  | "shanghai"
+  | "shenzhen"
+  | "guangzhou"
+  | "hangzhou"
+  | "nanjing"
+  | "suzhou"
+  | "chengdu"
+  | "wuhan"
+  | "xian"
+  | "chongqing"
+  | "tianjin"
+  | "qingdao"
+  | "changsha"
+  | "zhengzhou"
+  | "other";
 
 export type IndustryKey =
   | "internet"
@@ -29,82 +55,6 @@ export type MarketDatum = {
   note: string;
 };
 
-export const nationalBenchmark = {
-  label: "全国总体",
-  annualIncomeBenchmark: 120000,
-  weeklyHours: 48,
-  source: "前端内置演示基准，后续可替换为统计局与招聘报告数据",
-  year: 2024,
-  note: "粗粒度市场口径，用于缺少细分数据时退化计算。",
-};
-
-export const cityBenchmarks: Record<CityKey, MarketDatum> = {
-  beijing: {
-    label: "北京",
-    annualIncomeBenchmark: 210000,
-    commuteMinutes: 48,
-    source: "演示城市薪酬基准",
-    year: 2024,
-    note: "综合城镇工资与招聘薪资口径的前端示例数据。",
-  },
-  shanghai: {
-    label: "上海",
-    annualIncomeBenchmark: 205000,
-    commuteMinutes: 46,
-    source: "演示城市薪酬基准",
-    year: 2024,
-    note: "综合城镇工资与招聘薪资口径的前端示例数据。",
-  },
-  shenzhen: {
-    label: "深圳",
-    annualIncomeBenchmark: 220000,
-    commuteMinutes: 42,
-    source: "演示城市薪酬基准",
-    year: 2024,
-    note: "综合城镇工资与招聘薪资口径的前端示例数据。",
-  },
-  guangzhou: {
-    label: "广州",
-    annualIncomeBenchmark: 170000,
-    commuteMinutes: 41,
-    source: "演示城市薪酬基准",
-    year: 2024,
-    note: "综合城镇工资与招聘薪资口径的前端示例数据。",
-  },
-  hangzhou: {
-    label: "杭州",
-    annualIncomeBenchmark: 180000,
-    commuteMinutes: 38,
-    source: "演示城市薪酬基准",
-    year: 2024,
-    note: "综合城镇工资与招聘薪资口径的前端示例数据。",
-  },
-  chengdu: {
-    label: "成都",
-    annualIncomeBenchmark: 130000,
-    commuteMinutes: 35,
-    source: "演示城市薪酬基准",
-    year: 2024,
-    note: "综合城镇工资与招聘薪资口径的前端示例数据。",
-  },
-  wuhan: {
-    label: "武汉",
-    annualIncomeBenchmark: 125000,
-    commuteMinutes: 36,
-    source: "演示城市薪酬基准",
-    year: 2024,
-    note: "综合城镇工资与招聘薪资口径的前端示例数据。",
-  },
-  other: {
-    label: "其他城市",
-    annualIncomeBenchmark: 110000,
-    commuteMinutes: 35,
-    source: "演示城市薪酬基准",
-    year: 2024,
-    note: "未匹配城市时使用全国附近的保守基准。",
-  },
-};
-
 export type IndustryDatum = {
   label: string;
   annualIncomeBenchmark: number;
@@ -123,29 +73,145 @@ export type RoleDatum = {
   note: string;
 };
 
-const demoSource = "前端内置演示基准";
-const demoYear = 2024;
-const demoIndustryNote = "演示行业薪酬和需求口径，后续替换为统计局、招聘报告或行业报告数据。";
-const demoRoleNote = "演示岗位薪酬和流动性口径，后续替换为招聘平台与行业薪酬报告数据。";
+function firstNumber(...values: Array<number | null | undefined>) {
+  return values.find((value): value is number => typeof value === "number" && Number.isFinite(value));
+}
+
+function latestNationalBenchmark() {
+  return [...nationalIncomeBenchmarks].sort((a, b) => b.year - a.year)[0];
+}
+
+function findCityIncome(cityKey: string) {
+  const records = cityIncomeBenchmarks.filter((item) => item.cityKey === cityKey);
+  return records.find((item) => item.methodology === "official_salary" && firstNumber(item.annualIncomeAvg, item.socialAverageSalary, item.recruitingSalaryMedian))
+    ?? records.find((item) => firstNumber(item.annualIncomeAvg, item.socialAverageSalary, item.recruitingSalaryMedian));
+}
+
+function findCommute(cityKey: string) {
+  return cityCommuteBenchmarks.find((item) => item.cityKey === cityKey);
+}
+
+function commuteValue(cityKey: string, fallback = 38) {
+  return firstNumber(findCommute(cityKey)?.commuteMinutesAvg, fallback) ?? fallback;
+}
+
+function cityDatum(cityKey: string, label: string, fallbackIncome?: number): MarketDatum {
+  const city = findCityIncome(cityKey);
+  const income = firstNumber(city?.annualIncomeAvg, city?.socialAverageSalary, city?.recruitingSalaryMedian, fallbackIncome, nationalBenchmark.annualIncomeBenchmark);
+  const source = city?.source ?? nationalBenchmark.source;
+  const year = city?.year ?? nationalBenchmark.year;
+  const note = city
+    ? `${city.methodology === "official_salary" ? "官方工资" : "招聘薪资"}口径；${city.notes}`
+    : "城市数据缺失，退化到全国基准。";
+
+  return {
+    label,
+    annualIncomeBenchmark: income ?? nationalBenchmark.annualIncomeBenchmark,
+    commuteMinutes: commuteValue(cityKey),
+    source,
+    year,
+    note,
+  };
+}
+
+function industrySalary(...keys: string[]) {
+  return keys
+    .map((key) => industrySalaryBenchmarks.find((item) => item.industryKey === key))
+    .find((item) => item && firstNumber(item.annualSalaryAvg, item.annualSalaryMedian));
+}
+
+function stabilityDemand(industryKey: string, fallback: number) {
+  const stability = industryStabilityBenchmarks.find((item) => item.industryKey === industryKey);
+  return firstNumber(stability?.growthScore, stability?.stabilityScore, fallback) ?? fallback;
+}
+
+function industryDatum(label: string, fallbackDemand: number, ...keys: string[]): IndustryDatum {
+  const salary = industrySalary(...keys);
+  return {
+    label,
+    annualIncomeBenchmark: firstNumber(salary?.annualSalaryAvg, salary?.annualSalaryMedian, nationalBenchmark.annualIncomeBenchmark) ?? nationalBenchmark.annualIncomeBenchmark,
+    demandScore: stabilityDemand(keys[0] ?? "other", fallbackDemand),
+    source: salary?.source ?? "数据缺失，使用全国基准兜底",
+    year: salary?.year ?? nationalBenchmark.year,
+    note: salary ? `${salary.methodology === "official_salary" ? "官方行业工资" : "招聘薪资"}口径；${salary.notes}` : "未匹配行业薪酬数据，使用全国基准退化计算。",
+  };
+}
+
+function roleSalary(...keys: string[]) {
+  return keys
+    .map((key) => roleSalaryBenchmarks.find((item) => item.roleKey === key))
+    .find((item) => item && firstNumber(item.annualSalaryAvg, item.annualSalaryMedian));
+}
+
+function roleLiquidity(...keys: string[]) {
+  return keys
+    .map((key) => roleLiquidityBenchmarks.find((item) => item.roleKey === key))
+    .find((item) => item && firstNumber(item.liquidityScore, item.demandScore));
+}
+
+function roleDatum(label: string, fallbackLiquidity: number, ...keys: string[]): RoleDatum {
+  const salary = roleSalary(...keys);
+  const liquidity = roleLiquidity(...keys);
+  return {
+    label,
+    annualIncomeBenchmark: firstNumber(salary?.annualSalaryAvg, salary?.annualSalaryMedian, nationalBenchmark.annualIncomeBenchmark) ?? nationalBenchmark.annualIncomeBenchmark,
+    liquidityScore: firstNumber(liquidity?.liquidityScore, liquidity?.demandScore, fallbackLiquidity) ?? fallbackLiquidity,
+    source: salary?.source ?? liquidity?.source ?? "数据缺失，使用全国基准兜底",
+    year: salary?.year ?? liquidity?.year ?? nationalBenchmark.year,
+    note: salary
+      ? `${salary.methodology === "official_salary" ? "官方岗位大类工资" : "招聘岗位薪资"}口径；${salary.notes}`
+      : "未匹配岗位薪酬数据，使用全国基准退化计算。",
+  };
+}
+
+const national = latestNationalBenchmark();
+
+export const nationalBenchmark = {
+  label: national.label,
+  annualIncomeBenchmark: firstNumber(national.annualIncomeAvg, national.urbanNonPrivateAvg, national.urbanPrivateAvg) ?? 106080,
+  weeklyHours: firstNumber(national.weeklyHoursAvg, 48) ?? 48,
+  source: national.source,
+  year: national.year,
+  note: national.notes,
+};
+
+export const cityBenchmarks: Record<CityKey, MarketDatum> = {
+  beijing: cityDatum("beijing", "北京"),
+  shanghai: cityDatum("shanghai", "上海", 210000),
+  shenzhen: cityDatum("shenzhen", "深圳"),
+  guangzhou: cityDatum("guangzhou", "广州"),
+  hangzhou: cityDatum("hangzhou", "杭州"),
+  nanjing: cityDatum("nanjing", "南京"),
+  suzhou: cityDatum("suzhou", "苏州"),
+  chengdu: cityDatum("chengdu", "成都"),
+  wuhan: cityDatum("wuhan", "武汉"),
+  xian: cityDatum("xian", "西安"),
+  chongqing: cityDatum("chongqing", "重庆"),
+  tianjin: cityDatum("tianjin", "天津"),
+  qingdao: cityDatum("qingdao", "青岛"),
+  changsha: cityDatum("changsha", "长沙"),
+  zhengzhou: cityDatum("zhengzhou", "郑州"),
+  other: cityDatum("other", "其他城市"),
+};
 
 export const industryBenchmarks: Record<IndustryKey, IndustryDatum> = {
-  internet: { label: "互联网 / 软件", annualIncomeBenchmark: 260000, demandScore: 78, source: demoSource, year: demoYear, note: demoIndustryNote },
-  finance: { label: "金融 / 量化", annualIncomeBenchmark: 300000, demandScore: 74, source: demoSource, year: demoYear, note: demoIndustryNote },
-  manufacturing: { label: "制造业 / 硬件", annualIncomeBenchmark: 180000, demandScore: 66, source: demoSource, year: demoYear, note: demoIndustryNote },
-  consumer: { label: "消费 / 零售", annualIncomeBenchmark: 150000, demandScore: 58, source: demoSource, year: demoYear, note: demoIndustryNote },
-  education: { label: "教育 / 培训", annualIncomeBenchmark: 135000, demandScore: 52, source: demoSource, year: demoYear, note: demoIndustryNote },
-  healthcare: { label: "医疗健康", annualIncomeBenchmark: 190000, demandScore: 68, source: demoSource, year: demoYear, note: demoIndustryNote },
-  public: { label: "公共部门 / 国企", annualIncomeBenchmark: 160000, demandScore: 48, source: demoSource, year: demoYear, note: demoIndustryNote },
-  other: { label: "其他行业", annualIncomeBenchmark: 150000, demandScore: 55, source: demoSource, year: demoYear, note: demoIndustryNote },
+  internet: industryDatum("互联网 / 软件", 58, "nbs_information_software_it", "internet"),
+  finance: industryDatum("金融 / 量化", 74, "nbs_finance", "fund_securities_futures_investment", "banking"),
+  manufacturing: industryDatum("制造业 / 硬件", 70, "nbs_manufacturing", "energy_mining_metallurgy"),
+  consumer: industryDatum("消费 / 零售", 58, "nbs_wholesale_retail", "nbs_accommodation_catering"),
+  education: industryDatum("教育 / 培训", 42, "nbs_education", "education"),
+  healthcare: industryDatum("医疗健康", 68, "nbs_health_social_work"),
+  public: industryDatum("公共部门 / 国企", 48, "nbs_public_management_social_security"),
+  other: industryDatum("其他行业", 55, "nbs_public_management_social_security"),
 };
 
 export const roleBenchmarks: Record<RoleKey, RoleDatum> = {
-  engineering: { label: "技术 / 工程", annualIncomeBenchmark: 280000, liquidityScore: 78, source: demoSource, year: demoYear, note: demoRoleNote },
-  product: { label: "产品 / 项目", annualIncomeBenchmark: 230000, liquidityScore: 68, source: demoSource, year: demoYear, note: demoRoleNote },
-  operations: { label: "运营 / 增长", annualIncomeBenchmark: 170000, liquidityScore: 58, source: demoSource, year: demoYear, note: demoRoleNote },
-  research: { label: "研究 / 分析", annualIncomeBenchmark: 260000, liquidityScore: 66, source: demoSource, year: demoYear, note: demoRoleNote },
-  sales: { label: "销售 / 商务", annualIncomeBenchmark: 190000, liquidityScore: 62, source: demoSource, year: demoYear, note: demoRoleNote },
-  finance_role: { label: "财务 / 风控", annualIncomeBenchmark: 180000, liquidityScore: 60, source: demoSource, year: demoYear, note: demoRoleNote },
-  design: { label: "设计 / 创意", annualIncomeBenchmark: 170000, liquidityScore: 56, source: demoSource, year: demoYear, note: demoRoleNote },
-  other: { label: "其他岗位", annualIncomeBenchmark: 155000, liquidityScore: 55, source: demoSource, year: demoYear, note: demoRoleNote },
+  engineering: roleDatum("技术 / 工程", 78, "ai_engineer", "nbs_professional_technical", "internet_general"),
+  product: roleDatum("产品 / 项目", 68, "nbs_professional_technical", "internet_general"),
+  operations: roleDatum("运营 / 增长", 58, "nbs_clerical", "nbs_service", "internet_general"),
+  research: roleDatum("研究 / 分析", 66, "nbs_professional_technical", "ai_engineer"),
+  sales: roleDatum("销售 / 商务", 62, "nbs_service", "nbs_clerical"),
+  finance_role: roleDatum("财务 / 风控", 60, "nbs_professional_technical"),
+  design: roleDatum("设计 / 创意", 56, "nbs_professional_technical"),
+  other: roleDatum("其他岗位", 55, "nbs_clerical"),
 };

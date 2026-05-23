@@ -405,9 +405,9 @@ function getDimensionReason(key: DimensionKey, score: number, inputs: JobInputs)
 }
 
 function getConfidence(inputs: JobInputs, dimensions: Record<DimensionKey, number>): ScoreResult["confidence"] {
-  const briefReason = "简略模式缺少年龄、行业、岗位和经验等坐标系，使用城市与全国粗粒度基准。";
+  const briefReason = "简略模式缺少年龄、行业、岗位和经验等坐标系，使用城市与全国公开数据粗粒度基准。";
   return {
-    income: inputs.mode === "detailed" ? { level: "中", reason: "已结合城市、行业、岗位和经验基准；当前仍使用内置演示数据。" } : { level: "中", reason: briefReason },
+    income: inputs.mode === "detailed" ? { level: "中", reason: "已结合城市、行业、岗位和经验基准；城市和行业以公开统计数据为主，岗位和经验仍含兜底估算。" } : { level: "中", reason: briefReason },
     stability: inputs.mode === "detailed" ? { level: "中", reason: "已提供公司、行业、团队和岗位风险信息。" } : { level: "低", reason: "主要依赖未来一年安全感，结构性风险字段较少。" },
     holding: { level: "高", reason: "工时、通勤和压力是持有成本的核心字段。" },
     growth: inputs.mode === "detailed" ? { level: "中", reason: "已提供项目、核心业务、能力通用性和成长预期。" } : { level: "低", reason: "主要依赖过去成长和未来预期两个主观字段。" },
@@ -478,10 +478,10 @@ export function calculateJobScore(inputs: JobInputs): ScoreResult {
       `全国基准：${nationalBenchmark.source}，${nationalBenchmark.year}，${nationalBenchmark.note}`,
       inputs.mode === "detailed"
         ? `${industryBenchmarks[inputs.industry].label}行业基准：${industryBenchmarks[inputs.industry].source}，${industryBenchmarks[inputs.industry].year}，${industryBenchmarks[inputs.industry].note}`
-        : "详细行业、岗位、年龄、学历和专业数据暂未接入真实来源。",
+        : "简略模式未使用行业、岗位、年龄、学历和专业细分基准。",
       inputs.mode === "detailed"
         ? `${roleBenchmarks[inputs.role].label}岗位基准：${roleBenchmarks[inputs.role].source}，${roleBenchmarks[inputs.role].year}，${roleBenchmarks[inputs.role].note}`
-        : "当前版本使用前端内置演示数据，真实统计数据将在后续阶段替换。",
+        : "当前版本已接入公开统计和报告数据；缺失细分字段会退化到全国或岗位大类基准。",
     ],
   };
 }
