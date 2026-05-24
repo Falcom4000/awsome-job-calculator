@@ -512,9 +512,10 @@ function calculateStability(inputs: JobInputs) {
   if (!isDetailedMode(inputs)) {
     return clamp(
       weighted([
-        [scoringConfig.companySizeScore[inputs.companySize], 0.35],
-        [scoringConfig.businessScore[inputs.companyBusiness], 0.35],
-        [subjective(inputs.safetyFeeling), 0.3],
+        [scoringConfig.companySizeScore[inputs.companySize], 0.3],
+        [scoringConfig.businessScore[inputs.companyBusiness], 0.3],
+        [subjective(inputs.roleCore), 0.18],
+        [subjective(inputs.safetyFeeling), 0.22],
       ])
     );
   }

@@ -861,7 +861,6 @@ export default function JobCalculator() {
                   value={inputs.teamStability}
                   onChange={(value) => setValue("teamStability", value)}
                 />
-                <RatingField label="是不是核心牛马" low="边缘" high="核心" copyKey="roleCore" value={inputs.roleCore} onChange={(value) => setValue("roleCore", value)} />
                 <RatingField label="替身好不好找" low="容易替代" high="很难替代" copyKey="replacementDifficulty" value={inputs.replacementDifficulty} onChange={(value) => setValue("replacementDifficulty", value)} />
                 <RatingField
                   label="关键资源在不在你手里"
@@ -873,6 +872,7 @@ export default function JobCalculator() {
                 />
               </>
             ) : null}
+            <RatingField label="是不是核心牛马" low="边缘" high="核心" copyKey="roleCore" value={inputs.roleCore} onChange={(value) => setValue("roleCore", value)} />
             <RatingField label="饭碗安全感" low="不安全" high="很安全" copyKey="safetyFeeling" value={inputs.safetyFeeling} onChange={(value) => setValue("safetyFeeling", value)} />
           </Section>
 
