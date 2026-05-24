@@ -450,24 +450,25 @@ function RadarChart({ values }: { values: Array<{ label: string; value: number }
             return `${center + Math.cos(angle) * radius * level},${center + Math.sin(angle) * radius * level}`;
           })
           .join(" ");
-        return <polygon className="fill-none stroke-stone-200" key={level} points={ring} />;
+        return <polygon fill="none" key={level} points={ring} stroke="#e7e5e4" strokeWidth="1.5" />;
       })}
       {points.map((point) => (
-        <line className="stroke-stone-200" key={point.label} x1={center} x2={point.axisX} y1={center} y2={point.axisY} />
+        <line key={point.label} stroke="#e7e5e4" strokeWidth="1.5" x1={center} x2={point.axisX} y1={center} y2={point.axisY} />
       ))}
-      <polygon className="fill-emerald-500/25 stroke-emerald-800 stroke-2" points={polygon} />
+      <polygon fill="rgba(16, 185, 129, 0.24)" points={polygon} stroke="#065f46" strokeWidth="3" />
       {points.map((point) => (
         <g key={point.label}>
-          <circle className="fill-emerald-900" cx={point.x} cy={point.y} r="4" />
+          <circle cx={point.x} cy={point.y} fill="#064e3b" r="4" />
           <text
-            className="fill-stone-700 text-[22px] font-black"
+            className="text-[28px] font-black"
             dominantBaseline="middle"
+            fill="#44403c"
             textAnchor={point.labelAnchor}
             x={point.labelX}
             y={point.labelY}
           >
             <tspan>{point.label}</tspan>
-            <tspan className="fill-emerald-900" dx="6">
+            <tspan dx="6" fill="#064e3b">
               {point.value}
             </tspan>
           </text>
@@ -892,9 +893,9 @@ export default function JobCalculator() {
         ) : (
           <div className="space-y-6">
             <div ref={shareCaptureRef} className="space-y-6 bg-[#f4efe4]">
-            <header className="rounded-[2.5rem] border border-stone-900/10 bg-stone-950 p-7 text-white shadow-xl">
+            <header className="rounded-[2.5rem] border border-stone-900/10 bg-white p-7 text-stone-950 shadow-xl">
               <div className="flex flex-wrap items-center justify-between gap-4">
-                <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] text-emerald-100">
+                <div className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] text-emerald-900">
                   <BriefcaseBusiness className="h-4 w-4" />
                   发疯报告
                 </div>
@@ -905,11 +906,11 @@ export default function JobCalculator() {
                     <span className="shrink-0 text-8xl font-black leading-none md:text-9xl">{result.rating.grade}</span>
                     <div className="min-w-0 md:pb-2">
                       <h1 className="text-3xl font-black leading-tight tracking-tight md:text-5xl">{result.rating.title}</h1>
-                      <p className="mt-2 max-w-2xl text-base leading-7 text-stone-300 md:mt-3 md:text-lg md:leading-8">{result.rating.description}</p>
+                      <p className="mt-2 max-w-2xl text-base leading-7 text-stone-600 md:mt-3 md:text-lg md:leading-8">{result.rating.description}</p>
                     </div>
                   </div>
                 </div>
-                <div className="rounded-[2rem] bg-white p-5 text-stone-950">
+                <div className="rounded-[2rem] border border-stone-200 bg-stone-50 p-5 text-stone-950">
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-bold text-stone-500">总得分</p>
                     <Gauge className="h-5 w-5 text-emerald-800" />
