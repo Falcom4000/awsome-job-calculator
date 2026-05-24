@@ -45,9 +45,9 @@ type RatingCopyKey =
   | "criticalResourceControl"
   | "pastGrowth"
   | "futureGrowth"
-  | "closeToCoreBusiness"
   | "mentoring"
   | "promotionClarity"
+  | "feedbackQuality"
   | "resumeValue"
   | "externalOpportunities"
   | "jdMatch"
@@ -152,13 +152,6 @@ const ratingCopy: Record<RatingCopyKey, RatingOption[]> = {
     { score: 4, title: "有点盼头", description: "成长空间较好，有明确可学的东西。" },
     { score: 5, title: "盼头很大", description: "未来一年大概率继续显著升值。" },
   ],
-  closeToCoreBusiness: [
-    { score: 1, title: "很远", description: "离收入、产品或关键决策很远。" },
-    { score: 2, title: "偏远", description: "支持核心业务，但接触有限。" },
-    { score: 3, title: "中等", description: "参与核心流程的一部分。" },
-    { score: 4, title: "较近", description: "能直接影响关键业务结果。" },
-    { score: 5, title: "非常近", description: "直接站在核心价值链上。" },
-  ],
   mentoring: [
     { score: 1, title: "没人带", description: "基本靠自己摸索，反馈和指导很少。" },
     { score: 2, title: "带得少", description: "偶尔有指导，但系统性不足。" },
@@ -172,6 +165,13 @@ const ratingCopy: Record<RatingCopyKey, RatingOption[]> = {
     { score: 3, title: "有点影子", description: "大概知道方向，但不够确定。" },
     { score: 4, title: "比较清楚", description: "有明确能力要求、项目机会或晋升路径。" },
     { score: 5, title: "路很明", description: "下一阶段目标、标准和机会都比较清晰。" },
+  ],
+  feedbackQuality: [
+    { score: 1, title: "没人反馈", description: "做完就完了，基本没人帮你纠偏。" },
+    { score: 2, title: "反馈很虚", description: "有反馈，但大多是情绪或口号。" },
+    { score: 3, title: "偶尔有用", description: "有时能得到有效建议，但不稳定。" },
+    { score: 4, title: "反馈挺准", description: "能指出问题，也能帮你提升标准。" },
+    { score: 5, title: "精准纠偏", description: "反馈及时、具体、专业，能明显加速成长。" },
   ],
   resumeValue: [
     { score: 1, title: "几乎不加分", description: "经历难以对外解释，简历价值弱。" },
@@ -879,11 +879,11 @@ export default function JobCalculator() {
           <Section eyebrow="第五步" title="这班有没有盼头">
             <RatingField label="过去半年有没有变强" low="停滞" high="变强很多" copyKey="pastGrowth" value={inputs.pastGrowth} onChange={(value) => setValue("pastGrowth", value)} />
             <RatingField label="未来一年有没有盼头" low="有限" high="空间大" copyKey="futureGrowth" value={inputs.futureGrowth} onChange={(value) => setValue("futureGrowth", value)} />
-            <RatingField label="离饭碗核心多近" low="边缘" high="核心" copyKey="closeToCoreBusiness" value={inputs.closeToCoreBusiness} onChange={(value) => setValue("closeToCoreBusiness", value)} />
+            <RatingField label="有没有清晰上升通道" low="看不见" high="很清楚" copyKey="promotionClarity" value={inputs.promotionClarity} onChange={(value) => setValue("promotionClarity", value)} />
             {inputs.mode === "detailed" ? (
               <>
                 <RatingField label="有没有大佬带飞" low="没人带" high="学得快" copyKey="mentoring" value={inputs.mentoring} onChange={(value) => setValue("mentoring", value)} />
-                <RatingField label="有没有清晰上升通道" low="看不见" high="很清楚" copyKey="promotionClarity" value={inputs.promotionClarity} onChange={(value) => setValue("promotionClarity", value)} />
+                <RatingField label="有没有高质量反馈" low="没人反馈" high="反馈很准" copyKey="feedbackQuality" value={inputs.feedbackQuality} onChange={(value) => setValue("feedbackQuality", value)} />
               </>
             ) : null}
           </Section>
