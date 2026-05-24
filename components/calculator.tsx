@@ -4,7 +4,7 @@ import { AlertTriangle, ArrowLeft, BriefcaseBusiness, ChevronRight, Gauge, LineC
 import { toPng } from "html-to-image";
 import QRCode from "qrcode";
 import type { ReactNode, FormEvent } from "react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 import { cityBenchmarks, industryBenchmarks, roleBenchmarks } from "@/data/job-market";
 import {
@@ -268,6 +268,12 @@ function NumberField({
   min?: number;
   onChange: (value: number) => void;
 }) {
+  const [draftValue, setDraftValue] = useState("");
+
+  useEffect(() => {
+    setDraftValue(value === 0 ? "" : String(value));
+  }, [value]);
+
   return (
     <label className="grid content-start gap-2">
       <span className="text-sm font-medium text-stone-700">{label}</span>
@@ -277,8 +283,12 @@ function NumberField({
           min={min}
           type="number"
           placeholder="0"
-          value={value === 0 ? "" : value}
-          onChange={(event) => onChange(Number(event.target.value))}
+          value={draftValue}
+          onChange={(event) => {
+            const nextValue = event.target.value;
+            setDraftValue(nextValue);
+            onChange(nextValue === "" ? 0 : Number(nextValue));
+          }}
         />
         {suffix ? <span className="flex items-center bg-stone-100 px-3 text-sm text-stone-500">{suffix}</span> : null}
       </div>
