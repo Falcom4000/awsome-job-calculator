@@ -670,7 +670,7 @@ export default function JobCalculator() {
               value={inputs.weeklyHours}
               onChange={(value) => setValue("weeklyHours", value)}
             />
-            <NumberField label="通勤单程时间" suffix="分钟" value={inputs.commuteMinutes} onChange={(value) => setValue("commuteMinutes", value)} />
+            <NumberField label="单程通勤时间" suffix="分钟" value={inputs.commuteMinutes} onChange={(value) => setValue("commuteMinutes", value)} />
             <RatingField label="工作压力" low="压力大" high="从容" copyKey="stress" value={inputs.stress} onChange={(value) => setValue("stress", value)} />
             <RatingField label="福利水平" low="弱" high="好" copyKey="benefitsLevel" value={inputs.benefitsLevel} onChange={(value) => setValue("benefitsLevel", value)} />
             {inputs.mode === "detailed" ? (
@@ -689,7 +689,7 @@ export default function JobCalculator() {
                 <RatingField label="人际关系" low="消耗" high="舒服" copyKey="peopleHealth" value={inputs.peopleHealth} onChange={(value) => setValue("peopleHealth", value)} />
                 <RatingField label="健康影响" low="伤身" high="健康" copyKey="healthImpact" value={inputs.healthImpact} onChange={(value) => setValue("healthImpact", value)} />
                 <RatingField
-                  label="是否有时间学习和生活"
+                  label="学习生活余量"
                   low="没余量"
                   high="很充足"
                   copyKey="lifeAndLearningTime"
@@ -713,7 +713,7 @@ export default function JobCalculator() {
               onChange={(value) => setValue("companySize", value)}
             />
             <SelectField<BusinessState>
-              label="公司经营情况"
+              label="公司经营状态"
               options={[
                 { value: "good", label: "好" },
                 { value: "average", label: "一般" },
@@ -756,27 +756,27 @@ export default function JobCalculator() {
           </Section>
 
           <Section eyebrow="第五步" title="成长性">
-            <RatingField label="过去半年成长" low="停滞" high="变强很多" copyKey="pastGrowth" value={inputs.pastGrowth} onChange={(value) => setValue("pastGrowth", value)} />
+            <RatingField label="过去半年成长性" low="停滞" high="变强很多" copyKey="pastGrowth" value={inputs.pastGrowth} onChange={(value) => setValue("pastGrowth", value)} />
             <RatingField label="未来一年成长预期" low="有限" high="空间大" copyKey="futureGrowth" value={inputs.futureGrowth} onChange={(value) => setValue("futureGrowth", value)} />
-                <RatingField label="离核心业务有多近" low="边缘" high="核心" copyKey="closeToCoreBusiness" value={inputs.closeToCoreBusiness} onChange={(value) => setValue("closeToCoreBusiness", value)} />
+                <RatingField label="核心业务接近度" low="边缘" high="核心" copyKey="closeToCoreBusiness" value={inputs.closeToCoreBusiness} onChange={(value) => setValue("closeToCoreBusiness", value)} />
             {inputs.mode === "detailed" ? (
               <>
-                <RatingField label="有人带、能学到东西吗" low="没人带" high="学得快" copyKey="mentoring" value={inputs.mentoring} onChange={(value) => setValue("mentoring", value)} />
-                <RatingField label="这段经历简历加分吗" low="弱" high="强" copyKey="resumeValue" value={inputs.resumeValue} onChange={(value) => setValue("resumeValue", value)} />
+                <RatingField label="带教与学习资源" low="没人带" high="学得快" copyKey="mentoring" value={inputs.mentoring} onChange={(value) => setValue("mentoring", value)} />
+                <RatingField label="简历加分度" low="弱" high="强" copyKey="resumeValue" value={inputs.resumeValue} onChange={(value) => setValue("resumeValue", value)} />
               </>
             ) : null}
           </Section>
 
           <Section eyebrow="第六步" title="流动性">
-            <RatingField label="最近外部机会情况" low="很少" high="很多" copyKey="externalOpportunities" value={inputs.externalOpportunities} onChange={(value) => setValue("externalOpportunities", value)} />
+            <RatingField label="外部机会密度" low="很少" high="很多" copyKey="externalOpportunities" value={inputs.externalOpportunities} onChange={(value) => setValue("externalOpportunities", value)} />
             <RatingField label="外部 JD 匹配度" low="低" high="高" copyKey="jdMatch" value={inputs.jdMatch} onChange={(value) => setValue("jdMatch", value)} />
-            <RatingField label="简历项目对外可讲程度" low="难讲" high="好讲" copyKey="projectExplainability" value={inputs.projectExplainability} onChange={(value) => setValue("projectExplainability", value)} />
+            <RatingField label="项目可讲度" low="难讲" high="好讲" copyKey="projectExplainability" value={inputs.projectExplainability} onChange={(value) => setValue("projectExplainability", value)} />
             {inputs.mode === "detailed" ? (
               <>
                 <RatingField label="技能跨公司迁移能力" low="弱" high="强" copyKey="companyTransferability" value={inputs.companyTransferability} onChange={(value) => setValue("companyTransferability", value)} />
                 <RatingField label="技能跨行业迁移能力" low="弱" high="强" copyKey="industryTransferability" value={inputs.industryTransferability} onChange={(value) => setValue("industryTransferability", value)} />
                 <SelectField<OfferParity>
-                  label="能否拿到接近当前收入 offer"
+                  label="同薪 Offer 可得性"
                   options={[
                     { value: "high", label: "高" },
                     { value: "medium", label: "中" },
@@ -792,11 +792,11 @@ export default function JobCalculator() {
 
           <Section eyebrow="第七步" title="匹配度">
             <RatingField label="长期目标符合度" low="不适合" high="很匹配" copyKey="longTermFit" value={inputs.longTermFit} onChange={(value) => setValue("longTermFit", value)} />
-            <RatingField label="喜欢当前行业吗" low="不喜欢" high="喜欢" copyKey="industryLove" value={inputs.industryLove} onChange={(value) => setValue("industryLove", value)} />
-            <RatingField label="喜欢当前工作内容吗" low="不喜欢" high="喜欢" copyKey="contentLove" value={inputs.contentLove} onChange={(value) => setValue("contentLove", value)} />
+            <RatingField label="行业喜欢度" low="不喜欢" high="喜欢" copyKey="industryLove" value={inputs.industryLove} onChange={(value) => setValue("industryLove", value)} />
+            <RatingField label="工作内容喜欢度" low="不喜欢" high="喜欢" copyKey="contentLove" value={inputs.contentLove} onChange={(value) => setValue("contentLove", value)} />
             {inputs.mode === "detailed" ? (
               <>
-                <RatingField label="愿意额外投入学习吗" low="不愿意" high="很愿意" copyKey="extraLearningWillingness" value={inputs.extraLearningWillingness} onChange={(value) => setValue("extraLearningWillingness", value)} />
+                <RatingField label="额外学习意愿" low="不愿意" high="很愿意" copyKey="extraLearningWillingness" value={inputs.extraLearningWillingness} onChange={(value) => setValue("extraLearningWillingness", value)} />
               </>
             ) : null}
           </Section>
