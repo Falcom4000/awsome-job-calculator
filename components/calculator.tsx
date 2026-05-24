@@ -80,7 +80,7 @@ const ratingCopy: Record<RatingCopyKey, RatingOption[]> = {
     { score: 2, title: "偏少", description: "基础有一点，但整体不香。" },
     { score: 3, title: "正常", description: "常规配置，不拖后腿。" },
     { score: 4, title: "挺舒服", description: "保障完整，还有一些实用福利。" },
-    { score: 5, title: "很香", description: "福利扎实，确实能提升体验。" },
+    { score: 5, title: "真香", description: "福利扎实，确实能提升体验。" },
   ],
   atmosphere: [
     { score: 1, title: "氛围很差", description: "有明显 PUA、甩锅、内斗或不尊重。" },
@@ -682,8 +682,8 @@ export default function JobCalculator() {
           <section className="rounded-[2rem] border border-stone-200 bg-white/80 p-3 shadow-sm backdrop-blur">
             <div className="grid grid-cols-2 gap-2 sm:gap-3">
               {[
-                ["brief", "快速评估", "少填一点，先看大方向"],
-                ["detailed", "完整评估", "多填一点，对标更细"],
+                ["brief", "快速发疯", "少填一点，先看这班值不值"],
+                ["detailed", "深度发疯", "多填一点，把这班扒干净"],
               ].map(([mode, title, description]) => (
                 <button
                   className={`rounded-[1.5rem] border p-4 text-left transition ${
@@ -706,19 +706,19 @@ export default function JobCalculator() {
 
           <Section eyebrow="第一步" title="基础信息">
             <SelectField
-              label="所在城市"
+              label="在哪打工"
               options={Object.entries(cityBenchmarks).map(([value, item]) => ({ value: value as CityKey, label: item.label }))}
               value={inputs.city}
               onChange={(value) => setValue("city", value)}
             />
             <SelectField
-              label="行业"
+              label="在哪个坑"
               options={Object.entries(industryBenchmarks).map(([value, item]) => ({ value: value as IndustryKey, label: item.label }))}
               value={inputs.industry}
               onChange={(value) => setValue("industry", value)}
             />
             <SelectField<JobLevelInput>
-              label="岗位层级"
+              label="坑位等级"
               options={jobLevelOptions}
               value={inputs.jobLevel}
               onChange={(value) => setValue("jobLevel", value)}
@@ -726,21 +726,21 @@ export default function JobCalculator() {
             {inputs.mode === "detailed" ? (
               <>
                 <SelectField
-                  label="学历"
+                  label="学历 buff"
                   options={educationOptions.map((item) => ({ value: item, label: item }))}
                   value={inputs.education}
                   onChange={(value) => setValue("education", value)}
                 />
-                <NumberField label="年龄" suffix="岁" value={inputs.age} onChange={(value) => setValue("age", value)} />
-                <NumberField label="工作年限" suffix="年" value={inputs.experienceYears} onChange={(value) => setValue("experienceYears", value)} />
+                <NumberField label="打工人年龄" suffix="岁" value={inputs.age} onChange={(value) => setValue("age", value)} />
+                <NumberField label="打工年限" suffix="年" value={inputs.experienceYears} onChange={(value) => setValue("experienceYears", value)} />
                 <SelectField
-                  label="岗位"
+                  label="具体坑位"
                   options={Object.entries(roleBenchmarks).map(([value, item]) => ({ value: value as RoleKey, label: item.label }))}
                   value={inputs.role}
                   onChange={(value) => setValue("role", value)}
                 />
                 <SelectField<EnterpriseNatureInput>
-                  label="企业性质"
+                  label="公司段位"
                   options={enterpriseNatureOptions}
                   value={inputs.enterpriseNature}
                   onChange={(value) => setValue("enterpriseNature", value)}
@@ -749,7 +749,7 @@ export default function JobCalculator() {
             ) : null}
           </Section>
 
-          <Section eyebrow="第二步" title="回报水平">
+          <Section eyebrow="第二步" title="钱给够没">
             <NumberField
               label={inputs.mode === "detailed" ? "税前总包：现金部分" : "税前总包"}
               suffix="元/年"
@@ -769,34 +769,34 @@ export default function JobCalculator() {
             </p>
           </Section>
 
-          <Section eyebrow="第三步" title="舒适度">
+          <Section eyebrow="第三步" title="这班是不是在吸命">
             <NumberField
               label="每周工时"
               suffix="小时"
-              note="指从上班到下班的时间差。"
+              note="指从上班到下班的时间差，包括摸鱼和休息。"
               value={inputs.weeklyHours}
               onChange={(value) => setValue("weeklyHours", value)}
             />
             <NumberField label="单程通勤时间" suffix="分钟" value={inputs.commuteMinutes} onChange={(value) => setValue("commuteMinutes", value)} />
-            <RatingField label="工作压力" low="压力大" high="从容" copyKey="stress" value={inputs.stress} onChange={(value) => setValue("stress", value)} />
-            <RatingField label="福利水平" low="弱" high="好" copyKey="benefitsLevel" value={inputs.benefitsLevel} onChange={(value) => setValue("benefitsLevel", value)} />
+            <RatingField label="精神压强" low="压力大" high="从容" copyKey="stress" value={inputs.stress} onChange={(value) => setValue("stress", value)} />
+            <RatingField label="回血包厚度" low="弱" high="好" copyKey="benefitsLevel" value={inputs.benefitsLevel} onChange={(value) => setValue("benefitsLevel", value)} />
             {inputs.mode === "detailed" ? (
               <>
                 <SelectField<WeekendWork>
-                  label="周末工作频率"
+                  label="周末被召唤频率"
                   options={[
-                    { value: "never", label: "从不" },
-                    { value: "sometimes", label: "偶尔" },
-                    { value: "often", label: "经常" },
+                    { value: "never", label: "不召唤" },
+                    { value: "sometimes", label: "偶尔诈尸" },
+                    { value: "often", label: "周末也不放过" },
                   ]}
                   value={inputs.weekendWork}
                   onChange={(value) => setValue("weekendWork", value)}
                 />
-                <RatingField label="工作氛围" low="消耗" high="舒服" copyKey="atmosphere" value={inputs.atmosphere} onChange={(value) => setValue("atmosphere", value)} />
-                <RatingField label="人际关系" low="消耗" high="舒服" copyKey="peopleHealth" value={inputs.peopleHealth} onChange={(value) => setValue("peopleHealth", value)} />
-                <RatingField label="健康影响" low="伤身" high="健康" copyKey="healthImpact" value={inputs.healthImpact} onChange={(value) => setValue("healthImpact", value)} />
+                <RatingField label="阴间程度" low="消耗" high="舒服" copyKey="atmosphere" value={inputs.atmosphere} onChange={(value) => setValue("atmosphere", value)} />
+                <RatingField label="领导同事正常度" low="消耗" high="舒服" copyKey="peopleHealth" value={inputs.peopleHealth} onChange={(value) => setValue("peopleHealth", value)} />
+                <RatingField label="伤身程度" low="伤身" high="健康" copyKey="healthImpact" value={inputs.healthImpact} onChange={(value) => setValue("healthImpact", value)} />
                 <RatingField
-                  label="学习生活余量"
+                  label="下班回血时间"
                   low="没余量"
                   high="很充足"
                   copyKey="lifeAndLearningTime"
@@ -807,11 +807,11 @@ export default function JobCalculator() {
             ) : null}
           </Section>
 
-          <Section eyebrow="第四步" title="稳定性">
+          <Section eyebrow="第四步" title="这公司是不是要塌">
             <SelectField<CompanySize>
-              label="公司规模"
+              label="公司体量"
               options={[
-                { value: "large", label: "大公司 / 平台型" },
+                { value: "large", label: "大公司" },
                 { value: "medium", label: "中型公司" },
                 { value: "small", label: "小公司" },
                 { value: "startup", label: "早期团队" },
@@ -820,11 +820,11 @@ export default function JobCalculator() {
               onChange={(value) => setValue("companySize", value)}
             />
             <SelectField<BusinessState>
-              label="公司经营状态"
+              label="公司状态"
               options={[
-                { value: "good", label: "好" },
-                { value: "average", label: "一般" },
-                { value: "bad", label: "差" },
+                { value: "good", label: "还挺能打" },
+                { value: "average", label: "普普通通" },
+                { value: "bad", label: "快塌了" },
                 { value: "unknown", label: "不清楚" },
               ]}
               value={inputs.companyBusiness}
@@ -833,62 +833,62 @@ export default function JobCalculator() {
             {inputs.mode === "detailed" ? (
               <>
                 <SelectField<BusinessState>
-                  label="行业景气度"
+                  label="行业状态"
                   options={[
-                    { value: "good", label: "好" },
-                    { value: "average", label: "一般" },
-                    { value: "bad", label: "差" },
+                    { value: "good", label: "还在起飞" },
+                    { value: "average", label: "不温不火" },
+                    { value: "bad", label: "有点凉" },
                     { value: "unknown", label: "不清楚" },
                   ]}
                   value={inputs.industryOutlook}
                   onChange={(value) => setValue("industryOutlook", value)}
                 />
                 <SelectField<Certainty>
-                  label="团队稳定性"
+                  label="团队散架风险"
                   options={[
-                    { value: "high", label: "高" },
-                    { value: "medium", label: "中" },
-                    { value: "low", label: "低" },
+                    { value: "high", label: "不太会散" },
+                    { value: "medium", label: "有点悬" },
+                    { value: "low", label: "快散了" },
                     { value: "unknown", label: "不清楚" },
                   ]}
                   value={inputs.teamStability}
                   onChange={(value) => setValue("teamStability", value)}
                 />
-                <RatingField label="岗位核心度" low="边缘" high="核心" copyKey="roleCore" value={inputs.roleCore} onChange={(value) => setValue("roleCore", value)} />
-                <RatingField label="被替代难度" low="容易替代" high="很难替代" copyKey="replacementDifficulty" value={inputs.replacementDifficulty} onChange={(value) => setValue("replacementDifficulty", value)} />
-                <RatingField label="裁员 / 优化风险" low="风险高" high="安全" copyKey="layoffRisk" value={inputs.layoffRisk} onChange={(value) => setValue("layoffRisk", value)} />
+                <RatingField label="是不是核心牛马" low="边缘" high="核心" copyKey="roleCore" value={inputs.roleCore} onChange={(value) => setValue("roleCore", value)} />
+                <RatingField label="替身好不好找" low="容易替代" high="很难替代" copyKey="replacementDifficulty" value={inputs.replacementDifficulty} onChange={(value) => setValue("replacementDifficulty", value)} />
+                <RatingField label="被优化预警" low="风险高" high="安全" copyKey="layoffRisk" value={inputs.layoffRisk} onChange={(value) => setValue("layoffRisk", value)} />
               </>
             ) : null}
-            <RatingField label="未来一年安全感" low="不安全" high="很安全" copyKey="safetyFeeling" value={inputs.safetyFeeling} onChange={(value) => setValue("safetyFeeling", value)} />
+            <RatingField label="饭碗安全感" low="不安全" high="很安全" copyKey="safetyFeeling" value={inputs.safetyFeeling} onChange={(value) => setValue("safetyFeeling", value)} />
           </Section>
 
-          <Section eyebrow="第五步" title="成长性">
-            <RatingField label="过去半年成长性" low="停滞" high="变强很多" copyKey="pastGrowth" value={inputs.pastGrowth} onChange={(value) => setValue("pastGrowth", value)} />
-            <RatingField label="未来一年成长预期" low="有限" high="空间大" copyKey="futureGrowth" value={inputs.futureGrowth} onChange={(value) => setValue("futureGrowth", value)} />
-                <RatingField label="核心业务接近度" low="边缘" high="核心" copyKey="closeToCoreBusiness" value={inputs.closeToCoreBusiness} onChange={(value) => setValue("closeToCoreBusiness", value)} />
+          <Section eyebrow="第五步" title="这班有没有盼头">
+            <RatingField label="过去半年有没有变强" low="停滞" high="变强很多" copyKey="pastGrowth" value={inputs.pastGrowth} onChange={(value) => setValue("pastGrowth", value)} />
+            <RatingField label="未来一年有没有盼头" low="有限" high="空间大" copyKey="futureGrowth" value={inputs.futureGrowth} onChange={(value) => setValue("futureGrowth", value)} />
+                <RatingField label="离饭碗核心多近" low="边缘" high="核心" copyKey="closeToCoreBusiness" value={inputs.closeToCoreBusiness} onChange={(value) => setValue("closeToCoreBusiness", value)} />
             {inputs.mode === "detailed" ? (
               <>
-                <RatingField label="带教与学习资源" low="没人带" high="学得快" copyKey="mentoring" value={inputs.mentoring} onChange={(value) => setValue("mentoring", value)} />
-                <RatingField label="简历加分度" low="弱" high="强" copyKey="resumeValue" value={inputs.resumeValue} onChange={(value) => setValue("resumeValue", value)} />
+                <RatingField label="有没有大佬带飞" low="没人带" high="学得快" copyKey="mentoring" value={inputs.mentoring} onChange={(value) => setValue("mentoring", value)} />
+                <RatingField label="简历能不能镀金" low="弱" high="强" copyKey="resumeValue" value={inputs.resumeValue} onChange={(value) => setValue("resumeValue", value)} />
               </>
             ) : null}
           </Section>
 
-          <Section eyebrow="第六步" title="流动性">
-            <RatingField label="外部机会密度" low="很少" high="很多" copyKey="externalOpportunities" value={inputs.externalOpportunities} onChange={(value) => setValue("externalOpportunities", value)} />
-            <RatingField label="外部 JD 匹配度" low="低" high="高" copyKey="jdMatch" value={inputs.jdMatch} onChange={(value) => setValue("jdMatch", value)} />
-            <RatingField label="项目可讲度" low="难讲" high="好讲" copyKey="projectExplainability" value={inputs.projectExplainability} onChange={(value) => setValue("projectExplainability", value)} />
+          <Section eyebrow="第六步" title="外面还有没有路">
+            <RatingField label="有没有人来捞你" low="很少" high="很多" copyKey="externalOpportunities" value={inputs.externalOpportunities} onChange={(value) => setValue("externalOpportunities", value)} />
+            <RatingField label="想去的坑配不配你" low="低" high="高" copyKey="jdMatch" value={inputs.jdMatch} onChange={(value) => setValue("jdMatch", value)} />
+            <RatingField label="简历吹得响不响" low="难讲" high="好讲" copyKey="projectExplainability" value={inputs.projectExplainability} onChange={(value) => setValue("projectExplainability", value)} />
             {inputs.mode === "detailed" ? (
               <>
-                <RatingField label="技能跨公司迁移能力" low="弱" high="强" copyKey="companyTransferability" value={inputs.companyTransferability} onChange={(value) => setValue("companyTransferability", value)} />
-                <RatingField label="技能跨行业迁移能力" low="弱" high="强" copyKey="industryTransferability" value={inputs.industryTransferability} onChange={(value) => setValue("industryTransferability", value)} />
+                <RatingField label="换家公司还能不能打" low="弱" high="强" copyKey="companyTransferability" value={inputs.companyTransferability} onChange={(value) => setValue("companyTransferability", value)} />
+                <RatingField label="换个行业还能不能活" low="弱" high="强" copyKey="industryTransferability" value={inputs.industryTransferability} onChange={(value) => setValue("industryTransferability", value)} />
                 <SelectField<OfferParity>
-                  label="同薪 Offer 可得性"
+                  label="同薪跑路可能性"
                   options={[
-                    { value: "high", label: "高" },
-                    { value: "medium", label: "中" },
-                    { value: "low", label: "低" },
-                    { value: "unknown", label: "未知" },
+                    { value: "high", label: "很能跑" },
+                    { value: "medium", label: "勉强能跑" },
+                    { value: "low", label: "跑了也降薪" },
+                    { value: "unknown", label: "不清楚" },
                   ]}
                   value={inputs.offerParity}
                   onChange={(value) => setValue("offerParity", value)}
@@ -897,13 +897,13 @@ export default function JobCalculator() {
             ) : null}
           </Section>
 
-          <Section eyebrow="第七步" title="匹配度">
-            <RatingField label="长期目标符合度" low="不适合" high="很匹配" copyKey="longTermFit" value={inputs.longTermFit} onChange={(value) => setValue("longTermFit", value)} />
-            <RatingField label="行业喜欢度" low="不喜欢" high="喜欢" copyKey="industryLove" value={inputs.industryLove} onChange={(value) => setValue("industryLove", value)} />
-            <RatingField label="工作内容喜欢度" low="不喜欢" high="喜欢" copyKey="contentLove" value={inputs.contentLove} onChange={(value) => setValue("contentLove", value)} />
+          <Section eyebrow="第七步" title="你和这班八字合不合">
+            <RatingField label="人生路线匹配度" low="不适合" high="很匹配" copyKey="longTermFit" value={inputs.longTermFit} onChange={(value) => setValue("longTermFit", value)} />
+            <RatingField label="对这个行业满意吗" low="不喜欢" high="喜欢" copyKey="industryLove" value={inputs.industryLove} onChange={(value) => setValue("industryLove", value)} />
+            <RatingField label="对工作内容满意吗" low="不喜欢" high="喜欢" copyKey="contentLove" value={inputs.contentLove} onChange={(value) => setValue("contentLove", value)} />
             {inputs.mode === "detailed" ? (
               <>
-                <RatingField label="额外学习意愿" low="不愿意" high="很愿意" copyKey="extraLearningWillingness" value={inputs.extraLearningWillingness} onChange={(value) => setValue("extraLearningWillingness", value)} />
+                <RatingField label="愿不愿意为它加练" low="不愿意" high="很愿意" copyKey="extraLearningWillingness" value={inputs.extraLearningWillingness} onChange={(value) => setValue("extraLearningWillingness", value)} />
               </>
             ) : null}
           </Section>
@@ -947,7 +947,7 @@ export default function JobCalculator() {
                 </div>
                 <div className="rounded-[2rem] bg-white p-5 text-stone-950">
                   <div className="flex items-center justify-between">
-                    <p className="text-sm font-bold text-stone-500">总得分</p>
+                    <p className="text-sm font-bold text-stone-500">发疯性价比分</p>
                     <Gauge className="h-5 w-5 text-emerald-800" />
                   </div>
                   <div className="mt-4 flex items-end gap-2">
@@ -993,23 +993,23 @@ export default function JobCalculator() {
                 <div className="rounded-[1.5rem] border border-stone-200 p-4">
               <div className="flex items-center gap-2 text-sm font-black">
                 <LineChart className="h-4 w-4 text-emerald-800" />
-                先看结论
+                先判一下
               </div>
               <div className="mt-3 grid gap-2 text-sm leading-6 text-stone-600">
-                <p>最能打的是：{result.strengths.join("、")}。</p>
-                <p>最拖后腿的是：{result.weaknesses.join("、")}。</p>
+                <p>这班最能撑场面的是：{result.strengths.join("、")}。</p>
+                <p>最容易把人拖下水的是：{result.weaknesses.join("、")}。</p>
                 <p>
-                  退路指数：{result.optionValue} / 100，{result.optionValueDescription}
+                  跑路指数：{result.optionValue} / 100，{result.optionValueDescription}
                 </p>
                 <p>
-                  收入约基准 {result.incomeRatio} 倍，折合{" "}
+                  老板给的钱约是基准 {result.incomeRatio} 倍，折合{" "}
                   {result.unitHourlyIncome.toLocaleString("zh-CN")} 元/小时。
                 </p>
               </div>
             </div>
 
             <div className="rounded-[1.5rem] bg-emerald-50 p-4">
-              <p className="text-sm font-black text-emerald-950">为什么是这个档</p>
+              <p className="text-sm font-black text-emerald-950">判决理由</p>
               <div className="mt-3 space-y-2">
                 {[...result.strengthReasons, ...result.weaknessReasons].map((reason) => (
                   <p className="text-sm leading-6 text-emerald-900" key={reason}>
@@ -1022,7 +1022,7 @@ export default function JobCalculator() {
             <div className="rounded-[1.5rem] bg-orange-50 p-4">
               <div className="flex items-center gap-2 text-sm font-black text-orange-950">
                 <AlertTriangle className="h-4 w-4" />
-                别忽略这些
+                雷区警报
               </div>
               <div className="mt-3 space-y-2">
                 {result.warnings.slice(0, 4).map((warning) => (
@@ -1035,7 +1035,7 @@ export default function JobCalculator() {
             </div>
 
             <div className="rounded-[1.5rem] bg-stone-50 p-4">
-              <p className="text-sm font-black">接下来怎么做</p>
+              <p className="text-sm font-black">自救指南</p>
               <div className="mt-3 space-y-2">
                 {result.suggestions.map((suggestion) => (
                   <p className="text-sm leading-6 text-stone-600" key={suggestion}>
@@ -1046,7 +1046,7 @@ export default function JobCalculator() {
             </div>
 
             <details className="rounded-[1.5rem] border border-stone-200 p-4">
-              <summary className="cursor-pointer text-sm font-black">数据置信度与口径</summary>
+              <summary className="cursor-pointer text-sm font-black">判案依据</summary>
               <div className="mt-3 space-y-3 text-sm leading-6 text-stone-600">
                 {Object.entries(result.confidence).map(([key, item]) => (
                   <p key={key}>
