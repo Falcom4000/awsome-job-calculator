@@ -30,7 +30,7 @@ type RatingOption = {
   description: string;
 };
 
-const SHARE_URL = "https://awsome-job-calculator.vercel.app/";
+const SHARE_URL = "crazy.work";
 
 const ratingThemes = {
   S: {
