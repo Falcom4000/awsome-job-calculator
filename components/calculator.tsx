@@ -339,9 +339,9 @@ function RatingField({
           {low} / {high}
         </span>
       </div>
-      <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 sm:hidden">
-        <span className="max-w-14 text-xs leading-4 text-stone-500">{low}</span>
-        <div className="grid grid-cols-5 gap-1.5">
+      <div className="relative min-h-10 sm:hidden">
+        <span className="absolute left-0 top-1/2 max-w-14 -translate-y-1/2 text-left text-xs leading-4 text-stone-500">{low}</span>
+        <div className="mx-auto grid w-[min(72%,18rem)] grid-cols-5 gap-1.5">
           {options.map((option) => {
             const selected = value === option.score;
             return (
@@ -361,7 +361,7 @@ function RatingField({
             );
           })}
         </div>
-        <span className="max-w-14 text-right text-xs leading-4 text-stone-500">{high}</span>
+        <span className="absolute right-0 top-1/2 max-w-14 -translate-y-1/2 text-right text-xs leading-4 text-stone-500">{high}</span>
       </div>
       {selectedOption ? (
         <div className="rounded-xl border border-stone-200 bg-white px-3 py-2 sm:hidden">
