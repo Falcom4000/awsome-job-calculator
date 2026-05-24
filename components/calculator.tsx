@@ -914,7 +914,7 @@ export default function JobCalculator() {
               <div className="mt-5 grid gap-6 md:grid-cols-[minmax(0,1fr)_260px] md:items-center">
                 <div>
                   <div className="flex items-center gap-5 md:gap-6">
-                    <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-[2rem] bg-white text-stone-950 shadow-lg md:h-36 md:w-36">
+                    <div className="flex h-28 w-24 shrink-0 items-center justify-center text-white md:h-36 md:w-32">
                       <span className="text-8xl font-black leading-none md:text-9xl">{result.rating.grade}</span>
                     </div>
                     <div className="min-w-0">
