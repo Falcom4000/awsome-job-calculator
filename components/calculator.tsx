@@ -570,28 +570,35 @@ export default function JobCalculator() {
       const deviceWidth = Math.min(window.innerWidth || shareCaptureRef.current.clientWidth, shareCaptureRef.current.clientWidth);
       const deviceHeight = window.innerHeight || deviceWidth * 1.8;
       const deviceAspectRatio = deviceWidth / deviceHeight;
-      const devicePadding = deviceWidth >= 768 ? deviceWidth * 0.08 : deviceWidth * 0.12;
-      const outerPadding = Math.round(Math.min(Math.max(devicePadding * 2, 72), 144));
+      const outerPadding = Math.round(Math.min(Math.max(deviceWidth * 0.12, 40), 72));
       const padding = 42;
       const qrSize = 156;
-      const canvasHeight = captureImage.height + footerGap + footerHeight + outerPadding * 2;
-      const baseCanvasWidth = captureImage.width + outerPadding * 2;
+      const fixedHeight = footerGap + footerHeight + outerPadding * 2;
+      const fixedWidth = outerPadding * 2;
+      const scaleDenominator = captureImage.width - deviceAspectRatio * captureImage.height;
+      const idealScale =
+        scaleDenominator > 0 ? (deviceAspectRatio * fixedHeight - fixedWidth) / scaleDenominator : 1;
+      const captureScale = Math.min(Math.max(idealScale, 1), 1.14);
+      const captureWidth = Math.round(captureImage.width * captureScale);
+      const captureHeight = Math.round(captureImage.height * captureScale);
+      const canvasHeight = captureHeight + footerGap + footerHeight + outerPadding * 2;
+      const baseCanvasWidth = captureWidth + outerPadding * 2;
       const minCanvasWidth = Math.ceil(canvasHeight * deviceAspectRatio);
       const canvas = document.createElement("canvas");
       canvas.width = Math.max(baseCanvasWidth, minCanvasWidth);
       canvas.height = canvasHeight;
-      const contentX = Math.round((canvas.width - captureImage.width) / 2);
+      const contentX = Math.round((canvas.width - captureWidth) / 2);
 
       const context = canvas.getContext("2d");
       if (!context) return;
 
       context.fillStyle = "#f4efe4";
       context.fillRect(0, 0, canvas.width, canvas.height);
-      context.drawImage(captureImage, contentX, outerPadding);
+      context.drawImage(captureImage, contentX, outerPadding, captureWidth, captureHeight);
 
-      const footerY = outerPadding + captureImage.height + footerGap;
+      const footerY = outerPadding + captureHeight + footerGap;
       context.fillStyle = "#ffffff";
-      context.fillRect(contentX, footerY, captureImage.width, footerHeight);
+      context.fillRect(contentX, footerY, captureWidth, footerHeight);
       context.drawImage(qrImage, contentX + padding, footerY + (footerHeight - qrSize) / 2, qrSize, qrSize);
 
       const textX = contentX + padding + qrSize + 28;
@@ -938,7 +945,7 @@ export default function JobCalculator() {
             </header>
 
             <div className="grid gap-6">
-              <div className="space-y-4 rounded-[2.5rem] border border-stone-900/10 bg-white p-5 shadow-2xl">
+              <div className="space-y-4 rounded-[2.5rem] border border-stone-900/10 bg-white p-5 shadow-lg">
                 <div className="flex justify-center overflow-hidden rounded-[2rem] bg-stone-50 px-2 py-2 md:p-4">
                   <div className="-my-6 w-full max-w-[680px] md:-my-8">
                     <RadarChart values={radarValues} />
