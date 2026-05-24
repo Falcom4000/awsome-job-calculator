@@ -418,7 +418,7 @@ function RadarChart({ values }: { values: Array<{ label: string; value: number }
   const size = 720;
   const center = size / 2;
   const radius = 170;
-  const labelRadius = 270;
+  const labelRadius = 245;
   const points = values.map((item, index) => {
     const angle = -Math.PI / 2 + (index * Math.PI * 2) / values.length;
     const itemRadius = (item.value / 100) * radius;
@@ -428,7 +428,7 @@ function RadarChart({ values }: { values: Array<{ label: string; value: number }
       ...item,
       x: center + Math.cos(angle) * itemRadius,
       y: center + Math.sin(angle) * itemRadius,
-      labelX: labelAnchor === "end" ? Math.max(rawLabelX, 135) : labelAnchor === "start" ? Math.min(rawLabelX, size - 135) : rawLabelX,
+      labelX: labelAnchor === "end" ? Math.max(rawLabelX, 115) : labelAnchor === "start" ? Math.min(rawLabelX, size - 115) : rawLabelX,
       labelY: center + Math.sin(angle) * labelRadius,
       labelAnchor,
       axisX: center + Math.cos(angle) * radius,
@@ -456,7 +456,7 @@ function RadarChart({ values }: { values: Array<{ label: string; value: number }
         <g key={point.label}>
           <circle className="fill-emerald-900" cx={point.x} cy={point.y} r="4" />
           <text
-            className="fill-stone-700 text-[18px] font-black"
+            className="fill-stone-700 text-[22px] font-black"
             dominantBaseline="middle"
             textAnchor={point.labelAnchor}
             x={point.labelX}
@@ -827,11 +827,11 @@ export default function JobCalculator() {
               </div>
               <div className="mt-5 grid gap-6 md:grid-cols-[minmax(0,1fr)_260px] md:items-center">
                 <div>
-                  <div className="flex flex-wrap items-end gap-x-4 gap-y-2">
-                    <span className="text-8xl font-black leading-none md:text-9xl">{result.rating.grade}</span>
-                    <div className="pb-2">
-                      <h1 className="text-3xl font-black tracking-tight md:text-5xl">{result.rating.title}</h1>
-                      <p className="mt-3 max-w-2xl text-lg leading-8 text-stone-300">{result.rating.description}</p>
+                  <div className="flex items-center gap-5 md:items-end">
+                    <span className="shrink-0 text-8xl font-black leading-none md:text-9xl">{result.rating.grade}</span>
+                    <div className="min-w-0 md:pb-2">
+                      <h1 className="text-3xl font-black leading-tight tracking-tight md:text-5xl">{result.rating.title}</h1>
+                      <p className="mt-2 max-w-2xl text-base leading-7 text-stone-300 md:mt-3 md:text-lg md:leading-8">{result.rating.description}</p>
                     </div>
                   </div>
                 </div>
