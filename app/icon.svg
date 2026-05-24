@@ -1,8 +1,5 @@
 <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="64" height="64" rx="16" fill="#111111"/>
-  <path d="M23 22.5V20.5C23 18.0147 25.0147 16 27.5 16H36.5C38.9853 16 41 18.0147 41 20.5V22.5" stroke="#D9F99D" stroke-width="3" stroke-linecap="round"/>
-  <rect x="14" y="23" width="36" height="23" rx="6" fill="#F5F5F4" stroke="#D6D3D1" stroke-width="2"/>
-  <path d="M14 31H50" stroke="#D6D3D1" stroke-width="2"/>
-  <rect x="28" y="29" width="8" height="6" rx="2" fill="#111111"/>
-  <path d="M29 40V36H35V40" stroke="#111111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect width="64" height="64" rx="16" fill="#1C1917"/>
+  <circle cx="32" cy="32" r="23" fill="#F4EFE4"/>
+  <path d="M24 25.5C24 20.8 27.7 17 32.8 17C37.8 17 41.5 20.4 41.5 24.9C41.5 28.2 40 30.2 36.6 32.4C33.8 34.2 32.9 35.4 32.9 38.2V39.3H27.6V37.8C27.6 33.5 29.1 31.1 32.6 28.9C35.1 27.3 35.9 26.2 35.9 24.8C35.9 23 34.5 21.7 32.6 21.7C30.5 21.7 29.1 23.3 29 25.5H24ZM27.1 46C27.1 43.9 28.7 42.4 30.9 42.4C33.1 42.4 34.8 43.9 34.8 46C34.8 48.1 33.1 49.6 30.9 49.6C28.7 49.6 27.1 48.1 27.1 46Z" fill="#065F46"/>
 </svg>
