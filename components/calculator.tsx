@@ -857,18 +857,18 @@ export default function JobCalculator() {
                   </div>
                 </div>
 
-                <div className="grid gap-3 md:grid-cols-2">
-                  <div className="rounded-[2rem] border border-stone-200 bg-stone-50 p-5 text-stone-950">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-[1.5rem] border border-stone-200 bg-stone-50 p-4 text-stone-950 md:rounded-[2rem] md:p-5">
                     <p className="text-sm font-bold text-stone-600">综合收益</p>
-                    <div className="mt-4 flex items-end gap-2">
-                      <span className="text-5xl font-black leading-none">{result.aggregateScores.benefit}</span>
+                    <div className="mt-4 flex items-end gap-1.5 md:gap-2">
+                      <span className="text-4xl font-black leading-none md:text-5xl">{result.aggregateScores.benefit}</span>
                       <span className="pb-1 text-sm font-bold text-stone-500">/ 100</span>
                     </div>
                   </div>
-                  <div className="rounded-[2rem] border border-stone-200 bg-stone-50 p-5 text-stone-950">
+                  <div className="rounded-[1.5rem] border border-stone-200 bg-stone-50 p-4 text-stone-950 md:rounded-[2rem] md:p-5">
                     <p className="text-sm font-bold text-stone-600">综合成本</p>
-                    <div className="mt-4 flex items-end gap-2">
-                      <span className="text-5xl font-black leading-none">{result.aggregateScores.cost}</span>
+                    <div className="mt-4 flex items-end gap-1.5 md:gap-2">
+                      <span className="text-4xl font-black leading-none md:text-5xl">{result.aggregateScores.cost}</span>
                       <span className="pb-1 text-sm font-bold text-stone-500">/ 100</span>
                     </div>
                   </div>
