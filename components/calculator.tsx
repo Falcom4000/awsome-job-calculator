@@ -678,9 +678,9 @@ export default function JobCalculator() {
           <header className="relative overflow-hidden rounded-[2rem] border border-stone-900/10 bg-stone-950 px-6 py-7 text-white shadow-xl md:rounded-[2.5rem] md:p-9">
             <div className="pointer-events-none absolute -right-24 -top-28 h-72 w-72 rounded-full bg-emerald-300/20 blur-3xl" />
             <div className="pointer-events-none absolute -bottom-20 left-1/3 h-44 w-44 rounded-full bg-amber-200/10 blur-2xl" />
-            <div className="relative flex flex-wrap items-end gap-x-6 gap-y-1 md:gap-x-8">
-              <h1 className="shrink-0 text-left text-[2.25rem] font-black leading-[0.95] tracking-tight md:text-[3.5rem]">打工哪有不疯的</h1>
-              <p className="w-full text-right text-[1.45rem] font-black leading-[0.95] tracking-tight text-emerald-100 md:w-auto md:text-left md:text-[2.2rem]">
+            <div className="relative flex flex-wrap items-end justify-start gap-x-6 gap-y-2 text-left md:gap-x-8">
+              <h1 className="shrink-0 text-left text-[2.25rem] font-black leading-tight tracking-tight md:text-[3.5rem]">打工哪有不疯的</h1>
+              <p className="w-full text-right text-[1.45rem] font-black leading-tight tracking-tight text-emerald-100 md:w-auto md:text-left md:text-[2.2rem]">
                 测测这份工作疯得值不值
               </p>
             </div>
