@@ -341,7 +341,7 @@ function RatingField({
       </div>
       <div className="relative min-h-10 sm:hidden">
         <span className="absolute left-0 top-1/2 max-w-14 -translate-y-1/2 text-left text-xs leading-4 text-stone-500">{low}</span>
-        <div className="mx-auto grid w-[min(72%,18rem)] grid-cols-5 gap-1.5">
+        <div className="mx-auto grid w-[14rem] max-w-[calc(100%-7rem)] grid-cols-5 justify-items-center">
           {options.map((option) => {
             const selected = value === option.score;
             return (
