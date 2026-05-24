@@ -567,26 +567,34 @@ export default function JobCalculator() {
       const [captureImage, qrImage] = await Promise.all([loadImage(captureUrl), loadImage(qrUrl)]);
       const footerHeight = 220;
       const footerGap = 32;
-      const outerPadding = Math.round(Math.min(Math.max(captureImage.width * 0.055, 48), 88));
+      const deviceWidth = Math.min(window.innerWidth || shareCaptureRef.current.clientWidth, shareCaptureRef.current.clientWidth);
+      const deviceHeight = window.innerHeight || deviceWidth * 1.8;
+      const deviceAspectRatio = deviceWidth / deviceHeight;
+      const devicePadding = deviceWidth >= 768 ? deviceWidth * 0.08 : deviceWidth * 0.12;
+      const outerPadding = Math.round(Math.min(Math.max(devicePadding * 2, 72), 144));
       const padding = 42;
       const qrSize = 156;
+      const canvasHeight = captureImage.height + footerGap + footerHeight + outerPadding * 2;
+      const baseCanvasWidth = captureImage.width + outerPadding * 2;
+      const minCanvasWidth = Math.ceil(canvasHeight * deviceAspectRatio);
       const canvas = document.createElement("canvas");
-      canvas.width = captureImage.width + outerPadding * 2;
-      canvas.height = captureImage.height + footerGap + footerHeight + outerPadding * 2;
+      canvas.width = Math.max(baseCanvasWidth, minCanvasWidth);
+      canvas.height = canvasHeight;
+      const contentX = Math.round((canvas.width - captureImage.width) / 2);
 
       const context = canvas.getContext("2d");
       if (!context) return;
 
       context.fillStyle = "#f4efe4";
       context.fillRect(0, 0, canvas.width, canvas.height);
-      context.drawImage(captureImage, outerPadding, outerPadding);
+      context.drawImage(captureImage, contentX, outerPadding);
 
       const footerY = outerPadding + captureImage.height + footerGap;
       context.fillStyle = "#ffffff";
-      context.fillRect(outerPadding, footerY, captureImage.width, footerHeight);
-      context.drawImage(qrImage, outerPadding + padding, footerY + (footerHeight - qrSize) / 2, qrSize, qrSize);
+      context.fillRect(contentX, footerY, captureImage.width, footerHeight);
+      context.drawImage(qrImage, contentX + padding, footerY + (footerHeight - qrSize) / 2, qrSize, qrSize);
 
-      const textX = outerPadding + padding + qrSize + 28;
+      const textX = contentX + padding + qrSize + 28;
       context.fillStyle = "#0f172a";
       context.font = "700 34px sans-serif";
       context.fillText("扫码测测你的工作疯得值不值", textX, footerY + 78);
