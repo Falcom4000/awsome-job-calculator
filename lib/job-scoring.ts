@@ -738,7 +738,6 @@ export function calculateJobScore(inputs: JobInputs): ScoreResult {
   if (dimensions.growth < 60 && dimensions.liquidity < 60) warnings.push("成长和外面的路都偏窄，这班可能越上越锁。");
   if (dimensions.income >= 80 && dimensions.growth < 60 && dimensions.liquidity < 60) warnings.push("钱给得不错，但成长和退路偏弱，小心高薪陷阱把人焊住。");
   if (dimensions.income >= 80 && dimensions.holding < 60) warnings.push("钱是给了，但吸命程度也上来了，可能是高薪高消耗。");
-  if (!isDetailedMode(inputs)) warnings.push("当前是快速发疯版，结果适合先看个大方向。");
   const dimensionNarratives = getDimensionNarratives(dimensions, total);
 
   const suggestions = [

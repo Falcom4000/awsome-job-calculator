@@ -1002,20 +1002,22 @@ export default function JobCalculator() {
               </div>
             </div>
 
-            <div className="rounded-[1.5rem] bg-orange-50 p-4">
-              <div className="flex items-center gap-2 text-sm font-black text-orange-950">
-                <AlertTriangle className="h-4 w-4" />
-                雷区警报
+            {result.warnings.length > 0 ? (
+              <div className="rounded-[1.5rem] bg-orange-50 p-4">
+                <div className="flex items-center gap-2 text-sm font-black text-orange-950">
+                  <AlertTriangle className="h-4 w-4" />
+                  雷区警报
+                </div>
+                <div className="mt-3 space-y-2">
+                  {result.warnings.slice(0, 4).map((warning) => (
+                    <p className="flex gap-2 text-sm leading-6 text-orange-900" key={warning}>
+                      <ChevronRight className="mt-1 h-4 w-4 shrink-0" />
+                      {warning}
+                    </p>
+                  ))}
+                </div>
               </div>
-              <div className="mt-3 space-y-2">
-                {result.warnings.slice(0, 4).map((warning) => (
-                  <p className="flex gap-2 text-sm leading-6 text-orange-900" key={warning}>
-                    <ChevronRight className="mt-1 h-4 w-4 shrink-0" />
-                    {warning}
-                  </p>
-                ))}
-              </div>
-            </div>
+            ) : null}
 
             <div className="rounded-[1.5rem] bg-stone-50 p-4">
               <p className="text-sm font-black">自救指南</p>
