@@ -34,6 +34,7 @@ export type JobInputs = {
   peopleHealth: RatingValue;
   healthImpact: RatingValue;
   lifeAndLearningTime: RatingValue;
+  rhythmPredictability: RatingValue;
   safetyFeeling: RatingValue;
   companySize: CompanySize;
   companyBusiness: BusinessState;
@@ -47,6 +48,7 @@ export type JobInputs = {
   mentoring: RatingValue;
   promotionClarity: RatingValue;
   feedbackQuality: RatingValue;
+  compoundingValue: RatingValue;
   resumeValue: RatingValue;
   externalOpportunities: RatingValue;
   jdMatch: RatingValue;
@@ -57,6 +59,7 @@ export type JobInputs = {
   contentLove: RatingValue;
   longTermFit: RatingValue;
   extraLearningWillingness: RatingValue;
+  valueRecognition: RatingValue;
   age: number;
   experienceYears: number;
   education: string;
@@ -330,6 +333,7 @@ export const defaultInputs: JobInputs = {
   peopleHealth: null,
   healthImpact: null,
   lifeAndLearningTime: null,
+  rhythmPredictability: null,
   safetyFeeling: null,
   companySize: "",
   companyBusiness: "",
@@ -343,6 +347,7 @@ export const defaultInputs: JobInputs = {
   mentoring: null,
   promotionClarity: null,
   feedbackQuality: null,
+  compoundingValue: null,
   resumeValue: null,
   externalOpportunities: null,
   jdMatch: null,
@@ -353,6 +358,7 @@ export const defaultInputs: JobInputs = {
   contentLove: null,
   longTermFit: null,
   extraLearningWillingness: null,
+  valueRecognition: null,
   age: 0,
   experienceYears: 0,
   education: "",
@@ -504,6 +510,7 @@ function calculateHolding(inputs: JobInputs) {
     score += (subjective(inputs.peopleHealth) - 50) * 0.12;
     score += (subjective(inputs.healthImpact) - 50) * 0.24;
     score += (subjective(inputs.lifeAndLearningTime) - 50) * 0.16;
+    score += (subjective(inputs.rhythmPredictability) - 50) * 0.14;
   }
   return clamp(score);
 }
@@ -545,8 +552,9 @@ function calculateGrowth(inputs: JobInputs) {
       [subjective(inputs.pastGrowth), 0.28],
       [subjective(inputs.futureGrowth), 0.32],
       [subjective(inputs.mentoring), 0.1],
-      [subjective(inputs.promotionClarity), 0.18],
-      [subjective(inputs.feedbackQuality), 0.12],
+      [subjective(inputs.promotionClarity), 0.16],
+      [subjective(inputs.feedbackQuality), 0.1],
+      [subjective(inputs.compoundingValue), 0.14],
     ])
   );
 }
@@ -579,9 +587,10 @@ function calculateFit(inputs: JobInputs) {
   return clamp(
     weighted([
       [subjective(inputs.industryLove), 0.25],
-      [subjective(inputs.contentLove), 0.3],
-      [subjective(inputs.longTermFit), 0.3],
-      [subjective(inputs.extraLearningWillingness), 0.15],
+      [subjective(inputs.contentLove), 0.25],
+      [subjective(inputs.longTermFit), 0.24],
+      [subjective(inputs.extraLearningWillingness), 0.12],
+      [subjective(inputs.valueRecognition), 0.14],
     ])
   );
 }
@@ -640,11 +649,11 @@ function getDimensionReason(key: DimensionKey, score: number, inputs: JobInputs)
     stability: !isDetailedMode(inputs) ? "主要依据公司规模、经营情况和未来一年安全感判断。" : "综合公司经营、行业景气、团队稳定、岗位核心度、资源掌握和安全感判断。",
     holding:
       level === "优势"
-        ? "工时、通勤、压力、福利和健康损耗整体可控。"
-        : "工时、通勤、压力、福利或健康损耗拉低了可持续性。",
-    growth: !isDetailedMode(inputs) ? "主要依据过去成长、未来预期和上升通道判断。" : "综合成长速度、未来预期、带教和上升通道判断。",
+        ? "工时、通勤、压力、福利、健康损耗和节奏可预期性整体可控。"
+        : "工时、通勤、压力、福利、健康损耗或节奏混乱拉低了可持续性。",
+    growth: !isDetailedMode(inputs) ? "主要依据过去成长、未来预期和上升通道判断。" : "综合成长速度、未来预期、带教、反馈、复利和上升通道判断。",
     liquidity: "综合外部机会、JD 匹配、简历价值、成果可理解度和迁移能力判断。",
-    fit: !isDetailedMode(inputs) ? "主要依据总体匹配度判断。" : "综合行业偏好、内容偏好、长期目标和额外学习意愿判断。",
+    fit: !isDetailedMode(inputs) ? "主要依据总体匹配度判断。" : "综合行业偏好、内容偏好、长期目标、额外学习意愿和价值认可判断。",
   };
   return `${dimensionLabels[key]}：${reasons[key]}`;
 }
@@ -654,8 +663,8 @@ function getConfidence(inputs: JobInputs): ScoreResult["confidence"] {
   return {
     income: isDetailedMode(inputs) ? { level: "中", reason: "已结合城市、行业、岗位、经验、企业性质和岗位层级基准；行业层级薪酬仍依赖报告分位和兜底规则。" } : { level: "中", reason: briefIncomeReason },
     stability: isDetailedMode(inputs) ? { level: "中", reason: "已结合公司、团队、岗位核心度、资源掌握和行业稳定性基准。" } : { level: "低", reason: "主要依赖公司规模、经营情况和未来一年安全感。" },
-    holding: { level: "高", reason: "工时、通勤、压力、福利水平和所在城市通勤基准是舒适度的核心字段。" },
-    growth: isDetailedMode(inputs) ? { level: "中", reason: "已提供成长预期、带教和上升通道。" } : { level: "低", reason: "主要依赖过去成长、未来预期和上升通道。" },
+    holding: { level: "高", reason: "工时、通勤、压力、福利水平、节奏可预期性和所在城市通勤基准是舒适度的核心字段。" },
+    growth: isDetailedMode(inputs) ? { level: "中", reason: "已提供成长预期、带教、反馈、复利和上升通道。" } : { level: "低", reason: "主要依赖过去成长、未来预期和上升通道。" },
     liquidity: isDetailedMode(inputs)
       ? { level: "中", reason: "已结合外部机会、JD 匹配、简历价值、成果表达和迁移能力。" }
       : { level: "低", reason: "主要依赖外部机会、JD 匹配和简历价值。" },

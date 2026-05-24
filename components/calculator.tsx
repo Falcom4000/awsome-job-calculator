@@ -77,6 +77,7 @@ type RatingCopyKey =
   | "peopleHealth"
   | "healthImpact"
   | "lifeAndLearningTime"
+  | "rhythmPredictability"
   | "safetyFeeling"
   | "roleCore"
   | "replacementDifficulty"
@@ -86,6 +87,7 @@ type RatingCopyKey =
   | "mentoring"
   | "promotionClarity"
   | "feedbackQuality"
+  | "compoundingValue"
   | "resumeValue"
   | "externalOpportunities"
   | "jdMatch"
@@ -95,7 +97,8 @@ type RatingCopyKey =
   | "longTermFit"
   | "industryLove"
   | "contentLove"
-  | "extraLearningWillingness";
+  | "extraLearningWillingness"
+  | "valueRecognition";
 
 const genericRatingOptions: RatingOption[] = [
   { score: 1, title: "很拉胯", description: "已经是明显短板。" },
@@ -147,6 +150,13 @@ const ratingCopy: Record<RatingCopyKey, RatingOption[]> = {
     { score: 3, title: "一般", description: "能保住基本生活，但余量不多。" },
     { score: 4, title: "比较有", description: "有稳定时间生活、学习或运动。" },
     { score: 5, title: "很充足", description: "工作之外仍有明显自主时间。" },
+  ],
+  rhythmPredictability: [
+    { score: 1, title: "天天炸锅", description: "需求、会议和救火随时砸脸。" },
+    { score: 2, title: "经常诈尸", description: "计划总被打断，精神随叫随到。" },
+    { score: 3, title: "偶尔爆雷", description: "有突发，但整体还能安排。" },
+    { score: 4, title: "比较可控", description: "节奏大多能预判，不用天天拆弹。" },
+    { score: 5, title: "节奏很稳", description: "提前量充足，很少临时炸工位。" },
   ],
   safetyFeeling: [
     { score: 1, title: "很悬", description: "随时可能出问题。" },
@@ -210,6 +220,13 @@ const ratingCopy: Record<RatingCopyKey, RatingOption[]> = {
     { score: 3, title: "偶尔有用", description: "有时能得到有效建议，但不稳定。" },
     { score: 4, title: "反馈挺准", description: "能指出问题，也能帮你提升标准。" },
     { score: 5, title: "精准纠偏", description: "反馈及时、具体、专业，能明显加速成长。" },
+  ],
+  compoundingValue: [
+    { score: 1, title: "一次性苦力", description: "干完就散，除了疲惫啥也不剩。" },
+    { score: 2, title: "沉淀很少", description: "能攒一点，但大多是在重复燃烧。" },
+    { score: 3, title: "有点复利", description: "部分经验、方法或成果以后还能用。" },
+    { score: 4, title: "越干越值钱", description: "能沉淀能力、作品或方法论。" },
+    { score: 5, title: "复利拉满", description: "每一轮发疯都在抬高你的市场价值。" },
   ],
   resumeValue: [
     { score: 1, title: "几乎不加分", description: "经历难以对外解释，简历价值弱。" },
@@ -280,6 +297,13 @@ const ratingCopy: Record<RatingCopyKey, RatingOption[]> = {
     { score: 3, title: "一般", description: "愿意做必要学习，但主动性有限。" },
     { score: 4, title: "较愿意", description: "愿意持续补能力、做积累。" },
     { score: 5, title: "很愿意", description: "愿意长期主动投入，形成复利。" },
+  ],
+  valueRecognition: [
+    { score: 1, title: "隐形牛马", description: "活干了很多，但像没在组织里出现过。" },
+    { score: 2, title: "偶尔露头", description: "价值有一点被看见，但认可很不稳定。" },
+    { score: 3, title: "正常可见", description: "基本贡献能被看见，但不算突出。" },
+    { score: 4, title: "比较被认", description: "你的价值经常被看见，也会带来机会。" },
+    { score: 5, title: "很被接住", description: "贡献清楚、存在感强，组织愿意给你位置。" },
   ],
 };
 
@@ -852,6 +876,14 @@ export default function JobCalculator() {
                   value={inputs.lifeAndLearningTime}
                   onChange={(value) => setValue("lifeAndLearningTime", value)}
                 />
+                <RatingField
+                  label="工作节奏可不可预期"
+                  low="随时爆炸"
+                  high="节奏稳定"
+                  copyKey="rhythmPredictability"
+                  value={inputs.rhythmPredictability}
+                  onChange={(value) => setValue("rhythmPredictability", value)}
+                />
               </>
             ) : null}
           </Section>
@@ -926,6 +958,7 @@ export default function JobCalculator() {
               <>
                 <RatingField label="有没有大佬带飞" low="没人带" high="学得快" copyKey="mentoring" value={inputs.mentoring} onChange={(value) => setValue("mentoring", value)} />
                 <RatingField label="有没有高质量反馈" low="没人反馈" high="反馈很准" copyKey="feedbackQuality" value={inputs.feedbackQuality} onChange={(value) => setValue("feedbackQuality", value)} />
+                <RatingField label="做的事有没有复利" low="一次性杂活" high="越做越值钱" copyKey="compoundingValue" value={inputs.compoundingValue} onChange={(value) => setValue("compoundingValue", value)} />
               </>
             ) : null}
           </Section>
@@ -957,6 +990,7 @@ export default function JobCalculator() {
             {inputs.mode === "detailed" ? (
               <>
                 <RatingField label="愿不愿意为它加练" low="不愿意" high="很愿意" copyKey="extraLearningWillingness" value={inputs.extraLearningWillingness} onChange={(value) => setValue("extraLearningWillingness", value)} />
+                <RatingField label="你的价值有没有被看见" low="没人知道" high="很被认可" copyKey="valueRecognition" value={inputs.valueRecognition} onChange={(value) => setValue("valueRecognition", value)} />
               </>
             ) : null}
           </Section>
