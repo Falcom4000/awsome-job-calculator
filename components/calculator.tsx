@@ -993,18 +993,12 @@ export default function JobCalculator() {
                 <div className="rounded-[1.5rem] border border-stone-200 p-4">
               <div className="flex items-center gap-2 text-sm font-black">
                 <LineChart className="h-4 w-4 text-emerald-800" />
-                先判一下
+                疯值诊断
               </div>
               <div className="mt-3 grid gap-2 text-sm leading-6 text-stone-600">
-                <p>这班最能撑场面的是：{result.strengths.join("、")}。</p>
-                <p>最容易把人拖下水的是：{result.weaknesses.join("、")}。</p>
-                <p>
-                  跑路指数：{result.optionValue} / 100，{result.optionValueDescription}
-                </p>
-                <p>
-                  老板给的钱约是基准 {result.incomeRatio} 倍，折合{" "}
-                  {result.unitHourlyIncome.toLocaleString("zh-CN")} 元/小时。
-                </p>
+                {result.dimensionVerdicts.map((verdict) => (
+                  <p key={verdict}>{verdict}</p>
+                ))}
               </div>
             </div>
 
@@ -1026,16 +1020,20 @@ export default function JobCalculator() {
             <div className="rounded-[1.5rem] bg-stone-50 p-4">
               <p className="text-sm font-black">自救指南</p>
               <div className="mt-3 space-y-2">
-                {result.suggestions.map((suggestion) => (
-                  <p className="text-sm leading-6 text-stone-600" key={suggestion}>
-                    {suggestion}
-                  </p>
-                ))}
+                {result.dimensionRescues.length > 0 ? (
+                  result.dimensionRescues.map((rescue) => (
+                    <p className="text-sm leading-6 text-stone-600" key={rescue}>
+                      {rescue}
+                    </p>
+                  ))
+                ) : (
+                  <p className="text-sm leading-6 text-stone-600">暂时不用急着自救，这班先稳住，别把好牌打烂。</p>
+                )}
               </div>
             </div>
 
             <details className="rounded-[1.5rem] border border-stone-200 p-4">
-              <summary className="cursor-pointer text-sm font-black">判案依据</summary>
+              <summary className="cursor-pointer text-sm font-black">数据来源</summary>
               <div className="mt-3 space-y-3 text-sm leading-6 text-stone-600">
                 {result.dataNotes.map((note) => (
                   <p key={note}>{note}</p>
@@ -1054,7 +1052,7 @@ export default function JobCalculator() {
                 onClick={handleShareImage}
               >
                 <Share2 className="h-5 w-5" />
-                {isSharing ? "生成中..." : "分享"}
+                {isSharing ? "生成中..." : "分享发疯报告"}
               </button>
               <button className="inline-flex items-center justify-center gap-2 rounded-2xl bg-stone-950 px-8 py-4 text-base font-black text-white transition hover:bg-emerald-900" type="button" onClick={handleBack}>
                 <ArrowLeft className="h-5 w-5" />

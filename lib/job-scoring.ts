@@ -91,6 +91,8 @@ export type ScoreResult = {
   weaknesses: string[];
   warnings: string[];
   suggestions: string[];
+  dimensionVerdicts: string[];
+  dimensionRescues: string[];
   strengthReasons: string[];
   weaknessReasons: string[];
   optionValueDescription: string;
@@ -113,6 +115,132 @@ export const dimensionLabels: Record<DimensionKey, string> = {
   growth: "成长性",
   liquidity: "流动性",
   fit: "匹配度",
+};
+
+type RatingGrade = "S" | "A" | "B" | "C" | "D";
+type DimensionCopy = Record<RatingGrade, { verdicts: string[]; rescues?: string[] }>;
+
+const dimensionCopy: Record<DimensionKey, DimensionCopy> = {
+  income: {
+    S: {
+      verdicts: ["钱这块老板确实没抠，工资单看着不寒碜。", "回报水平很能打，这班在钱上没怎么亏待你。", "这份工作最硬的底气就是钱，发疯也算有补偿。"],
+    },
+    A: {
+      verdicts: ["钱给得还算像话，不是暴富，但也不算白干。", "收入水平有点竞争力，至少不是纯靠情怀发电。", "工资单能稍微安抚一下灵魂。"],
+    },
+    B: {
+      verdicts: ["钱不算太离谱，但也没到让人闭嘴的程度。", "这份收入能撑住基本盘，但别指望太多惊喜。", "回报就是普通班，能发工资，但不负责治愈人生。"],
+      rescues: ["先确认市场价，明显低于同类岗位就该准备谈或走。", "把核心产出整理出来，给下一次谈钱留证据。", "继续干可以，但别停止找更高定价的机会。"],
+    },
+    C: {
+      verdicts: ["钱给得有点虚，像是在用梦想抵工资。", "回报已经开始拖后腿，性价比被工资按住了。", "收入不太撑得住消耗，再上头就有点自我感动。"],
+      rescues: ["尽快做市场比价，别靠老板一句以后会涨续命。", "如果短期涨不了，就把这份工作当跳板，不要当归宿。", "准备可展示成果，别让低工资和低议价权一起锁死你。"],
+    },
+    D: {
+      verdicts: ["钱这块已经很危险，像是在给老板做慈善。", "回报水平严重不够看，再谈热爱就有点伤身。", "这班在钱上亏得明显，发疯都缺经费支持。"],
+      rescues: ["优先考虑谈薪、换岗或换工作，别让低收入长期固化。", "如果没有强成长收益，尽快把退出计划提上日程。", "先保现金流，再找机会，不要被低薪耗到没力气翻身。"],
+    },
+  },
+  stability: {
+    S: {
+      verdicts: ["饭碗看起来很稳，短期不太像要塌。", "稳定性很强，不像随时要通知你收拾东西。", "公司和岗位安全感不错，精神内耗能少一大截。"],
+    },
+    A: {
+      verdicts: ["稳定性还可以，暂时不用每天怀疑公司明天没了。", "饭碗还算稳，不是铁饭碗，但也不是纸糊的。", "组织风险不算高，至少能让人睡个整觉。"],
+    },
+    B: {
+      verdicts: ["稳定性一般，暂时没塌，但也别太放心。", "饭碗有点悬但还没红灯，适合边干边观察。", "安全感不算厚，别把希望全押在公司身上。"],
+      rescues: ["开始准备备选项，别等风吹到脸上才找伞。", "关注业务、现金流、团队变动和岗位边缘化信号。", "提升可替代难度，别做最先被优化的那批人。"],
+    },
+    C: {
+      verdicts: ["稳定性偏虚，这饭碗拿着有点烫手。", "公司或岗位信号不太稳，不能只靠侥幸续命。", "这班有塌方风险，继续上也得给自己留逃生口。"],
+      rescues: ["立刻更新简历，先让自己拥有外部选项。", "别把关键资源只押在当前团队，尽快拓宽退路。", "重要成果和人脉都整理好，别临走才手忙脚乱。"],
+    },
+    D: {
+      verdicts: ["稳定性高危，像坐在火山口旁边打卡。", "饭碗已经很悬，别把希望押在公司突然变好。", "这不是安全感低，是警报器已经在响。"],
+      rescues: ["优先启动求职和内部转岗，别等通知来了才动。", "降低债务和大额支出，给自己留现金缓冲。", "把所有可迁移成果打包好，准备随时撤离。"],
+    },
+  },
+  holding: {
+    S: {
+      verdicts: ["这班消耗很低，像打工界少见的低噪音模式。", "舒适度很强，没有天天把人榨成纸片。", "工时、通勤和压力都比较友好，这班不太吸命。"],
+    },
+    A: {
+      verdicts: ["这班还算阳间，累归累，但没到天天崩溃。", "生活没被工作完全吃掉，还能留点人样。", "消耗整体可控，暂时不算吸命型岗位。"],
+    },
+    B: {
+      verdicts: ["舒适度凑合，能扛，但需要定期回血。", "这班有消耗，但还没到不能活的程度。", "工作体验普通，谈不上舒服，也不算彻底阴间。"],
+      rescues: ["找出最吸命的一项，先处理工时、通勤或压力中的最大头。", "固定休息和运动时间，不要把恢复完全交给周末。", "如果消耗持续升高，就别再用最近比较忙糊弄自己。"],
+    },
+    C: {
+      verdicts: ["舒适度偏低，这班已经开始明显吸命。", "工时、压力或通勤有点过量，身体和情绪都在交税。", "这不是单纯累，是恢复速度追不上消耗速度。"],
+      rescues: ["先砍最伤身的消耗源，不然其他分再高也难长期扛。", "明确拒绝无效加班，把边界说出来，而不是默默硬吞。", "如果调整不了，就把这份工作纳入短期过渡。"],
+    },
+    D: {
+      verdicts: ["舒适度高危，这班像在按小时扣血。", "消耗已经严重超标，再撑下去可能人比工资先没。", "这不是累，是持续性献祭。"],
+      rescues: ["优先保健康和睡眠，必要时认真考虑离开。", "先降低工作强度或请假恢复，不要等身体强制关机。", "如果公司不允许你像个人一样活，就该找下一个出口。"],
+    },
+  },
+  growth: {
+    S: {
+      verdicts: ["成长性很强，这班确实能让你升级。", "这份工作有盼头，不只是重复搬砖。", "你在这里能涨经验值，不是原地打转。"],
+    },
+    A: {
+      verdicts: ["成长性不错，这班还能给你一点未来。", "这里有东西可学，不算纯消耗型岗位。", "这班不只是发工资，也能给履历加点料。"],
+    },
+    B: {
+      verdicts: ["成长性一般，有点东西，但不多。", "还能学到一些，但可能很快进入重复模式。", "盼头不算没有，只是需要自己主动捞。"],
+      rescues: ["主动找新项目、新责任或新技能点，不然容易原地磨损。", "给自己设成长期限，过期没变化就重新评估。", "不要只做熟悉的活，熟练不等于升值。"],
+    },
+    C: {
+      verdicts: ["成长性偏低，这班可能让你越上越钝。", "这里的活有点重复，技能增值不明显。", "盼头不太足，继续耗着容易变成履历空转。"],
+      rescues: ["尽快补一个外部可识别的技能或项目，别被岗位困住。", "主动争取更核心的工作，如果争取不到就准备换环境。", "把当前工作当现金流，不要当成长主线。"],
+    },
+    D: {
+      verdicts: ["成长性高危，这班像经验值黑洞。", "继续待下去，可能不是成长，是退化。", "这班在升值这件事上几乎没给你留路。"],
+      rescues: ["立刻寻找新的成长来源，内部没有就去外部找。", "不要让低成长工作长期占满你的黄金时间。", "如果无法获得项目、反馈和技能提升，就该启动退出计划。"],
+    },
+  },
+  liquidity: {
+    S: {
+      verdicts: ["外面的路很宽，你不是被这班锁死的人。", "流动性很强，真想动的时候大概率有人接。", "你在市场上还有牌，不是只能困在当前公司。"],
+    },
+    A: {
+      verdicts: ["外面还有路，想动不算太难。", "流动性不错，这班还没把你焊死。", "市场上还有人能看懂你，不算孤岛型岗位。"],
+    },
+    B: {
+      verdicts: ["流动性一般，能动，但不算丝滑。", "外面不是没路，但可能要多准备几步。", "这班还没锁死你，但选择权也没多宽。"],
+      rescues: ["先明确目标岗位，再对照 JD 补短板。", "把项目经历讲清楚，别让好东西卡在表达上。", "试投一轮，拿真实市场反馈，不要靠想象判断行情。"],
+    },
+    C: {
+      verdicts: ["外面的路偏窄，这班有点锁人。", "流动性偏低，想走可能会遇到不少阻力。", "当前经验对外不够好卖，换工作会比较费劲。"],
+      rescues: ["先补可迁移技能，再包装可讲项目。", "不要继续只做公司内部限定任务，市场听不懂就很亏。", "提前准备半年，不要等被迫离开才发现不好卖。"],
+    },
+    D: {
+      verdicts: ["流动性高危，这班快把你焊在工位上了。", "外面的路很窄，想走可能要先拆锁。", "这份经历对外不好卖，风险已经不小。"],
+      rescues: ["立刻开始补市场通用能力，先把锁撬开。", "做一个能对外展示的项目或成果，给自己制造出口。", "不要继续加深单一公司依赖，否则越待越难动。"],
+    },
+  },
+  fit: {
+    S: {
+      verdicts: ["匹配度很高，这班和你确实有点八字合。", "你对行业和内容都比较买账，内耗会少很多。", "这班不只是能上，还比较像你的路。"],
+    },
+    A: {
+      verdicts: ["匹配度不错，这班至少不是天天和你对着干。", "你和这份工作还算合拍，长期做有一定可能。", "这班不算违背天性，干起来没那么拧巴。"],
+    },
+    B: {
+      verdicts: ["匹配度一般，不讨厌，但也谈不上天选。", "这班能上，但不一定是你的命定工位。", "你和这份工作还算能处，只是火花不多。"],
+      rescues: ["找出你真正喜欢和真正排斥的部分，别糊着过。", "试着调整职责，让工作更靠近你的长期方向。", "如果长期目标不合，要尽早承认，不要硬凑。"],
+    },
+    C: {
+      verdicts: ["匹配度偏低，这班和你有点八字不合。", "干得下去不代表适合，内耗已经开始露头。", "这份工作可能不是你的菜，硬吃容易反胃。"],
+      rescues: ["先判断是不喜欢行业、内容，还是当前公司环境。", "把不匹配点拆清楚，下一份工作别重复踩坑。", "如果每天都在说服自己喜欢，那大概率就不喜欢。"],
+    },
+    D: {
+      verdicts: ["匹配度高危，这班和你像硬凑的孽缘。", "这份工作明显不对味，继续硬上会很消耗。", "不是你不行，是这班可能真的不适合你。"],
+      rescues: ["尽快重新确认职业方向，不要把人生耗在不合适里。", "先找相邻方向试水，别一边痛苦一边原地不动。", "如果已经持续排斥，就别再用责任感绑架自己。"],
+    },
+  },
 };
 
 export const scoringConfig = {
@@ -514,6 +642,29 @@ function getConfidence(inputs: JobInputs): ScoreResult["confidence"] {
   };
 }
 
+function pickDimensionCopy(options: string[], total: number, score: number, index: number) {
+  return options[(total + score + index) % options.length];
+}
+
+function getDimensionNarratives(dimensions: Record<DimensionKey, number>, total: number) {
+  const verdicts: string[] = [];
+  const rescues: string[] = [];
+  const dimensionKeys = Object.keys(scoringConfig.weights) as DimensionKey[];
+
+  dimensionKeys.forEach((key, index) => {
+    const score = dimensions[key];
+    const grade = getRating(score).grade as RatingGrade;
+    const copy = dimensionCopy[key][grade];
+    verdicts.push(`${dimensionLabels[key]}：${pickDimensionCopy(copy.verdicts, total, score, index)}`);
+
+    if (copy.rescues?.length) {
+      rescues.push(`${dimensionLabels[key]}：${pickDimensionCopy(copy.rescues, total, score, index + 17)}`);
+    }
+  });
+
+  return { verdicts, rescues };
+}
+
 export function calculateJobScore(inputs: JobInputs): ScoreResult {
   const income = calculateIncome(inputs);
   const activeIndustryBenchmark = getIndustryBenchmark(industryKey(inputs), inputs.experienceYears, industryBenchmarkOptions(inputs));
@@ -562,6 +713,7 @@ export function calculateJobScore(inputs: JobInputs): ScoreResult {
   if (dimensions.income >= 80 && dimensions.growth < 60 && dimensions.liquidity < 60) warnings.push("钱给得不错，但成长和退路偏弱，小心高薪陷阱把人焊住。");
   if (dimensions.income >= 80 && dimensions.holding < 60) warnings.push("钱是给了，但吸命程度也上来了，可能是高薪高消耗。");
   if (!isDetailedMode(inputs)) warnings.push("当前是快速发疯版，结果适合先看个大方向。");
+  const dimensionNarratives = getDimensionNarratives(dimensions, total);
 
   const suggestions = [
     total >= 75 ? "这班暂时能处，先把最低分那块补一补，别让短板偷偷发烂。" : "别只盯着工资，先去外面试试水，看看有没有更像人的活法。",
@@ -582,6 +734,8 @@ export function calculateJobScore(inputs: JobInputs): ScoreResult {
     weaknesses,
     warnings,
     suggestions,
+    dimensionVerdicts: dimensionNarratives.verdicts,
+    dimensionRescues: dimensionNarratives.rescues,
     strengthReasons,
     weaknessReasons,
     optionValueDescription: getOptionValueDescription(optionValue),
