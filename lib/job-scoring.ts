@@ -15,7 +15,6 @@ export type InputMode = "" | "brief" | "detailed";
 export type Certainty = "" | "high" | "medium" | "low" | "unknown";
 export type WeekendWork = "" | "never" | "sometimes" | "often";
 export type BusinessState = "" | "good" | "average" | "bad" | "unknown";
-export type OfferParity = "" | "high" | "medium" | "low" | "unknown";
 export type CompanySize = "" | "large" | "medium" | "small" | "startup";
 export type EnterpriseNatureInput = "" | "state_owned" | "foreign" | "private_leading" | "private_general" | "unknown";
 export type JobLevelInput = "" | "senior_management" | "middle_manager" | "senior_staff" | "general_staff" | "unknown";
@@ -42,18 +41,18 @@ export type JobInputs = {
   teamStability: Certainty;
   roleCore: RatingValue;
   replacementDifficulty: RatingValue;
-  layoffRisk: RatingValue;
+  criticalResourceControl: RatingValue;
   pastGrowth: RatingValue;
   futureGrowth: RatingValue;
   closeToCoreBusiness: RatingValue;
   mentoring: RatingValue;
+  promotionClarity: RatingValue;
   resumeValue: RatingValue;
   externalOpportunities: RatingValue;
   jdMatch: RatingValue;
   projectExplainability: RatingValue;
   companyTransferability: RatingValue;
   industryTransferability: RatingValue;
-  offerParity: OfferParity;
   industryLove: RatingValue;
   contentLove: RatingValue;
   longTermFit: RatingValue;
@@ -315,13 +314,6 @@ export const scoringConfig = {
     low: 38,
     unknown: 55,
   } satisfies Record<Certainty, number>,
-  offerParityScore: {
-    "": 55,
-    high: 86,
-    medium: 64,
-    low: 36,
-    unknown: 55,
-  } satisfies Record<OfferParity, number>,
 };
 
 export const defaultInputs: JobInputs = {
@@ -345,18 +337,18 @@ export const defaultInputs: JobInputs = {
   teamStability: "",
   roleCore: null,
   replacementDifficulty: null,
-  layoffRisk: null,
+  criticalResourceControl: null,
   pastGrowth: null,
   futureGrowth: null,
   closeToCoreBusiness: null,
   mentoring: null,
+  promotionClarity: null,
   resumeValue: null,
   externalOpportunities: null,
   jdMatch: null,
   projectExplainability: null,
   companyTransferability: null,
   industryTransferability: null,
-  offerParity: "",
   industryLove: null,
   contentLove: null,
   longTermFit: null,
@@ -534,10 +526,10 @@ function calculateStability(inputs: JobInputs) {
       [scoringConfig.businessScore[inputs.industryOutlook], 0.16],
       [marketStability, 0.1],
       [scoringConfig.certaintyScore[inputs.teamStability], 0.15],
-      [subjective(inputs.roleCore), 0.12],
+      [subjective(inputs.roleCore), 0.13],
       [subjective(inputs.replacementDifficulty), 0.08],
-      [subjective(inputs.layoffRisk), 0.08],
-      [subjective(inputs.safetyFeeling), 0.12],
+      [subjective(inputs.criticalResourceControl), 0.12],
+      [subjective(inputs.safetyFeeling), 0.15],
     ])
   );
 }
@@ -549,31 +541,31 @@ function calculateGrowth(inputs: JobInputs) {
 
   return clamp(
     weighted([
-      [subjective(inputs.closeToCoreBusiness), 0.2],
-      [subjective(inputs.pastGrowth), 0.24],
-      [subjective(inputs.futureGrowth), 0.28],
-      [subjective(inputs.mentoring), 0.14],
-      [subjective(inputs.resumeValue), 0.14],
+      [subjective(inputs.closeToCoreBusiness), 0.22],
+      [subjective(inputs.pastGrowth), 0.26],
+      [subjective(inputs.futureGrowth), 0.32],
+      [subjective(inputs.mentoring), 0.1],
+      [subjective(inputs.promotionClarity), 0.1],
     ])
   );
 }
 
 function calculateLiquidity(inputs: JobInputs) {
   if (!isDetailedMode(inputs)) {
-    return clamp(weighted([[subjective(inputs.externalOpportunities), 0.4], [subjective(inputs.jdMatch), 0.3], [subjective(inputs.projectExplainability), 0.3]]));
+    return clamp(weighted([[subjective(inputs.externalOpportunities), 0.4], [subjective(inputs.jdMatch), 0.3], [subjective(inputs.resumeValue), 0.3]]));
   }
 
   const marketBase = isDetailedMode(inputs)
     ? (getIndustryBenchmark(industryKey(inputs), inputs.experienceYears, industryBenchmarkOptions(inputs)).demandScore + roleBenchmarks[roleKey(inputs)].liquidityScore) / 2
     : 60;
   const score = weighted([
-    [subjective(inputs.externalOpportunities), 0.2],
-    [subjective(inputs.jdMatch), 0.2],
-    [subjective(inputs.projectExplainability), 0.2],
-    [subjective(inputs.companyTransferability), 0.14],
-    [subjective(inputs.industryTransferability), 0.14],
-    [scoringConfig.offerParityScore[inputs.offerParity], 0.07],
-    [marketBase, 0.05],
+    [subjective(inputs.externalOpportunities), 0.18],
+    [subjective(inputs.jdMatch), 0.18],
+    [subjective(inputs.resumeValue), 0.2],
+    [subjective(inputs.projectExplainability), 0.18],
+    [subjective(inputs.companyTransferability), 0.12],
+    [subjective(inputs.industryTransferability), 0.12],
+    [marketBase, 0.04],
   ]);
 
   return clamp(score);
@@ -644,13 +636,13 @@ function getDimensionReason(key: DimensionKey, score: number, inputs: JobInputs)
       level === "优势"
         ? `当前年化收入约为基准 ${income.ratio.toFixed(2)} 倍。`
         : `当前年化收入约为基准 ${income.ratio.toFixed(2)} 倍，收益优势不明显。`,
-    stability: !isDetailedMode(inputs) ? "主要依据公司规模、经营情况和未来一年安全感判断。" : "综合公司经营、行业景气、团队稳定、岗位核心度和裁员风险判断。",
+    stability: !isDetailedMode(inputs) ? "主要依据公司规模、经营情况和未来一年安全感判断。" : "综合公司经营、行业景气、团队稳定、岗位核心度、资源掌握和安全感判断。",
     holding:
       level === "优势"
         ? "工时、通勤、压力、福利和健康损耗整体可控。"
         : "工时、通勤、压力、福利或健康损耗拉低了可持续性。",
-    growth: !isDetailedMode(inputs) ? "主要依据过去半年成长和未来一年成长预期。" : "综合核心业务、成长速度、带教和简历价值判断。",
-    liquidity: "综合外部机会、JD 匹配、项目可讲程度和迁移能力判断。",
+    growth: !isDetailedMode(inputs) ? "主要依据过去半年成长和未来一年成长预期。" : "综合核心业务、成长速度、带教和上升通道判断。",
+    liquidity: "综合外部机会、JD 匹配、简历价值、成果可理解度和迁移能力判断。",
     fit: !isDetailedMode(inputs) ? "主要依据总体匹配度判断。" : "综合行业偏好、内容偏好、长期目标和额外学习意愿判断。",
   };
   return `${dimensionLabels[key]}：${reasons[key]}`;
@@ -660,12 +652,12 @@ function getConfidence(inputs: JobInputs): ScoreResult["confidence"] {
   const briefIncomeReason = "已使用城市、行业和岗位层级；未填写企业性质时按民营普通口径兜底，未填写工作年限时按默认经验阶段兜底。";
   return {
     income: isDetailedMode(inputs) ? { level: "中", reason: "已结合城市、行业、岗位、经验、企业性质和岗位层级基准；行业层级薪酬仍依赖报告分位和兜底规则。" } : { level: "中", reason: briefIncomeReason },
-    stability: isDetailedMode(inputs) ? { level: "中", reason: "已结合公司、团队、岗位风险和行业稳定性基准。" } : { level: "低", reason: "主要依赖公司规模、经营情况和未来一年安全感。" },
+    stability: isDetailedMode(inputs) ? { level: "中", reason: "已结合公司、团队、岗位核心度、资源掌握和行业稳定性基准。" } : { level: "低", reason: "主要依赖公司规模、经营情况和未来一年安全感。" },
     holding: { level: "高", reason: "工时、通勤、压力、福利水平和所在城市通勤基准是舒适度的核心字段。" },
-    growth: isDetailedMode(inputs) ? { level: "中", reason: "已提供核心业务、成长预期、带教和简历价值。" } : { level: "低", reason: "主要依赖核心业务、过去成长和未来预期。" },
+    growth: isDetailedMode(inputs) ? { level: "中", reason: "已提供核心业务、成长预期、带教和上升通道。" } : { level: "低", reason: "主要依赖核心业务、过去成长和未来预期。" },
     liquidity: isDetailedMode(inputs)
-      ? { level: "中", reason: "已结合外部机会、JD 匹配、项目表达和迁移能力。" }
-      : { level: "低", reason: "主要依赖外部机会、JD 匹配和项目可讲程度。" },
+      ? { level: "中", reason: "已结合外部机会、JD 匹配、简历价值、成果表达和迁移能力。" }
+      : { level: "低", reason: "主要依赖外部机会、JD 匹配和简历价值。" },
     fit: isDetailedMode(inputs) ? { level: "中", reason: "已拆分行业、内容、长期目标和学习意愿。" } : { level: "低", reason: "主要依赖行业偏好、内容偏好和长期目标。" },
   };
 }

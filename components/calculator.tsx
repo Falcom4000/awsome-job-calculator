@@ -20,7 +20,6 @@ import {
   type InputMode,
   type JobInputs,
   type JobLevelInput,
-  type OfferParity,
   type RoleKey,
   type WeekendWork,
 } from "@/lib/job-scoring";
@@ -43,11 +42,12 @@ type RatingCopyKey =
   | "safetyFeeling"
   | "roleCore"
   | "replacementDifficulty"
-  | "layoffRisk"
+  | "criticalResourceControl"
   | "pastGrowth"
   | "futureGrowth"
   | "closeToCoreBusiness"
   | "mentoring"
+  | "promotionClarity"
   | "resumeValue"
   | "externalOpportunities"
   | "jdMatch"
@@ -131,12 +131,12 @@ const ratingCopy: Record<RatingCopyKey, RatingOption[]> = {
     { score: 4, title: "较难", description: "能力、经验或上下文积累有明显壁垒。" },
     { score: 5, title: "很难", description: "短期很难找到同等产出的人替代。" },
   ],
-  layoffRisk: [
-    { score: 1, title: "风险很高", description: "组织或岗位有明显优化风险。" },
-    { score: 2, title: "偏危险", description: "有一些不稳定信号，需要留意。" },
-    { score: 3, title: "一般", description: "看不出特别安全，也没有明显危险。" },
-    { score: 4, title: "较安全", description: "短期被优化概率较低。" },
-    { score: 5, title: "很安全", description: "岗位和团队都比较稳。" },
+  criticalResourceControl: [
+    { score: 1, title: "纯执行", description: "只接任务，不掌握关键上下文。" },
+    { score: 2, title: "沾一点边", description: "知道部分信息，但资源不在手里。" },
+    { score: 3, title: "有一部分", description: "掌握一些流程、客户、系统或关键关系。" },
+    { score: 4, title: "比较关键", description: "不少关键上下文和协作资源依赖你。" },
+    { score: 5, title: "资源在手", description: "关键流程、信息或关系明显在你手里。" },
   ],
   pastGrowth: [
     { score: 1, title: "几乎没有", description: "几乎没有成长，甚至感觉能力在退化。" },
@@ -166,6 +166,13 @@ const ratingCopy: Record<RatingCopyKey, RatingOption[]> = {
     { score: 4, title: "有人带飞", description: "有人能持续给方向、标准和反馈。" },
     { score: 5, title: "大佬带飞", description: "身边有高水平的人带，成长速度明显提升。" },
   ],
+  promotionClarity: [
+    { score: 1, title: "看不见", description: "完全不知道下一步怎么升。" },
+    { score: 2, title: "很模糊", description: "偶尔画饼，但标准和路径不清楚。" },
+    { score: 3, title: "有点影子", description: "大概知道方向，但不够确定。" },
+    { score: 4, title: "比较清楚", description: "有明确能力要求、项目机会或晋升路径。" },
+    { score: 5, title: "路很明", description: "下一阶段目标、标准和机会都比较清晰。" },
+  ],
   resumeValue: [
     { score: 1, title: "几乎不加分", description: "经历难以对外解释，简历价值弱。" },
     { score: 2, title: "加分有限", description: "能写一些，但市场识别度不高。" },
@@ -188,11 +195,11 @@ const ratingCopy: Record<RatingCopyKey, RatingOption[]> = {
     { score: 5, title: "高度对口", description: "与目标岗位高度契合，竞争力明确。" },
   ],
   projectExplainability: [
-    { score: 1, title: "讲不清", description: "几乎讲不清，主要是内部系统和内部流程。" },
-    { score: 2, title: "较难讲", description: "能讲一些，但外部不容易理解价值。" },
-    { score: 3, title: "基本能讲", description: "可以讲清基本价值，但不够突出。" },
-    { score: 4, title: "比较好讲", description: "有明确成果、指标或技术难度。" },
-    { score: 5, title: "非常好讲", description: "项目有清晰影响力、难度和可迁移价值。" },
+    { score: 1, title: "看不懂", description: "成果太内部，外面很难理解价值。" },
+    { score: 2, title: "有点费劲", description: "能解释，但需要很多背景铺垫。" },
+    { score: 3, title: "基本能懂", description: "外部能听懂大概价值，但亮点不够尖。" },
+    { score: 4, title: "挺好懂", description: "成果、指标和难度都比较容易讲清。" },
+    { score: 5, title: "一听就懂", description: "外部很容易理解价值，也容易认可含金量。" },
   ],
   companyTransferability: [
     { score: 1, title: "很弱", description: "强依赖当前公司上下文，换公司价值下降明显。" },
@@ -673,7 +680,7 @@ export default function JobCalculator() {
             <div className="pointer-events-none absolute -bottom-20 left-1/3 h-44 w-44 rounded-full bg-amber-200/10 blur-2xl" />
             <div className="relative flex flex-wrap items-end gap-x-6 gap-y-1 md:gap-x-8">
               <h1 className="shrink-0 text-left text-[2.25rem] font-black leading-[0.95] tracking-tight md:text-[3.5rem]">打工哪有不疯的</h1>
-              <p className="text-left text-[1.45rem] font-black leading-[0.95] tracking-tight text-emerald-100 md:text-[2.2rem]">
+              <p className="w-full text-right text-[1.45rem] font-black leading-[0.95] tracking-tight text-emerald-100 md:w-auto md:text-left md:text-[2.2rem]">
                 测测这份工作疯得值不值
               </p>
             </div>
@@ -807,7 +814,7 @@ export default function JobCalculator() {
             ) : null}
           </Section>
 
-          <Section eyebrow="第四步" title="这公司是不是要塌">
+          <Section eyebrow="第四步" title="这饭碗稳不稳">
             <SelectField<CompanySize>
               label="公司体量"
               options={[
@@ -856,7 +863,14 @@ export default function JobCalculator() {
                 />
                 <RatingField label="是不是核心牛马" low="边缘" high="核心" copyKey="roleCore" value={inputs.roleCore} onChange={(value) => setValue("roleCore", value)} />
                 <RatingField label="替身好不好找" low="容易替代" high="很难替代" copyKey="replacementDifficulty" value={inputs.replacementDifficulty} onChange={(value) => setValue("replacementDifficulty", value)} />
-                <RatingField label="被优化预警" low="风险高" high="安全" copyKey="layoffRisk" value={inputs.layoffRisk} onChange={(value) => setValue("layoffRisk", value)} />
+                <RatingField
+                  label="关键资源在不在你手里"
+                  low="纯执行"
+                  high="关键上下文"
+                  copyKey="criticalResourceControl"
+                  value={inputs.criticalResourceControl}
+                  onChange={(value) => setValue("criticalResourceControl", value)}
+                />
               </>
             ) : null}
             <RatingField label="饭碗安全感" low="不安全" high="很安全" copyKey="safetyFeeling" value={inputs.safetyFeeling} onChange={(value) => setValue("safetyFeeling", value)} />
@@ -865,11 +879,11 @@ export default function JobCalculator() {
           <Section eyebrow="第五步" title="这班有没有盼头">
             <RatingField label="过去半年有没有变强" low="停滞" high="变强很多" copyKey="pastGrowth" value={inputs.pastGrowth} onChange={(value) => setValue("pastGrowth", value)} />
             <RatingField label="未来一年有没有盼头" low="有限" high="空间大" copyKey="futureGrowth" value={inputs.futureGrowth} onChange={(value) => setValue("futureGrowth", value)} />
-                <RatingField label="离饭碗核心多近" low="边缘" high="核心" copyKey="closeToCoreBusiness" value={inputs.closeToCoreBusiness} onChange={(value) => setValue("closeToCoreBusiness", value)} />
+            <RatingField label="离饭碗核心多近" low="边缘" high="核心" copyKey="closeToCoreBusiness" value={inputs.closeToCoreBusiness} onChange={(value) => setValue("closeToCoreBusiness", value)} />
             {inputs.mode === "detailed" ? (
               <>
                 <RatingField label="有没有大佬带飞" low="没人带" high="学得快" copyKey="mentoring" value={inputs.mentoring} onChange={(value) => setValue("mentoring", value)} />
-                <RatingField label="简历能不能镀金" low="弱" high="强" copyKey="resumeValue" value={inputs.resumeValue} onChange={(value) => setValue("resumeValue", value)} />
+                <RatingField label="有没有清晰上升通道" low="看不见" high="很清楚" copyKey="promotionClarity" value={inputs.promotionClarity} onChange={(value) => setValue("promotionClarity", value)} />
               </>
             ) : null}
           </Section>
@@ -877,22 +891,19 @@ export default function JobCalculator() {
           <Section eyebrow="第六步" title="外面还有没有路">
             <RatingField label="有没有人来捞你" low="很少" high="很多" copyKey="externalOpportunities" value={inputs.externalOpportunities} onChange={(value) => setValue("externalOpportunities", value)} />
             <RatingField label="想去的坑配不配你" low="低" high="高" copyKey="jdMatch" value={inputs.jdMatch} onChange={(value) => setValue("jdMatch", value)} />
-            <RatingField label="简历吹得响不响" low="难讲" high="好讲" copyKey="projectExplainability" value={inputs.projectExplainability} onChange={(value) => setValue("projectExplainability", value)} />
+            <RatingField label="简历能不能镀金" low="弱" high="强" copyKey="resumeValue" value={inputs.resumeValue} onChange={(value) => setValue("resumeValue", value)} />
             {inputs.mode === "detailed" ? (
               <>
+                <RatingField
+                  label="成果能不能被外面看懂"
+                  low="看不懂"
+                  high="很好懂"
+                  copyKey="projectExplainability"
+                  value={inputs.projectExplainability}
+                  onChange={(value) => setValue("projectExplainability", value)}
+                />
                 <RatingField label="换家公司还能不能打" low="弱" high="强" copyKey="companyTransferability" value={inputs.companyTransferability} onChange={(value) => setValue("companyTransferability", value)} />
                 <RatingField label="换个行业还能不能活" low="弱" high="强" copyKey="industryTransferability" value={inputs.industryTransferability} onChange={(value) => setValue("industryTransferability", value)} />
-                <SelectField<OfferParity>
-                  label="同薪跑路可能性"
-                  options={[
-                    { value: "high", label: "很能跑" },
-                    { value: "medium", label: "勉强能跑" },
-                    { value: "low", label: "跑了也降薪" },
-                    { value: "unknown", label: "不清楚" },
-                  ]}
-                  value={inputs.offerParity}
-                  onChange={(value) => setValue("offerParity", value)}
-                />
               </>
             ) : null}
           </Section>
