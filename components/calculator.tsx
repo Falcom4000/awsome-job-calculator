@@ -894,18 +894,22 @@ export default function JobCalculator() {
         ) : (
           <div className="space-y-6">
             <div ref={shareCaptureRef} className="space-y-6 bg-[#f4efe4]">
-            <header className="rounded-[2.5rem] border border-stone-900/10 bg-white p-7 text-stone-950 shadow-xl">
+            <header className="overflow-hidden rounded-[2.5rem] border border-stone-900/10 bg-white text-stone-950 shadow-xl">
+              <div className="h-2 bg-emerald-900" />
+              <div className="p-7">
               <div className="flex flex-wrap items-center justify-between gap-4">
-                <div className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] text-emerald-900">
+                <div className="inline-flex items-center gap-2 rounded-full bg-emerald-900 px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] text-emerald-50">
                   <BriefcaseBusiness className="h-4 w-4" />
                   发疯报告
                 </div>
               </div>
               <div className="mt-5 grid gap-6 md:grid-cols-[minmax(0,1fr)_260px] md:items-center">
                 <div>
-                  <div className="flex items-center gap-5 md:items-end">
-                    <span className="shrink-0 text-8xl font-black leading-none md:text-9xl">{result.rating.grade}</span>
-                    <div className="min-w-0 md:pb-2">
+                  <div className="flex items-center gap-4 md:gap-5">
+                    <div className="flex h-32 w-32 shrink-0 items-center justify-center rounded-[2rem] bg-stone-950 text-white shadow-lg md:h-40 md:w-40">
+                      <span className="text-8xl font-black leading-none md:text-9xl">{result.rating.grade}</span>
+                    </div>
+                    <div className="min-w-0">
                       <h1 className="text-3xl font-black leading-tight tracking-tight md:text-5xl">{result.rating.title}</h1>
                       <p className="mt-2 max-w-2xl text-base leading-7 text-stone-600 md:mt-3 md:text-lg md:leading-8">{result.rating.description}</p>
                     </div>
@@ -922,6 +926,7 @@ export default function JobCalculator() {
                   </div>
                   <p className="mt-3 text-sm font-bold text-stone-500">约超过 {result.rating.percentile}% 的工作</p>
                 </div>
+              </div>
               </div>
             </header>
 
