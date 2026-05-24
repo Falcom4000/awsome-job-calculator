@@ -540,6 +540,10 @@ export default function JobCalculator() {
 
     setIsSharing(true);
     try {
+      await new Promise<void>((resolve) => {
+        window.requestAnimationFrame(() => resolve());
+      });
+
       const [captureUrl, qrUrl] = await Promise.all([
         toPng(shareCaptureRef.current, {
           backgroundColor: "#f4efe4",
@@ -578,25 +582,26 @@ export default function JobCalculator() {
       const scaleDenominator = captureImage.width - deviceAspectRatio * captureImage.height;
       const idealScale =
         scaleDenominator > 0 ? (deviceAspectRatio * fixedHeight - fixedWidth) / scaleDenominator : 1;
-      const captureScale = Math.min(Math.max(idealScale, 1), 1.14);
+      const captureScale = Math.min(Math.max(idealScale, 1), 1.28);
       const captureWidth = Math.round(captureImage.width * captureScale);
       const captureHeight = Math.round(captureImage.height * captureScale);
-      const canvasHeight = captureHeight + footerGap + footerHeight + outerPadding * 2;
+      const contentHeight = captureHeight + footerGap + footerHeight + outerPadding * 2;
       const baseCanvasWidth = captureWidth + outerPadding * 2;
-      const minCanvasWidth = Math.ceil(canvasHeight * deviceAspectRatio);
+      const minCanvasWidth = Math.ceil(contentHeight * deviceAspectRatio);
       const canvas = document.createElement("canvas");
       canvas.width = Math.max(baseCanvasWidth, minCanvasWidth);
-      canvas.height = canvasHeight;
+      canvas.height = Math.max(contentHeight, Math.ceil(canvas.width / deviceAspectRatio));
       const contentX = Math.round((canvas.width - captureWidth) / 2);
+      const contentY = Math.round((canvas.height - contentHeight) / 2);
 
       const context = canvas.getContext("2d");
       if (!context) return;
 
       context.fillStyle = "#f4efe4";
       context.fillRect(0, 0, canvas.width, canvas.height);
-      context.drawImage(captureImage, contentX, outerPadding, captureWidth, captureHeight);
+      context.drawImage(captureImage, contentX, contentY + outerPadding, captureWidth, captureHeight);
 
-      const footerY = outerPadding + captureHeight + footerGap;
+      const footerY = contentY + outerPadding + captureHeight + footerGap;
       context.fillStyle = "#ffffff";
       context.fillRect(contentX, footerY, captureWidth, footerHeight);
       context.drawImage(qrImage, contentX + padding, footerY + (footerHeight - qrSize) / 2, qrSize, qrSize);
@@ -911,7 +916,7 @@ export default function JobCalculator() {
         ) : (
           <div className="space-y-6">
             <div ref={shareCaptureRef} className="space-y-6 bg-[#f4efe4]">
-            <header className="rounded-[2.5rem] border border-stone-900/10 bg-stone-950 p-7 text-white shadow-xl">
+            <header className={`rounded-[2.5rem] border border-stone-900/10 bg-stone-950 p-7 text-white ${isSharing ? "shadow-none" : "shadow-xl"}`}>
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] text-emerald-100">
                   <BriefcaseBusiness className="h-4 w-4" />
@@ -945,7 +950,7 @@ export default function JobCalculator() {
             </header>
 
             <div className="grid gap-6">
-              <div className="space-y-4 rounded-[2.5rem] border border-stone-900/10 bg-white p-5 shadow-lg">
+              <div className={`space-y-4 rounded-[2.5rem] border border-stone-900/10 bg-white p-5 ${isSharing ? "shadow-none" : "shadow-lg"}`}>
                 <div className="flex justify-center overflow-hidden rounded-[2rem] bg-stone-50 px-2 py-2 md:p-4">
                   <div className="-my-6 w-full max-w-[680px] md:-my-8">
                     <RadarChart values={radarValues} />
