@@ -466,11 +466,11 @@ function getTotalPercentile(total: number) {
 
 function getRating(total: number) {
   const percentile = getTotalPercentile(total);
-  if (percentile >= 90) return { grade: "S", title: "这班真能上", description: "钱、成长、消耗都在线，疯得很值。", percentile };
-  if (percentile >= 70) return { grade: "A", title: "这班可以上", description: "整体划算，有短板但不影响大局。", percentile };
-  if (percentile >= 30) return { grade: "B", title: "这班先上着", description: "不是梦中情班，但暂时不算亏。", percentile };
-  if (percentile >= 10) return { grade: "C", title: "这班边上边看", description: "能上，但别太上头，边干边找解法。", percentile };
-  return { grade: "D", title: "这班就上到这里吧", description: "疯得不太值，该认真准备退路了。", percentile };
+  if (percentile >= 90) return { grade: "S", title: "这班是仙品", description: "钱到位、成长有、消耗低，这种班建议供起来。", percentile };
+  if (percentile >= 70) return { grade: "A", title: "这班能处", description: "有短板，但总体不坑，属于打工人可以暂时握手言和的班。", percentile };
+  if (percentile >= 30) return { grade: "B", title: "这班先苟着", description: "不是梦中情班，但还能苟，别把它当人生归宿。", percentile };
+  if (percentile >= 10) return { grade: "C", title: "这班有毒", description: "能上，但毒性不低，建议一边回血一边找解药。", percentile };
+  return { grade: "D", title: "这班别上头", description: "亏得有点明显了，再撑下去可能人比工资先没。", percentile };
 }
 
 function getOptionValueDescription(score: number) {

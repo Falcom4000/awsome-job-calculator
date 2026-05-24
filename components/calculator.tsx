@@ -779,7 +779,7 @@ export default function JobCalculator() {
             />
             <NumberField label="单程通勤时间" suffix="分钟" value={inputs.commuteMinutes} onChange={(value) => setValue("commuteMinutes", value)} />
             <RatingField label="精神压强" low="压力大" high="从容" copyKey="stress" value={inputs.stress} onChange={(value) => setValue("stress", value)} />
-            <RatingField label="回血包厚度" low="弱" high="好" copyKey="benefitsLevel" value={inputs.benefitsLevel} onChange={(value) => setValue("benefitsLevel", value)} />
+            <RatingField label="福利厚度" low="弱" high="好" copyKey="benefitsLevel" value={inputs.benefitsLevel} onChange={(value) => setValue("benefitsLevel", value)} />
             {inputs.mode === "detailed" ? (
               <>
                 <SelectField<WeekendWork>
