@@ -265,7 +265,7 @@ function NumberField({
   onChange: (value: number) => void;
 }) {
   return (
-    <label className="grid gap-2">
+    <label className="grid content-start gap-2">
       <span className="text-sm font-medium text-stone-700">{label}</span>
       <div className="flex overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
         <input
@@ -335,36 +335,41 @@ function RatingField({
     <div className="grid gap-2 md:col-span-2">
       <div className="flex items-center justify-between gap-3">
         <span className="text-sm font-medium text-stone-700">{label}</span>
-        <span className="text-xs text-stone-500">
+        <span className="hidden text-xs text-stone-500 sm:inline">
           {low} / {high}
         </span>
       </div>
-      <div className="grid grid-cols-5 gap-1.5 sm:hidden">
-        {options.map((option) => {
-          const selected = value === option.score;
-          return (
-            <button
-              className={`flex min-h-20 min-w-0 flex-col items-center justify-center rounded-xl border px-1.5 py-2 text-center transition ${
-                selected
-                  ? "border-emerald-900 bg-emerald-900 text-white shadow-sm"
-                  : "border-stone-200 bg-white text-stone-700 hover:border-emerald-300"
-              }`}
-              key={option.score}
-              type="button"
-              onClick={() => onChange(option.score)}
-            >
-              <span className={`block text-lg font-black leading-6 ${selected ? "text-white" : "text-stone-950"}`}>{option.score}</span>
-              <span className={`mt-1 block max-w-full text-[11px] font-black leading-4 ${selected ? "text-emerald-50" : "text-stone-800"}`}>
-                {option.title}
-              </span>
-            </button>
-          );
-        })}
+      <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 sm:hidden">
+        <span className="max-w-14 text-xs leading-4 text-stone-500">{low}</span>
+        <div className="grid grid-cols-5 gap-1.5">
+          {options.map((option) => {
+            const selected = value === option.score;
+            return (
+              <button
+                className={`mx-auto flex h-10 w-10 items-center justify-center rounded-full border text-sm font-black transition ${
+                  selected
+                    ? "border-emerald-900 bg-emerald-900 text-white shadow-sm"
+                    : "border-stone-200 bg-white text-stone-950 hover:border-emerald-300"
+                }`}
+                key={option.score}
+                type="button"
+                onClick={() => onChange(option.score)}
+                aria-label={`${option.score}，${option.title}`}
+              >
+                {option.score}
+              </button>
+            );
+          })}
+        </div>
+        <span className="max-w-14 text-right text-xs leading-4 text-stone-500">{high}</span>
       </div>
       {selectedOption ? (
-        <p className="rounded-xl border border-stone-200 bg-white px-3 py-2 text-xs leading-5 text-stone-500 sm:hidden">{selectedOption.description}</p>
+        <div className="rounded-xl border border-stone-200 bg-white px-3 py-2 sm:hidden">
+          <p className="text-sm font-black leading-5 text-stone-900">{selectedOption.title}</p>
+          <p className="mt-1 text-xs leading-5 text-stone-500">{selectedOption.description}</p>
+        </div>
       ) : null}
-      <div className="hidden gap-2 sm:grid sm:grid-cols-2 xl:grid-cols-5">
+      <div className="hidden gap-2 sm:grid sm:grid-cols-2 lg:grid-cols-5">
         {options.map((option) => {
           const selected = value === option.score;
           return (
@@ -659,7 +664,7 @@ export default function JobCalculator() {
 
           <Section eyebrow="第三步" title="舒适度">
             <NumberField
-              label="每周实际工作小时数"
+              label="每周工时"
               suffix="小时"
               note="指从上班到下班的时间差。"
               value={inputs.weeklyHours}
