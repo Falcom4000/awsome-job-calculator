@@ -460,9 +460,10 @@ function RadarChart({ values }: { values: Array<{ label: string; value: number }
         <g key={point.label}>
           <circle cx={point.x} cy={point.y} fill="#064e3b" r="4" />
           <text
-            className="text-[34px] font-black"
             dominantBaseline="middle"
             fill="#44403c"
+            fontSize="30"
+            fontWeight="900"
             textAnchor={point.labelAnchor}
             x={point.labelX}
             y={point.labelY}
@@ -894,8 +895,8 @@ export default function JobCalculator() {
         ) : (
           <div className="space-y-6">
             <div ref={shareCaptureRef} className="space-y-6 bg-[#f4efe4]">
-            <header className="overflow-hidden rounded-[2.5rem] border border-stone-900/10 bg-white text-stone-950 shadow-xl">
-              <div className="h-2 bg-emerald-900" />
+            <header className="overflow-hidden rounded-[2.5rem] border border-emerald-900/10 bg-emerald-50 text-stone-950 shadow-xl">
+              <div className="h-2 bg-emerald-800" />
               <div className="p-7">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div className="inline-flex items-center gap-2 rounded-full bg-emerald-900 px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] text-emerald-50">
@@ -905,8 +906,8 @@ export default function JobCalculator() {
               </div>
               <div className="mt-5 grid gap-6 md:grid-cols-[minmax(0,1fr)_260px] md:items-center">
                 <div>
-                  <div className="flex items-center gap-4 md:gap-5">
-                    <div className="flex h-32 w-32 shrink-0 items-center justify-center rounded-[2rem] bg-stone-950 text-white shadow-lg md:h-40 md:w-40">
+                  <div className="flex items-center gap-5 md:gap-6">
+                    <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-[2rem] border border-emerald-900/10 bg-white text-emerald-950 shadow-sm md:h-36 md:w-36">
                       <span className="text-8xl font-black leading-none md:text-9xl">{result.rating.grade}</span>
                     </div>
                     <div className="min-w-0">
@@ -915,7 +916,7 @@ export default function JobCalculator() {
                     </div>
                   </div>
                 </div>
-                <div className="rounded-[2rem] border border-stone-200 bg-stone-50 p-5 text-stone-950">
+                <div className="rounded-[2rem] border border-emerald-900/10 bg-white p-5 text-stone-950 shadow-sm">
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-bold text-stone-500">总得分</p>
                     <Gauge className="h-5 w-5 text-emerald-800" />
