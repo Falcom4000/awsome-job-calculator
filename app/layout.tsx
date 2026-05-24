@@ -17,8 +17,8 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: {
-    default: "打工哪有不疯的",
-    template: "%s | 打工哪有不疯的",
+    default: "打工哪有不疯的 - 测测这份工作疯得值不值",
+    template: "%s | 打工哪有不疯的 - 测测这份工作疯得值不值",
   },
   description: "测测这份工作疯得值不值，输出总分、上班档位、雷达图、优势短板和建议。",
   icons: {
