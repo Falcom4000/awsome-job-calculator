@@ -626,7 +626,7 @@ export default function JobCalculator() {
 
       const link = document.createElement("a");
       link.href = canvas.toDataURL("image/png");
-      link.download = "job-calculator-report.png";
+      link.download = "crazy-value-report.png";
       link.click();
     } catch (error) {
       console.warn("Failed to generate share image", error);
@@ -652,9 +652,9 @@ export default function JobCalculator() {
               <div className="relative">
                 <div className="mx-auto h-16 w-16 animate-spin rounded-full border-4 border-white/20 border-t-emerald-300" />
                 <p className="mt-6 text-center text-xs font-bold tracking-[0.24em] text-emerald-200">正在计算</p>
-                <h1 className="mt-2 text-center text-3xl font-black">正在计算发疯性价比</h1>
+                <h1 className="mt-2 text-center text-3xl font-black">正在生成疯值报告</h1>
                 <p className="mt-3 max-w-md text-center text-sm leading-6 text-stone-300">
-                  正在计算老板给的钱，够不够买你的命。
+                  正在盘老板给的钱，够不够抵你发的疯。
                 </p>
                 <div className="mt-6 h-2 overflow-hidden rounded-full bg-white/10">
                   <div
@@ -911,7 +911,7 @@ export default function JobCalculator() {
           <div className="rounded-[2rem] border border-stone-900/10 bg-stone-950 p-5 text-white shadow-xl">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div>
-                <p className="mt-1 text-xl font-black">生成发疯性价比报告</p>
+                <p className="mt-1 text-xl font-black">生成疯值报告</p>
               </div>
               <button
                 className="rounded-2xl bg-emerald-300 px-8 py-4 text-base font-black text-stone-950 transition hover:bg-emerald-200 disabled:cursor-not-allowed disabled:opacity-70"
@@ -930,7 +930,7 @@ export default function JobCalculator() {
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] text-emerald-100">
                   <BriefcaseBusiness className="h-4 w-4" />
-                  发疯报告
+                  疯值报告
                 </div>
               </div>
               <div className="mt-5 grid gap-6 md:grid-cols-[minmax(0,1fr)_260px] md:items-center">
@@ -1058,7 +1058,7 @@ export default function JobCalculator() {
                 onClick={handleShareImage}
               >
                 <Share2 className="h-5 w-5" />
-                {isSharing ? "生成中..." : "分享发疯报告"}
+                {isSharing ? "生成中..." : "分享疯值报告"}
               </button>
               <button className="inline-flex items-center justify-center gap-2 rounded-2xl bg-stone-950 px-8 py-4 text-base font-black text-white transition hover:bg-emerald-900" type="button" onClick={handleBack}>
                 <ArrowLeft className="h-5 w-5" />
