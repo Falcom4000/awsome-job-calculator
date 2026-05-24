@@ -573,7 +573,7 @@ export default function JobCalculator() {
           </header>
 
           <section className="rounded-[2rem] border border-stone-200 bg-white/80 p-3 shadow-sm backdrop-blur">
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3">
               {[
                 ["brief", "快速评估", "少填一点，先看大方向"],
                 ["detailed", "完整评估", "多填一点，对标更细"],
@@ -588,8 +588,8 @@ export default function JobCalculator() {
                   type="button"
                   onClick={() => setValue("mode", mode as InputMode)}
                 >
-                  <p className="text-lg font-black">{title}</p>
-                  <p className={`mt-1 text-sm ${inputs.mode === mode ? "text-emerald-100" : "text-stone-500"}`}>
+                  <p className="text-base font-black sm:text-lg">{title}</p>
+                  <p className={`mt-1 text-xs leading-5 sm:text-sm ${inputs.mode === mode ? "text-emerald-100" : "text-stone-500"}`}>
                     {description}
                   </p>
                 </button>
@@ -851,32 +851,32 @@ export default function JobCalculator() {
 
             <div className="grid gap-6">
               <div className="space-y-4 rounded-[2.5rem] border border-stone-900/10 bg-white p-5 shadow-2xl">
-            <div className="flex justify-center overflow-hidden rounded-[2rem] bg-stone-50 px-2 py-2 md:p-4">
-              <div className="-my-6 w-full max-w-[680px] md:-my-8">
-                <RadarChart values={radarValues} />
-              </div>
-            </div>
-
-            <div className="grid gap-3 md:grid-cols-2">
-              <div className="rounded-[2rem] border border-stone-200 bg-stone-50 p-5 text-stone-950">
-                <p className="text-sm font-bold text-stone-600">综合收益</p>
-                <div className="mt-4 flex items-end gap-2">
-                  <span className="text-5xl font-black leading-none">{result.aggregateScores.benefit}</span>
-                  <span className="pb-1 text-sm font-bold text-stone-500">/ 100</span>
+                <div className="flex justify-center overflow-hidden rounded-[2rem] bg-stone-50 px-2 py-2 md:p-4">
+                  <div className="-my-6 w-full max-w-[680px] md:-my-8">
+                    <RadarChart values={radarValues} />
+                  </div>
                 </div>
-                <p className="mt-3 text-sm leading-6 text-stone-600">看钱和成长：现在值钱吗，以后还能涨吗。</p>
-              </div>
-              <div className="rounded-[2rem] border border-stone-200 bg-stone-50 p-5 text-stone-950">
-                <p className="text-sm font-bold text-stone-600">综合成本</p>
-                <div className="mt-4 flex items-end gap-2">
-                  <span className="text-5xl font-black leading-none">{result.aggregateScores.cost}</span>
-                  <span className="pb-1 text-sm font-bold text-stone-500">/ 100</span>
-                </div>
-                <p className="mt-3 text-sm leading-6 text-stone-600">看消耗和退路：累不累、稳不稳、想走能不能走。</p>
-              </div>
-            </div>
 
-            <div className="rounded-[1.5rem] border border-stone-200 p-4">
+                <div className="grid gap-3 md:grid-cols-2">
+                  <div className="rounded-[2rem] border border-stone-200 bg-stone-50 p-5 text-stone-950">
+                    <p className="text-sm font-bold text-stone-600">综合收益</p>
+                    <div className="mt-4 flex items-end gap-2">
+                      <span className="text-5xl font-black leading-none">{result.aggregateScores.benefit}</span>
+                      <span className="pb-1 text-sm font-bold text-stone-500">/ 100</span>
+                    </div>
+                  </div>
+                  <div className="rounded-[2rem] border border-stone-200 bg-stone-50 p-5 text-stone-950">
+                    <p className="text-sm font-bold text-stone-600">综合成本</p>
+                    <div className="mt-4 flex items-end gap-2">
+                      <span className="text-5xl font-black leading-none">{result.aggregateScores.cost}</span>
+                      <span className="pb-1 text-sm font-bold text-stone-500">/ 100</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4 rounded-[2.5rem] border border-stone-900/10 bg-white p-5 shadow-2xl">
+                <div className="rounded-[1.5rem] border border-stone-200 p-4">
               <div className="flex items-center gap-2 text-sm font-black">
                 <LineChart className="h-4 w-4 text-emerald-800" />
                 先看结论
