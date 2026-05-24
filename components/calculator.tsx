@@ -566,12 +566,13 @@ export default function JobCalculator() {
 
       const [captureImage, qrImage] = await Promise.all([loadImage(captureUrl), loadImage(qrUrl)]);
       const footerHeight = 220;
-      const outerPadding = Math.round(Math.min(Math.max(captureImage.width * 0.035, 32), 56));
+      const footerGap = 32;
+      const outerPadding = Math.round(Math.min(Math.max(captureImage.width * 0.055, 48), 88));
       const padding = 42;
       const qrSize = 156;
       const canvas = document.createElement("canvas");
       canvas.width = captureImage.width + outerPadding * 2;
-      canvas.height = captureImage.height + footerHeight + outerPadding * 2;
+      canvas.height = captureImage.height + footerGap + footerHeight + outerPadding * 2;
 
       const context = canvas.getContext("2d");
       if (!context) return;
@@ -580,7 +581,7 @@ export default function JobCalculator() {
       context.fillRect(0, 0, canvas.width, canvas.height);
       context.drawImage(captureImage, outerPadding, outerPadding);
 
-      const footerY = outerPadding + captureImage.height;
+      const footerY = outerPadding + captureImage.height + footerGap;
       context.fillStyle = "#ffffff";
       context.fillRect(outerPadding, footerY, captureImage.width, footerHeight);
       context.drawImage(qrImage, outerPadding + padding, footerY + (footerHeight - qrSize) / 2, qrSize, qrSize);
@@ -895,11 +896,9 @@ export default function JobCalculator() {
         ) : (
           <div className="space-y-6">
             <div ref={shareCaptureRef} className="space-y-6 bg-[#f4efe4]">
-            <header className="overflow-hidden rounded-[2.5rem] border border-emerald-900/10 bg-emerald-50 text-stone-950 shadow-xl">
-              <div className="h-2 bg-emerald-800" />
-              <div className="p-7">
+            <header className="rounded-[2.5rem] border border-stone-900/10 bg-stone-950 p-7 text-white shadow-xl">
               <div className="flex flex-wrap items-center justify-between gap-4">
-                <div className="inline-flex items-center gap-2 rounded-full bg-emerald-900 px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] text-emerald-50">
+                <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] text-emerald-100">
                   <BriefcaseBusiness className="h-4 w-4" />
                   发疯报告
                 </div>
@@ -907,16 +906,16 @@ export default function JobCalculator() {
               <div className="mt-5 grid gap-6 md:grid-cols-[minmax(0,1fr)_260px] md:items-center">
                 <div>
                   <div className="flex items-center gap-5 md:gap-6">
-                    <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-[2rem] border border-emerald-900/10 bg-white text-emerald-950 shadow-sm md:h-36 md:w-36">
+                    <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-[2rem] bg-white text-stone-950 shadow-lg md:h-36 md:w-36">
                       <span className="text-8xl font-black leading-none md:text-9xl">{result.rating.grade}</span>
                     </div>
                     <div className="min-w-0">
                       <h1 className="text-3xl font-black leading-tight tracking-tight md:text-5xl">{result.rating.title}</h1>
-                      <p className="mt-2 max-w-2xl text-base leading-7 text-stone-600 md:mt-3 md:text-lg md:leading-8">{result.rating.description}</p>
+                      <p className="mt-2 max-w-2xl text-base leading-7 text-stone-300 md:mt-3 md:text-lg md:leading-8">{result.rating.description}</p>
                     </div>
                   </div>
                 </div>
-                <div className="rounded-[2rem] border border-emerald-900/10 bg-white p-5 text-stone-950 shadow-sm">
+                <div className="rounded-[2rem] bg-white p-5 text-stone-950">
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-bold text-stone-500">总得分</p>
                     <Gauge className="h-5 w-5 text-emerald-800" />
@@ -927,7 +926,6 @@ export default function JobCalculator() {
                   </div>
                   <p className="mt-3 text-sm font-bold text-stone-500">约超过 {result.rating.percentile}% 的工作</p>
                 </div>
-              </div>
               </div>
             </header>
 
