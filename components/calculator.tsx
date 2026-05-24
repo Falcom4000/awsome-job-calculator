@@ -1,6 +1,8 @@
 "use client";
 
-import { AlertTriangle, BriefcaseBusiness, ChevronRight, Gauge, LineChart } from "lucide-react";
+import { AlertTriangle, ArrowLeft, BriefcaseBusiness, ChevronRight, Gauge, LineChart, Share2 } from "lucide-react";
+import { toPng } from "html-to-image";
+import QRCode from "qrcode";
 import type { ReactNode, FormEvent } from "react";
 import { useState, useRef } from "react";
 
@@ -28,6 +30,8 @@ type RatingOption = {
   title: string;
   description: string;
 };
+
+const SHARE_URL = "https://awsome-job-calculator.vercel.app/";
 
 type RatingCopyKey =
   | "stress"
@@ -477,8 +481,10 @@ export default function JobCalculator() {
   const [inputs, setInputs] = useState<JobInputs>(defaultInputs);
   const [submittedInputs, setSubmittedInputs] = useState<JobInputs | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
   const [calculationProgress, setCalculationProgress] = useState(0);
   const calculationTimerRef = useRef<number | null>(null);
+  const shareCaptureRef = useRef<HTMLDivElement | null>(null);
   const result = submittedInputs ? calculateJobScore(submittedInputs) : null;
   const setValue = <K extends keyof JobInputs>(key: K, value: JobInputs[K]) => {
     setInputs((current) => ({ ...current, [key]: value }));
@@ -526,6 +532,73 @@ export default function JobCalculator() {
   const handleBack = () => {
     setSubmittedInputs(null);
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  const handleShareImage = async () => {
+    if (!shareCaptureRef.current || isSharing) return;
+
+    setIsSharing(true);
+    try {
+      const [captureUrl, qrUrl] = await Promise.all([
+        toPng(shareCaptureRef.current, {
+          backgroundColor: "#f4efe4",
+          cacheBust: true,
+          pixelRatio: 2,
+        }),
+        QRCode.toDataURL(SHARE_URL, {
+          margin: 1,
+          width: 240,
+          color: {
+            dark: "#0f3f2f",
+            light: "#ffffff",
+          },
+        }),
+      ]);
+
+      const loadImage = (src: string) =>
+        new Promise<HTMLImageElement>((resolve, reject) => {
+          const image = new Image();
+          image.onload = () => resolve(image);
+          image.onerror = reject;
+          image.src = src;
+        });
+
+      const [captureImage, qrImage] = await Promise.all([loadImage(captureUrl), loadImage(qrUrl)]);
+      const footerHeight = 220;
+      const padding = 42;
+      const qrSize = 156;
+      const canvas = document.createElement("canvas");
+      canvas.width = captureImage.width;
+      canvas.height = captureImage.height + footerHeight;
+
+      const context = canvas.getContext("2d");
+      if (!context) return;
+
+      context.fillStyle = "#f4efe4";
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      context.drawImage(captureImage, 0, 0);
+
+      const footerY = captureImage.height;
+      context.fillStyle = "#ffffff";
+      context.fillRect(0, footerY, canvas.width, footerHeight);
+      context.drawImage(qrImage, padding, footerY + (footerHeight - qrSize) / 2, qrSize, qrSize);
+
+      const textX = padding + qrSize + 28;
+      context.fillStyle = "#0f172a";
+      context.font = "700 34px sans-serif";
+      context.fillText("扫码测测你的工作疯得值不值", textX, footerY + 78);
+      context.fillStyle = "#64748b";
+      context.font = "500 24px sans-serif";
+      context.fillText(SHARE_URL, textX, footerY + 120);
+
+      const link = document.createElement("a");
+      link.href = canvas.toDataURL("image/png");
+      link.download = "job-calculator-report.png";
+      link.click();
+    } catch (error) {
+      console.warn("Failed to generate share image", error);
+    } finally {
+      setIsSharing(false);
+    }
   };
 
   return (
@@ -818,6 +891,7 @@ export default function JobCalculator() {
         </form>
         ) : (
           <div className="space-y-6">
+            <div ref={shareCaptureRef} className="space-y-6 bg-[#f4efe4]">
             <header className="rounded-[2.5rem] border border-stone-900/10 bg-stone-950 p-7 text-white shadow-xl">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] text-emerald-100">
@@ -875,6 +949,10 @@ export default function JobCalculator() {
                 </div>
               </div>
 
+            </div>
+            </div>
+
+            <div className="grid gap-6">
               <div className="space-y-4 rounded-[2.5rem] border border-stone-900/10 bg-white p-5 shadow-2xl">
                 <div className="rounded-[1.5rem] border border-stone-200 p-4">
               <div className="flex items-center gap-2 text-sm font-black">
@@ -949,9 +1027,19 @@ export default function JobCalculator() {
 
             </div>
 
-            <div className="flex justify-center">
-              <button className="rounded-2xl bg-stone-950 px-8 py-4 text-base font-black text-white transition hover:bg-emerald-900" type="button" onClick={handleBack}>
-                返回重新输入
+            <div className="flex flex-col justify-center gap-3 sm:flex-row">
+              <button
+                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-300 px-8 py-4 text-base font-black text-stone-950 transition hover:bg-emerald-200 disabled:cursor-not-allowed disabled:opacity-70"
+                disabled={isSharing}
+                type="button"
+                onClick={handleShareImage}
+              >
+                <Share2 className="h-5 w-5" />
+                {isSharing ? "生成中..." : "分享"}
+              </button>
+              <button className="inline-flex items-center justify-center gap-2 rounded-2xl bg-stone-950 px-8 py-4 text-base font-black text-white transition hover:bg-emerald-900" type="button" onClick={handleBack}>
+                <ArrowLeft className="h-5 w-5" />
+                返回
               </button>
             </div>
           </div>
