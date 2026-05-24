@@ -32,6 +32,44 @@ type RatingOption = {
 
 const SHARE_URL = "https://awsome-job-calculator.vercel.app/";
 
+const ratingThemes = {
+  S: {
+    hero: "border-amber-100/30 bg-[radial-gradient(circle_at_82%_0%,rgba(252,211,77,0.46),transparent_36%),linear-gradient(135deg,#2a1705,#70410d_62%,#3a2108)] text-amber-50",
+    badge: "bg-amber-100/22 text-amber-50 ring-1 ring-amber-100/26",
+    grade: "text-amber-100 drop-shadow-[0_0_22px_rgba(252,211,77,0.48)]",
+    description: "text-amber-50/78",
+    gauge: "text-amber-600",
+  },
+  A: {
+    hero: "border-violet-200/25 bg-[radial-gradient(circle_at_82%_0%,rgba(196,181,253,0.42),transparent_36%),linear-gradient(135deg,#211238,#56308a_62%,#2d1747)] text-violet-50",
+    badge: "bg-violet-200/20 text-violet-50 ring-1 ring-violet-200/24",
+    grade: "text-violet-100 drop-shadow-[0_0_20px_rgba(196,181,253,0.42)]",
+    description: "text-violet-50/78",
+    gauge: "text-violet-700",
+  },
+  B: {
+    hero: "border-sky-200/20 bg-[radial-gradient(circle_at_82%_0%,rgba(96,165,250,0.28),transparent_34%),linear-gradient(135deg,#081525,#173966_62%,#0b1c34)] text-sky-50",
+    badge: "bg-sky-200/15 text-sky-100 ring-1 ring-sky-200/18",
+    grade: "text-sky-200 drop-shadow-[0_0_18px_rgba(96,165,250,0.30)]",
+    description: "text-sky-50/76",
+    gauge: "text-blue-700",
+  },
+  C: {
+    hero: "border-emerald-100/12 bg-[radial-gradient(circle_at_82%_0%,rgba(167,196,171,0.18),transparent_34%),linear-gradient(135deg,#1b2420,#33443b_62%,#202922)] text-stone-50",
+    badge: "bg-emerald-100/10 text-emerald-100 ring-1 ring-emerald-100/12",
+    grade: "text-[#bfd7c4] drop-shadow-[0_0_14px_rgba(191,215,196,0.20)]",
+    description: "text-stone-300",
+    gauge: "text-emerald-700",
+  },
+  D: {
+    hero: "border-stone-300/12 bg-[radial-gradient(circle_at_82%_0%,rgba(168,162,158,0.16),transparent_34%),linear-gradient(135deg,#171717,#2b2a28_62%,#1c1917)] text-stone-50",
+    badge: "bg-stone-100/10 text-stone-200 ring-1 ring-stone-100/12",
+    grade: "text-stone-300 drop-shadow-[0_0_12px_rgba(214,211,209,0.16)]",
+    description: "text-stone-300",
+    gauge: "text-stone-700",
+  },
+} as const;
+
 type RatingCopyKey =
   | "stress"
   | "benefitsLevel"
@@ -505,6 +543,10 @@ export default function JobCalculator() {
   const calculationTimerRef = useRef<number | null>(null);
   const shareCaptureRef = useRef<HTMLDivElement | null>(null);
   const result = submittedInputs ? calculateJobScore(submittedInputs) : null;
+  const resultTheme =
+    result && result.rating.grade in ratingThemes
+      ? ratingThemes[result.rating.grade as keyof typeof ratingThemes]
+      : ratingThemes.B;
   const setValue = <K extends keyof JobInputs>(key: K, value: JobInputs[K]) => {
     setInputs((current) => ({ ...current, [key]: value }));
   };
@@ -937,9 +979,9 @@ export default function JobCalculator() {
         ) : (
           <div className="space-y-6">
             <div ref={shareCaptureRef} className="space-y-6">
-            <header className={`rounded-[2.5rem] border border-stone-900/10 bg-stone-950 p-7 text-white ${isSharing ? "shadow-none" : "shadow-xl"}`}>
+            <header className={`rounded-[2.5rem] border p-7 ${resultTheme.hero} ${isSharing ? "shadow-none" : "shadow-xl"}`}>
               <div className="flex flex-wrap items-center justify-between gap-4">
-                <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] text-emerald-100">
+                <div className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] ${resultTheme.badge}`}>
                   <BriefcaseBusiness className="h-4 w-4" />
                   疯值报告
                 </div>
@@ -947,19 +989,19 @@ export default function JobCalculator() {
               <div className="mt-5 grid gap-6 md:grid-cols-[minmax(0,1fr)_260px] md:items-center">
                 <div>
                   <div className="flex items-center gap-5 md:gap-6">
-                    <div className="flex h-28 w-24 shrink-0 items-center justify-center text-white md:h-36 md:w-32">
+                    <div className={`flex h-28 w-24 shrink-0 items-center justify-center md:h-36 md:w-32 ${resultTheme.grade}`}>
                       <span className="text-8xl font-black leading-none md:text-9xl">{result.rating.grade}</span>
                     </div>
                     <div className="min-w-0">
                       <h1 className="text-3xl font-black leading-tight tracking-tight md:text-5xl">{result.rating.title}</h1>
-                      <p className="mt-2 max-w-2xl text-base leading-7 text-stone-300 md:mt-3 md:text-lg md:leading-8">{result.rating.description}</p>
+                      <p className={`mt-2 max-w-2xl text-base leading-7 md:mt-3 md:text-lg md:leading-8 ${resultTheme.description}`}>{result.rating.description}</p>
                     </div>
                   </div>
                 </div>
                 <div className="rounded-[2rem] bg-white p-5 text-stone-950">
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-bold text-stone-500">发疯性价比分</p>
-                    <Gauge className="h-5 w-5 text-emerald-800" />
+                    <Gauge className={`h-5 w-5 ${resultTheme.gauge}`} />
                   </div>
                   <div className="mt-4 flex items-end gap-2">
                     <span className="text-7xl font-black leading-none">{result.total}</span>
