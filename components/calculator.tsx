@@ -422,7 +422,7 @@ function RadarChart({ values }: { values: Array<{ label: string; value: number }
   const size = 720;
   const center = size / 2;
   const radius = 170;
-  const labelRadius = 245;
+  const labelRadius = 238;
   const points = values.map((item, index) => {
     const angle = -Math.PI / 2 + (index * Math.PI * 2) / values.length;
     const itemRadius = (item.value / 100) * radius;
@@ -432,7 +432,7 @@ function RadarChart({ values }: { values: Array<{ label: string; value: number }
       ...item,
       x: center + Math.cos(angle) * itemRadius,
       y: center + Math.sin(angle) * itemRadius,
-      labelX: labelAnchor === "end" ? Math.max(rawLabelX, 115) : labelAnchor === "start" ? Math.min(rawLabelX, size - 115) : rawLabelX,
+      labelX: labelAnchor === "end" ? Math.max(rawLabelX, 92) : labelAnchor === "start" ? Math.min(rawLabelX, size - 92) : rawLabelX,
       labelY: center + Math.sin(angle) * labelRadius,
       labelAnchor,
       axisX: center + Math.cos(angle) * radius,
@@ -460,7 +460,7 @@ function RadarChart({ values }: { values: Array<{ label: string; value: number }
         <g key={point.label}>
           <circle cx={point.x} cy={point.y} fill="#064e3b" r="4" />
           <text
-            className="text-[28px] font-black"
+            className="text-[34px] font-black"
             dominantBaseline="middle"
             fill="#44403c"
             textAnchor={point.labelAnchor}
@@ -565,25 +565,26 @@ export default function JobCalculator() {
 
       const [captureImage, qrImage] = await Promise.all([loadImage(captureUrl), loadImage(qrUrl)]);
       const footerHeight = 220;
+      const outerPadding = Math.round(Math.min(Math.max(captureImage.width * 0.035, 32), 56));
       const padding = 42;
       const qrSize = 156;
       const canvas = document.createElement("canvas");
-      canvas.width = captureImage.width;
-      canvas.height = captureImage.height + footerHeight;
+      canvas.width = captureImage.width + outerPadding * 2;
+      canvas.height = captureImage.height + footerHeight + outerPadding * 2;
 
       const context = canvas.getContext("2d");
       if (!context) return;
 
       context.fillStyle = "#f4efe4";
       context.fillRect(0, 0, canvas.width, canvas.height);
-      context.drawImage(captureImage, 0, 0);
+      context.drawImage(captureImage, outerPadding, outerPadding);
 
-      const footerY = captureImage.height;
+      const footerY = outerPadding + captureImage.height;
       context.fillStyle = "#ffffff";
-      context.fillRect(0, footerY, canvas.width, footerHeight);
-      context.drawImage(qrImage, padding, footerY + (footerHeight - qrSize) / 2, qrSize, qrSize);
+      context.fillRect(outerPadding, footerY, captureImage.width, footerHeight);
+      context.drawImage(qrImage, outerPadding + padding, footerY + (footerHeight - qrSize) / 2, qrSize, qrSize);
 
-      const textX = padding + qrSize + 28;
+      const textX = outerPadding + padding + qrSize + 28;
       context.fillStyle = "#0f172a";
       context.font = "700 34px sans-serif";
       context.fillText("扫码测测你的工作疯得值不值", textX, footerY + 78);
