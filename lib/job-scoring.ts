@@ -117,6 +117,34 @@ export const dimensionLabels: Record<DimensionKey, string> = {
   fit: "匹配度",
 };
 
+const dataSourceNotes = [
+  "国家统计局：《2025 年城镇单位就业人员年平均工资情况》",
+  "国家统计局：《2024 年城镇单位就业人员年平均工资情况》",
+  "北京市人力资源和社会保障局：历年北京市全口径城镇单位就业人员平均工资",
+  "深圳市统计局：《2024 年深圳市城镇单位就业人员年平均工资情况》",
+  "广州市统计局：《2024 年广州市城镇单位就业人员年平均工资情况》",
+  "南京市统计局：《2024 年南京市城镇单位就业人员年平均工资情况》",
+  "天津市统计局：《2024 年天津市城镇单位就业人员平均工资情况》",
+  "重庆市统计局：《2024 年重庆市城镇单位就业人员年平均工资情况》",
+  "武汉市统计局：2024 年武汉市城镇单位就业人员平均工资公开答复",
+  "郑州市统计局：《2024 年郑州市城镇单位就业人员年平均工资情况》",
+  "苏州市统计局：2024 年苏州市城镇非私营单位在岗职工年平均工资公开答复",
+  "成都市统计局：《2024 年成都市城镇单位就业人员年平均工资公告》",
+  "青岛市统计局：《2024 年青岛市单位就业人员年平均工资统计公告》",
+  "杭州市统计局：《2024 年杭州市单位就业人员年平均工资统计公报》",
+  "西安市统计局：2024 年西安市城镇单位就业人员年平均工资公开信息",
+  "智联招聘：2024 年第三季度《中国企业招聘薪酬报告》",
+  "PERSOLKELLY：《China Salary Guide 2025》",
+  "LHH FESCO：《2025 年度薪酬指南》",
+  "Morgan Philips：《2025 中国大陆市场薪酬指南》",
+  "Hays：《2025 Asia Salary Guide》",
+  "科锐国际：《2025 人才市场洞察及薪酬指南》",
+  "Robert Walters：《中国大陆地区薪酬指南 2026》",
+  "百度地图 / 中国城市规划设计研究院：《2022 年度中国主要城市通勤监测报告》",
+  "艾瑞咨询：《中国网络招聘市场发展研究报告》",
+  "说明：排名和分数仅供参考。",
+];
+
 type RatingGrade = "S" | "A" | "B" | "C" | "D";
 type DimensionCopy = Record<RatingGrade, { verdicts: string[]; rescues?: string[] }>;
 
@@ -667,8 +695,6 @@ function getDimensionNarratives(dimensions: Record<DimensionKey, number>, total:
 
 export function calculateJobScore(inputs: JobInputs): ScoreResult {
   const income = calculateIncome(inputs);
-  const activeIndustryBenchmark = getIndustryBenchmark(industryKey(inputs), inputs.experienceYears, industryBenchmarkOptions(inputs));
-  const activeExperienceFactor = getExperienceIncomeFactor(inputs.experienceYears);
   const dimensions: Record<DimensionKey, number> = {
     income: Math.round(income.score),
     stability: Math.round(calculateStability(inputs)),
@@ -740,23 +766,6 @@ export function calculateJobScore(inputs: JobInputs): ScoreResult {
     weaknessReasons,
     optionValueDescription: getOptionValueDescription(optionValue),
     confidence: getConfidence(inputs),
-    dataNotes: [
-      `${cityBenchmarks[cityKey(inputs)].label}基准：${cityBenchmarks[cityKey(inputs)].source}，${cityBenchmarks[cityKey(inputs)].year}，${cityBenchmarks[cityKey(inputs)].note}`,
-      `全国基准：${nationalBenchmark.source}，${nationalBenchmark.year}，${nationalBenchmark.note}`,
-      isDetailedMode(inputs)
-        ? `${activeIndustryBenchmark.label}行业基准：${activeIndustryBenchmark.source}，${activeIndustryBenchmark.year}，${activeIndustryBenchmark.note}`
-        : `${activeIndustryBenchmark.label}行业 / 岗位层级基准：${activeIndustryBenchmark.source}，${activeIndustryBenchmark.year}，${activeIndustryBenchmark.note}`,
-      isDetailedMode(inputs)
-        ? `${roleBenchmarks[roleKey(inputs)].label}岗位基准：${roleBenchmarks[roleKey(inputs)].source}，${roleBenchmarks[roleKey(inputs)].year}，${roleBenchmarks[roleKey(inputs)].note}`
-        : "当前版本已接入公开统计和报告数据；缺失细分字段会退化到全国或岗位大类基准。",
-      isDetailedMode(inputs)
-        ? `经验倍率：${activeExperienceFactor.label ?? `${inputs.experienceYears}年`}，${activeExperienceFactor.factor} 倍，${activeExperienceFactor.source}，${activeExperienceFactor.notes}`
-        : "简略模式未使用经验倍率。",
-      !isDetailedMode(inputs)
-        ? "简略模式已使用行业和岗位层级；企业性质按民营普通口径兜底。"
-        : !inputs.enterpriseNature || inputs.enterpriseNature === "unknown" || !inputs.jobLevel || inputs.jobLevel === "unknown"
-        ? "未完整选择企业性质或岗位层级时，行业薪酬分位会按工作年限和民营普通企业口径兜底。"
-        : "详细模式已使用企业性质和岗位层级校准行业薪酬分位。",
-    ],
+    dataNotes: dataSourceNotes,
   };
 }

@@ -1034,10 +1034,14 @@ export default function JobCalculator() {
 
             <details className="rounded-[1.5rem] border border-stone-200 p-4">
               <summary className="cursor-pointer text-sm font-black">数据来源</summary>
-              <div className="mt-3 space-y-3 text-sm leading-6 text-stone-600">
-                {result.dataNotes.map((note) => (
-                  <p key={note}>{note}</p>
-                ))}
+              <div className="mt-3 text-sm leading-6 text-stone-600">
+                <p>当前参考的数据来源包括：</p>
+                <ul className="mt-3 list-disc space-y-2 pl-5">
+                  {result.dataNotes.slice(0, -1).map((note) => (
+                    <li key={note}>{note}</li>
+                  ))}
+                </ul>
+                <p className="mt-3">{result.dataNotes.at(-1)}</p>
               </div>
             </details>
               </div>
