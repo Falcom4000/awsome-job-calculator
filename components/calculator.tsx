@@ -253,12 +253,14 @@ function NumberField({
   label,
   value,
   suffix,
+  note,
   min = 0,
   onChange,
 }: {
   label: string;
   value: number;
   suffix?: string;
+  note?: string;
   min?: number;
   onChange: (value: number) => void;
 }) {
@@ -276,6 +278,7 @@ function NumberField({
         />
         {suffix ? <span className="flex items-center bg-stone-100 px-3 text-sm text-stone-500">{suffix}</span> : null}
       </div>
+      {note ? <span className="text-xs leading-5 text-stone-500">{note}</span> : null}
     </label>
   );
 }
@@ -629,7 +632,13 @@ export default function JobCalculator() {
           </Section>
 
           <Section eyebrow="第三步" title="舒适度">
-            <NumberField label="每周实际工作小时数" suffix="小时" value={inputs.weeklyHours} onChange={(value) => setValue("weeklyHours", value)} />
+            <NumberField
+              label="每周实际工作小时数"
+              suffix="小时"
+              note="指从上班到下班的时间差。"
+              value={inputs.weeklyHours}
+              onChange={(value) => setValue("weeklyHours", value)}
+            />
             <NumberField label="通勤单程时间" suffix="分钟" value={inputs.commuteMinutes} onChange={(value) => setValue("commuteMinutes", value)} />
             <RatingField label="工作压力" low="压力大" high="从容" copyKey="stress" value={inputs.stress} onChange={(value) => setValue("stress", value)} />
             <RatingField label="福利水平" low="弱" high="好" copyKey="benefitsLevel" value={inputs.benefitsLevel} onChange={(value) => setValue("benefitsLevel", value)} />
