@@ -85,23 +85,23 @@ const ratingCopy: Record<RatingCopyKey, RatingOption[]> = {
   atmosphere: [
     { score: 1, title: "氛围很差", description: "有明显 PUA、甩锅、内斗或不尊重。" },
     { score: 2, title: "氛围偏差", description: "沟通成本高，人际关系消耗明显。" },
-    { score: 3, title: "普通", description: "没明显问题，但也谈不上舒服。" },
-    { score: 4, title: "较好", description: "同事和老板基本正常，合作顺畅。" },
-    { score: 5, title: "很好", description: "氛围舒服，信任度高，沟通成本低。" },
+    { score: 3, title: "凑合活", description: "没明显问题，但也谈不上舒服。" },
+    { score: 4, title: "还算阳间", description: "同事和老板基本正常，合作顺畅。" },
+    { score: 5, title: "非常阳间", description: "氛围舒服，信任度高，沟通成本低。" },
   ],
   peopleHealth: [
     { score: 1, title: "很消耗", description: "甩锅、内斗、失信或情绪化管理明显。" },
     { score: 2, title: "偏消耗", description: "沟通和协作经常消耗精力。" },
-    { score: 3, title: "一般", description: "有摩擦，但没有明显恶性问题。" },
-    { score: 4, title: "较舒服", description: "大多数沟通直接、稳定、可预期。" },
-    { score: 5, title: "很舒服", description: "尊重边界，合作省心，信任成本低。" },
+    { score: 3, title: "凑合活", description: "有摩擦，但没有明显恶性问题。" },
+    { score: 4, title: "还算省心", description: "大多数沟通直接、稳定、可预期。" },
+    { score: 5, title: "非常省心", description: "尊重边界，合作省心，信任成本低。" },
   ],
   healthImpact: [
     { score: 1, title: "很伤身", description: "已经明显影响睡眠、情绪或身体状态。" },
     { score: 2, title: "有点伤", description: "经常疲惫，恢复成本偏高。" },
     { score: 3, title: "还行", description: "有消耗，但整体还能恢复。" },
-    { score: 4, title: "较健康", description: "大多数时候状态稳定。" },
-    { score: 5, title: "很健康", description: "基本不伤身，节奏可持续。" },
+    { score: 4, title: "还算抗造", description: "大多数时候状态稳定。" },
+    { score: 5, title: "基本无伤", description: "基本不伤身，节奏可持续。" },
   ],
   lifeAndLearningTime: [
     { score: 1, title: "完全没有", description: "下班后只想恢复，生活和学习被挤掉。" },
@@ -113,8 +113,8 @@ const ratingCopy: Record<RatingCopyKey, RatingOption[]> = {
   safetyFeeling: [
     { score: 1, title: "很悬", description: "随时可能出问题。" },
     { score: 2, title: "不太稳", description: "组织、业务或岗位有明显风险。" },
-    { score: 3, title: "一般", description: "有风险，但还没到警报级别。" },
-    { score: 4, title: "比较稳", description: "短中期看问题不大。" },
+    { score: 3, title: "有点悬", description: "有风险，但还没到警报级别。" },
+    { score: 4, title: "还算稳", description: "短中期看问题不大。" },
     { score: 5, title: "很稳", description: "公司、团队和岗位都比较稳。" },
   ],
   roleCore: [
@@ -149,8 +149,8 @@ const ratingCopy: Record<RatingCopyKey, RatingOption[]> = {
     { score: 1, title: "看不到", description: "基本看不到成长空间。" },
     { score: 2, title: "有限", description: "成长空间有限，可能很快重复。" },
     { score: 3, title: "还有一些", description: "还有一些成长，但不确定。" },
-    { score: 4, title: "较好", description: "成长空间较好，有明确可学的东西。" },
-    { score: 5, title: "很大", description: "未来一年大概率继续显著升值。" },
+    { score: 4, title: "有点盼头", description: "成长空间较好，有明确可学的东西。" },
+    { score: 5, title: "盼头很大", description: "未来一年大概率继续显著升值。" },
   ],
   closeToCoreBusiness: [
     { score: 1, title: "很远", description: "离收入、产品或关键决策很远。" },
@@ -162,30 +162,30 @@ const ratingCopy: Record<RatingCopyKey, RatingOption[]> = {
   mentoring: [
     { score: 1, title: "没人带", description: "基本靠自己摸索，反馈和指导很少。" },
     { score: 2, title: "带得少", description: "偶尔有指导，但系统性不足。" },
-    { score: 3, title: "一般", description: "能获得基本反馈和经验传递。" },
-    { score: 4, title: "较好", description: "有人能持续给方向、标准和反馈。" },
-    { score: 5, title: "很好", description: "身边有高水平的人带，成长速度明显提升。" },
+    { score: 3, title: "凑合学", description: "能获得基本反馈和经验传递。" },
+    { score: 4, title: "有人带飞", description: "有人能持续给方向、标准和反馈。" },
+    { score: 5, title: "大佬带飞", description: "身边有高水平的人带，成长速度明显提升。" },
   ],
   resumeValue: [
     { score: 1, title: "几乎不加分", description: "经历难以对外解释，简历价值弱。" },
     { score: 2, title: "加分有限", description: "能写一些，但市场识别度不高。" },
-    { score: 3, title: "普通", description: "能支撑基本履历，但亮点不突出。" },
-    { score: 4, title: "较加分", description: "有明确成果、指标或难度。" },
-    { score: 5, title: "很加分", description: "对外非常好讲，能明显提升市场定价。" },
+    { score: 3, title: "凑合能写", description: "能支撑基本履历，但亮点不突出。" },
+    { score: 4, title: "能镀点金", description: "有明确成果、指标或难度。" },
+    { score: 5, title: "很能镀金", description: "对外非常好讲，能明显提升市场定价。" },
   ],
   externalOpportunities: [
     { score: 1, title: "几乎没有", description: "几乎没人找，也很难匹配外部岗位。" },
     { score: 2, title: "偶尔有", description: "偶尔有机会，但质量一般或匹配度低。" },
     { score: 3, title: "有一些", description: "有一些机会，但不确定能否拿到好 offer。" },
-    { score: 4, title: "机会较多", description: "能匹配不少不错岗位。" },
-    { score: 5, title: "需求很强", description: "容易获得高质量机会。" },
+    { score: 4, title: "有人来捞", description: "能匹配不少不错岗位。" },
+    { score: 5, title: "抢着来捞", description: "容易获得高质量机会。" },
   ],
   jdMatch: [
     { score: 1, title: "很低", description: "外部 JD 关键要求大多不匹配。" },
     { score: 2, title: "偏低", description: "能匹配少量要求，但短板明显。" },
-    { score: 3, title: "一般", description: "能匹配常见要求，但优势不突出。" },
-    { score: 4, title: "较高", description: "能匹配多数目标岗位要求。" },
-    { score: 5, title: "很高", description: "与目标岗位高度契合，竞争力明确。" },
+    { score: 3, title: "凑合能投", description: "能匹配常见要求，但优势不突出。" },
+    { score: 4, title: "挺能打", description: "能匹配多数目标岗位要求。" },
+    { score: 5, title: "高度对口", description: "与目标岗位高度契合，竞争力明确。" },
   ],
   projectExplainability: [
     { score: 1, title: "讲不清", description: "几乎讲不清，主要是内部系统和内部流程。" },
@@ -197,35 +197,35 @@ const ratingCopy: Record<RatingCopyKey, RatingOption[]> = {
   companyTransferability: [
     { score: 1, title: "很弱", description: "强依赖当前公司上下文，换公司价值下降明显。" },
     { score: 2, title: "偏弱", description: "部分能力可迁移，但需要较长适应。" },
-    { score: 3, title: "一般", description: "基础能力可迁移，部分经验公司专用。" },
-    { score: 4, title: "较强", description: "换到同类公司仍容易被认可。" },
-    { score: 5, title: "很强", description: "跨公司复用度高，市场认可清晰。" },
+    { score: 3, title: "能挪窝", description: "基础能力可迁移，部分经验公司专用。" },
+    { score: 4, title: "还能打", description: "换到同类公司仍容易被认可。" },
+    { score: 5, title: "很能打", description: "跨公司复用度高，市场认可清晰。" },
   ],
   industryTransferability: [
     { score: 1, title: "很弱", description: "高度依赖当前行业，跨行业价值很低。" },
     { score: 2, title: "偏弱", description: "跨行业需要明显补课或降级。" },
-    { score: 3, title: "一般", description: "有部分通用能力可迁移。" },
-    { score: 4, title: "较强", description: "跨到相邻行业仍有竞争力。" },
-    { score: 5, title: "很强", description: "能力跨行业通用，选择面很宽。" },
+    { score: 3, title: "能挪窝", description: "有部分通用能力可迁移。" },
+    { score: 4, title: "还能打", description: "跨到相邻行业仍有竞争力。" },
+    { score: 5, title: "很能打", description: "能力跨行业通用，选择面很宽。" },
   ],
   longTermFit: [
     { score: 1, title: "明显不适合", description: "明显不喜欢，不适合长期做。" },
     { score: 2, title: "不太喜欢", description: "不太喜欢，经常内耗。" },
-    { score: 3, title: "一般", description: "不讨厌但也谈不上喜欢。" },
-    { score: 4, title: "比较匹配", description: "比较喜欢，适合当前阶段。" },
-    { score: 5, title: "很匹配", description: "很喜欢，也愿意长期投入。" },
+    { score: 3, title: "凑合能过", description: "不讨厌但也谈不上喜欢。" },
+    { score: 4, title: "挺合", description: "比较喜欢，适合当前阶段。" },
+    { score: 5, title: "很合", description: "很喜欢，也愿意长期投入。" },
   ],
   industryLove: [
     { score: 1, title: "明显不喜欢", description: "对行业缺乏认同，长期做会消耗。" },
     { score: 2, title: "不太喜欢", description: "能做，但兴趣和认同感偏弱。" },
-    { score: 3, title: "一般", description: "不排斥，但也没有明显热情。" },
+    { score: 3, title: "凑合", description: "不排斥，但也没有明显热情。" },
     { score: 4, title: "比较喜欢", description: "认可行业，愿意继续积累。" },
     { score: 5, title: "很喜欢", description: "高度认同行业，愿意长期投入。" },
   ],
   contentLove: [
     { score: 1, title: "明显不喜欢", description: "工作内容让人排斥或持续内耗。" },
     { score: 2, title: "不太喜欢", description: "能完成，但经常缺乏动力。" },
-    { score: 3, title: "一般", description: "不讨厌，但也没有明显兴趣。" },
+    { score: 3, title: "凑合", description: "不讨厌，但也没有明显兴趣。" },
     { score: 4, title: "比较喜欢", description: "大部分内容适合自己。" },
     { score: 5, title: "很喜欢", description: "内容本身有吸引力，愿意持续钻研。" },
   ],
@@ -515,7 +515,7 @@ export default function JobCalculator() {
     setIsCalculating(true);
     setCalculationProgress(0);
     const startedAt = Date.now();
-    const duration = 1500;
+    const duration = 2000;
 
     calculationTimerRef.current = window.setInterval(() => {
       const progress = Math.min(((Date.now() - startedAt) / duration) * 100, 99);
@@ -652,9 +652,9 @@ export default function JobCalculator() {
               <div className="relative">
                 <div className="mx-auto h-16 w-16 animate-spin rounded-full border-4 border-white/20 border-t-emerald-300" />
                 <p className="mt-6 text-center text-xs font-bold tracking-[0.24em] text-emerald-200">正在计算</p>
-                <h1 className="mt-2 text-center text-3xl font-black">正在算这班值不值</h1>
+                <h1 className="mt-2 text-center text-3xl font-black">正在计算发疯性价比</h1>
                 <p className="mt-3 max-w-md text-center text-sm leading-6 text-stone-300">
-                  正在匹配薪酬分位、城市基准和六维评分。
+                  正在计算老板给的钱，够不够买你的命。
                 </p>
                 <div className="mt-6 h-2 overflow-hidden rounded-full bg-white/10">
                   <div
@@ -1008,17 +1008,6 @@ export default function JobCalculator() {
               </div>
             </div>
 
-            <div className="rounded-[1.5rem] bg-emerald-50 p-4">
-              <p className="text-sm font-black text-emerald-950">判决理由</p>
-              <div className="mt-3 space-y-2">
-                {[...result.strengthReasons, ...result.weaknessReasons].map((reason) => (
-                  <p className="text-sm leading-6 text-emerald-900" key={reason}>
-                    {reason}
-                  </p>
-                ))}
-              </div>
-            </div>
-
             <div className="rounded-[1.5rem] bg-orange-50 p-4">
               <div className="flex items-center gap-2 text-sm font-black text-orange-950">
                 <AlertTriangle className="h-4 w-4" />
@@ -1048,12 +1037,6 @@ export default function JobCalculator() {
             <details className="rounded-[1.5rem] border border-stone-200 p-4">
               <summary className="cursor-pointer text-sm font-black">判案依据</summary>
               <div className="mt-3 space-y-3 text-sm leading-6 text-stone-600">
-                {Object.entries(result.confidence).map(([key, item]) => (
-                  <p key={key}>
-                    <span className="font-bold text-stone-950">{dimensionLabels[key as keyof typeof dimensionLabels]}：</span>
-                    置信度{item.level}，{item.reason}
-                  </p>
-                ))}
                 {result.dataNotes.map((note) => (
                   <p key={note}>{note}</p>
                 ))}

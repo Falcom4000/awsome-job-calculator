@@ -555,18 +555,18 @@ export function calculateJobScore(inputs: JobInputs): ScoreResult {
   const warnings: string[] = [];
 
   Object.entries(dimensions).forEach(([key, score]) => {
-    if (score < 40) warnings.push(`${dimensionLabels[key as DimensionKey]}低于 40，是高风险短板。`);
-    else if (score < 60) warnings.push(`${dimensionLabels[key as DimensionKey]}低于 60，需要盯紧。`);
+    if (score < 40) warnings.push(`${dimensionLabels[key as DimensionKey]}已经跌破 40，是这班的高危雷区。`);
+    else if (score < 60) warnings.push(`${dimensionLabels[key as DimensionKey]}低于 60，别装没看见。`);
   });
-  if (dimensions.growth < 60 && dimensions.liquidity < 60) warnings.push("成长性和流动性都偏低，后面可能不好换。");
-  if (dimensions.income >= 80 && dimensions.growth < 60 && dimensions.liquidity < 60) warnings.push("钱给得不错，但成长和退路偏弱，警惕高薪陷阱。");
-  if (dimensions.income >= 80 && dimensions.holding < 60) warnings.push("回报高但舒适度低，可能是高薪高消耗。");
-  if (!isDetailedMode(inputs)) warnings.push("当前是快速评估，结果适合先看方向。");
+  if (dimensions.growth < 60 && dimensions.liquidity < 60) warnings.push("成长和外面的路都偏窄，这班可能越上越锁。");
+  if (dimensions.income >= 80 && dimensions.growth < 60 && dimensions.liquidity < 60) warnings.push("钱给得不错，但成长和退路偏弱，小心高薪陷阱把人焊住。");
+  if (dimensions.income >= 80 && dimensions.holding < 60) warnings.push("钱是给了，但吸命程度也上来了，可能是高薪高消耗。");
+  if (!isDetailedMode(inputs)) warnings.push("当前是快速发疯版，结果适合先看个大方向。");
 
   const suggestions = [
-    total >= 75 ? "先继续上，把最低分那一项补起来。" : "别只看工资，先验证外面有没有更好的解法。",
-    dimensions.holding < 60 ? "先处理工时、通勤、压力、福利或健康损耗，不然很难长期扛。" : "舒适度还可以，把精力放到成长和退路上。",
-    dimensions.liquidity < 65 ? "未来 1-2 个月投一轮简历，看看市场真实反馈。" : "保持外部机会不断线，别只攒公司内部经验。",
+    total >= 75 ? "这班暂时能处，先把最低分那块补一补，别让短板偷偷发烂。" : "别只盯着工资，先去外面试试水，看看有没有更像人的活法。",
+    dimensions.holding < 60 ? "先把工时、通勤、压力这些吸命项压下来，不然迟早被榨干。" : "消耗暂时还扛得住，把精力放到成长和外部选择权上。",
+    dimensions.liquidity < 65 ? "未来 1-2 个月可以投一轮简历，看看有没有人来捞你。" : "外面的路别断，别只攒公司内部限定皮肤。",
   ];
 
   return {
