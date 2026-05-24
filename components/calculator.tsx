@@ -925,7 +925,7 @@ export default function JobCalculator() {
         </form>
         ) : (
           <div className="space-y-6">
-            <div ref={shareCaptureRef} className="space-y-6 bg-[#f4efe4]">
+            <div ref={shareCaptureRef} className="space-y-6">
             <header className={`rounded-[2.5rem] border border-stone-900/10 bg-stone-950 p-7 text-white ${isSharing ? "shadow-none" : "shadow-xl"}`}>
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] text-emerald-100">
