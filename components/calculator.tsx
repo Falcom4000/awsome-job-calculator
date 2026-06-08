@@ -30,7 +30,7 @@ type RatingOption = {
   description: string;
 };
 
-const SHARE_URL = "crazy.work";
+const SHARE_URL = "www.crazy.work";
 
 const ratingThemes = {
   S: {
@@ -694,7 +694,7 @@ export default function JobCalculator() {
       context.font = "700 34px sans-serif";
       context.fillText("扫码测测你的工作疯得值不值", textX, footerY + 78);
       context.fillStyle = "#64748b";
-      context.font = "500 24px sans-serif";
+      context.font = "600 30px sans-serif";
       context.fillText(SHARE_URL, textX, footerY + 120);
 
       const link = document.createElement("a");
