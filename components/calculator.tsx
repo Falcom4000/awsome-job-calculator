@@ -35,35 +35,35 @@ const SHARE_URL = "www.crazy.work";
 const ratingThemes = {
   S: {
     hero: "border-amber-100/36 bg-[radial-gradient(circle_at_82%_0%,rgba(253,224,71,0.66),transparent_36%),radial-gradient(circle_at_18%_18%,rgba(245,158,11,0.34),transparent_32%),linear-gradient(135deg,#3f2405,#b87516_58%,#5a3208)] text-amber-50",
-    badge: "bg-amber-100/22 text-amber-50 ring-1 ring-amber-100/26",
+    badge: "bg-amber-200 text-amber-950 ring-1 ring-amber-50/55",
     grade: "text-amber-100 drop-shadow-[0_0_22px_rgba(252,211,77,0.48)]",
     description: "text-amber-50/78",
     gauge: "text-amber-600",
   },
   A: {
     hero: "border-violet-200/25 bg-[radial-gradient(circle_at_82%_0%,rgba(196,181,253,0.42),transparent_36%),linear-gradient(135deg,#211238,#56308a_62%,#2d1747)] text-violet-50",
-    badge: "bg-violet-200/20 text-violet-50 ring-1 ring-violet-200/24",
+    badge: "bg-violet-200 text-violet-950 ring-1 ring-violet-50/45",
     grade: "text-violet-100 drop-shadow-[0_0_20px_rgba(196,181,253,0.42)]",
     description: "text-violet-50/78",
     gauge: "text-violet-700",
   },
   B: {
     hero: "border-sky-100/30 bg-[radial-gradient(circle_at_82%_0%,rgba(125,211,252,0.48),transparent_36%),linear-gradient(135deg,#123a5f,#3b82c4_62%,#1a4f78)] text-sky-50",
-    badge: "bg-sky-100/18 text-sky-50 ring-1 ring-sky-100/22",
+    badge: "bg-sky-200 text-sky-950 ring-1 ring-sky-50/45",
     grade: "text-sky-100 drop-shadow-[0_0_20px_rgba(125,211,252,0.40)]",
     description: "text-sky-50/76",
     gauge: "text-blue-700",
   },
   C: {
     hero: "border-emerald-100/16 bg-[radial-gradient(circle_at_82%_0%,rgba(187,211,190,0.26),transparent_36%),linear-gradient(135deg,#202b26,#42584d_62%,#29342d)] text-stone-50",
-    badge: "bg-emerald-100/13 text-emerald-50 ring-1 ring-emerald-100/16",
+    badge: "bg-emerald-200 text-emerald-950 ring-1 ring-emerald-50/35",
     grade: "text-[#d4e6d8] drop-shadow-[0_0_16px_rgba(212,230,216,0.26)]",
     description: "text-stone-300",
     gauge: "text-emerald-700",
   },
   D: {
     hero: "border-stone-200/16 bg-[radial-gradient(circle_at_82%_0%,rgba(214,211,209,0.22),transparent_36%),linear-gradient(135deg,#1f1f1f,#3a3936_62%,#252321)] text-stone-50",
-    badge: "bg-stone-100/13 text-stone-100 ring-1 ring-stone-100/16",
+    badge: "bg-stone-200 text-stone-950 ring-1 ring-stone-50/30",
     grade: "text-stone-200 drop-shadow-[0_0_14px_rgba(231,229,228,0.22)]",
     description: "text-stone-300",
     gauge: "text-stone-700",
@@ -1046,7 +1046,7 @@ export default function JobCalculator() {
         ) : (
           <div className="space-y-6">
             <div ref={shareCaptureRef} className="space-y-6">
-            <header className={`rounded-[2.5rem] border p-7 ${resultTheme.hero} ${isSharing ? "shadow-none" : "shadow-xl"}`}>
+            <header className={`rounded-[2.5rem] border p-7 ${resultTheme.hero} ${isSharing ? "shadow-none" : "shadow-[0_22px_48px_rgba(15,23,42,0.22)]"}`}>
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] ${resultTheme.badge}`}>
                   <BriefcaseBusiness className="h-4 w-4" />
@@ -1073,7 +1073,7 @@ export default function JobCalculator() {
                 <div className="rounded-[2rem] bg-stone-950 p-5 text-white">
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-bold text-stone-300">发疯性价比分</p>
-                    <Gauge className={`h-5 w-5 ${resultTheme.gauge}`} />
+                    <Gauge className="h-5 w-5 text-white" />
                   </div>
                   <div className="mt-4 flex items-end gap-2">
                     <span className="text-7xl font-black leading-none">{result.total}</span>
