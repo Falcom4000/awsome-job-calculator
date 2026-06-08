@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, ArrowLeft, BriefcaseBusiness, ChevronRight, Gauge, LineChart, Share2 } from "lucide-react";
+import { AlertTriangle, ArrowLeft, ChevronRight, Gauge, LineChart, Share2 } from "lucide-react";
 import { toPng } from "html-to-image";
 import QRCode from "qrcode";
 import type { ReactNode, FormEvent } from "react";
@@ -695,7 +695,7 @@ export default function JobCalculator() {
       context.font = "700 34px sans-serif";
       context.fillText("扫码测测你的工作疯得值不值", textX, footerY + 78);
       context.fillStyle = "#64748b";
-      context.font = "600 30px sans-serif";
+      context.font = "700 36px sans-serif";
       context.fillText(SHARE_DISPLAY_URL, textX, footerY + 120);
 
       const link = document.createElement("a");
@@ -1048,13 +1048,7 @@ export default function JobCalculator() {
           <div className="space-y-6">
             <div ref={shareCaptureRef} className="space-y-6">
             <header className={`rounded-[2.5rem] border p-7 ${resultTheme.hero} ${isSharing ? "shadow-none" : "shadow-[0_22px_48px_rgba(15,23,42,0.22)]"}`}>
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.22em] ${resultTheme.badge}`}>
-                  <BriefcaseBusiness className="h-4 w-4" />
-                  疯值报告
-                </div>
-              </div>
-              <div className="mt-5">
+              <div>
                 <div>
                   <div className="flex items-center gap-5 md:gap-6">
                     <div className={`flex h-28 w-24 shrink-0 items-center justify-center md:h-36 md:w-32 ${resultTheme.grade}`}>
