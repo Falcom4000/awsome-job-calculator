@@ -624,11 +624,11 @@ function getTotalPercentile(total: number) {
 
 function getRating(total: number) {
   const percentile = getTotalPercentile(total);
-  if (percentile >= 90) return { grade: "S", title: "疯得物超所值", description: "钱到位、成长有、消耗低，这种班建议供起来。", percentile };
-  if (percentile >= 70) return { grade: "A", title: "疯得值回票价", description: "有短板，但总体不坑，属于打工人可以暂时握手言和的班。", percentile };
-  if (percentile >= 30) return { grade: "B", title: "边疯边苟着", description: "不是梦中情班，但还能边疯边苟，别把它当人生归宿。", percentile };
+  if (percentile >= 90) return { grade: "S", title: "疯得值回票价", description: "钱给到位，成长也在线，这点疯没白发。", percentile };
+  if (percentile >= 70) return { grade: "A", title: "疯得还算体面", description: "有槽点，但整体能处，偶尔疯一阵也说得过去。", percentile };
+  if (percentile >= 30) return { grade: "B", title: "疯得先苟着", description: "不是梦中情班，但还能边疯边苟，别把它当人生归宿。", percentile };
   if (percentile >= 10) return { grade: "C", title: "疯得开始掉血", description: "这班已经开始耗你了，继续疯可以，但要边回血边找路。", percentile };
-  return { grade: "D", title: "疯得不值当", description: "再坚持上班，有可能真疯了。", percentile };
+  return { grade: "D", title: "疯得不值当", description: "再疯下去就不是上班了，是拿自己给公司续命。", percentile };
 }
 
 function getOptionValueDescription(score: number) {

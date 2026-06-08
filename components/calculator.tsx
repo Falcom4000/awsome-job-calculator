@@ -34,7 +34,7 @@ const SHARE_URL = "crazy.work";
 
 const ratingThemes = {
   S: {
-    hero: "border-amber-100/30 bg-[radial-gradient(circle_at_82%_0%,rgba(252,211,77,0.46),transparent_36%),linear-gradient(135deg,#2a1705,#70410d_62%,#3a2108)] text-amber-50",
+    hero: "border-amber-100/36 bg-[radial-gradient(circle_at_82%_0%,rgba(253,224,71,0.66),transparent_36%),radial-gradient(circle_at_18%_18%,rgba(245,158,11,0.34),transparent_32%),linear-gradient(135deg,#3f2405,#b87516_58%,#5a3208)] text-amber-50",
     badge: "bg-amber-100/22 text-amber-50 ring-1 ring-amber-100/26",
     grade: "text-amber-100 drop-shadow-[0_0_22px_rgba(252,211,77,0.48)]",
     description: "text-amber-50/78",
@@ -48,7 +48,7 @@ const ratingThemes = {
     gauge: "text-violet-700",
   },
   B: {
-    hero: "border-sky-100/25 bg-[radial-gradient(circle_at_82%_0%,rgba(125,211,252,0.38),transparent_36%),linear-gradient(135deg,#0b1d34,#245b93_62%,#102845)] text-sky-50",
+    hero: "border-sky-100/30 bg-[radial-gradient(circle_at_82%_0%,rgba(125,211,252,0.48),transparent_36%),linear-gradient(135deg,#123a5f,#3b82c4_62%,#1a4f78)] text-sky-50",
     badge: "bg-sky-100/18 text-sky-50 ring-1 ring-sky-100/22",
     grade: "text-sky-100 drop-shadow-[0_0_20px_rgba(125,211,252,0.40)]",
     description: "text-sky-50/76",
@@ -753,6 +753,7 @@ export default function JobCalculator() {
           </header>
 
           <section className="rounded-[2rem] border border-stone-200 bg-white/80 p-3 shadow-sm backdrop-blur">
+            <p className="mb-2 px-2 text-sm font-black text-stone-700">选择模式</p>
             <div className="grid grid-cols-2 gap-2 sm:gap-3">
               {[
                 ["brief", "快速发疯", "少填一点，先看这班值不值"],
