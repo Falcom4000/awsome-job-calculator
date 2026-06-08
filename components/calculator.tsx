@@ -110,18 +110,18 @@ const genericRatingOptions: RatingOption[] = [
 
 const ratingCopy: Record<RatingCopyKey, RatingOption[]> = {
   stress: [
-    { score: 1, title: "很窒息", description: "经常焦虑，下班也缓不过来。" },
-    { score: 2, title: "偏顶", description: "能扛，但恢复成本不低。" },
-    { score: 3, title: "还行", description: "忙归忙，总体还能接受。" },
-    { score: 4, title: "比较稳", description: "大多数时候节奏可控。" },
-    { score: 5, title: "很松弛", description: "压力低，基本不内耗。" },
+    { score: 1, title: "已经报警", description: "周末就开始焦虑，想到上班就明显难受。" },
+    { score: 2, title: "有点胸闷", description: "能去，但心理负担不小，恢复成本偏高。" },
+    { score: 3, title: "还能上桌", description: "会烦，但还没到明显失控。" },
+    { score: 4, title: "基本稳住", description: "偶尔紧绷，大多数时候能正常面对。" },
+    { score: 5, title: "稳如老僧", description: "想到上班也没太大波澜，精神负担低。" },
   ],
   benefitsLevel: [
-    { score: 1, title: "几乎裸奔", description: "保障、假期、补贴都明显不足。" },
-    { score: 2, title: "偏少", description: "基础有一点，但整体不香。" },
-    { score: 3, title: "正常", description: "常规配置，不拖后腿。" },
-    { score: 4, title: "挺舒服", description: "保障完整，还有一些实用福利。" },
-    { score: 5, title: "真香", description: "福利扎实，确实能提升体验。" },
+    { score: 1, title: "基本裸奔", description: "保障、假期、补贴都明显不足。" },
+    { score: 2, title: "勉强遮风", description: "有一点基础保障，但整体不太体面。" },
+    { score: 3, title: "普通人类", description: "常规配置，不拖后腿。" },
+    { score: 4, title: "有点照顾", description: "保障比较完整，也有实用福利。" },
+    { score: 5, title: "像个人了", description: "福利扎实，确实能降低打工损耗。" },
   ],
   atmosphere: [
     { score: 1, title: "氛围很差", description: "有明显 PUA、甩锅、内斗或不尊重。" },
@@ -166,18 +166,18 @@ const ratingCopy: Record<RatingCopyKey, RatingOption[]> = {
     { score: 5, title: "很稳", description: "公司、团队和岗位都比较稳。" },
   ],
   roleCore: [
-    { score: 1, title: "很边缘", description: "主要做杂活、支持、低价值维护。" },
-    { score: 2, title: "偏边缘", description: "对业务有帮助，但不是关键环节。" },
-    { score: 3, title: "中等", description: "参与重要流程，但不是核心决策或核心产出。" },
-    { score: 4, title: "较核心", description: "负责关键模块，对业务结果有明显影响。" },
-    { score: 5, title: "非常核心", description: "直接参与核心收入、产品、策略或关键决策。" },
+    { score: 1, title: "谁都能顶", description: "离开你基本不卡，别人很快能接上。" },
+    { score: 2, title: "会慢一点", description: "离开你会有影响，但不算关键卡点。" },
+    { score: 3, title: "会卡一阵", description: "你参与重要流程，换人需要适应。" },
+    { score: 4, title: "明显卡壳", description: "关键模块或结果依赖你，短期不好绕开。" },
+    { score: 5, title: "很难绕开", description: "离开你会直接影响核心收入、产品或决策。" },
   ],
   replacementDifficulty: [
-    { score: 1, title: "很容易", description: "岗位标准化强，替换成本很低。" },
-    { score: 2, title: "偏容易", description: "有一定门槛，但外部替代人选较多。" },
-    { score: 3, title: "中等", description: "需要业务熟悉度或经验，但不是不可替代。" },
-    { score: 4, title: "较难", description: "能力、经验或上下文积累有明显壁垒。" },
-    { score: 5, title: "很难", description: "短期很难找到同等产出的人替代。" },
+    { score: 1, title: "一键复制", description: "岗位标准化强，换人成本很低。" },
+    { score: 2, title: "不算难找", description: "有一点门槛，但外部替代人选不少。" },
+    { score: 3, title: "需要适应", description: "要熟悉业务或经验，但不是复制不了。" },
+    { score: 4, title: "不好复制", description: "能力、经验或上下文积累有明显壁垒。" },
+    { score: 5, title: "复制不了", description: "短期很难找到同等产出的人替代。" },
   ],
   criticalResourceControl: [
     { score: 1, title: "纯执行", description: "只接任务，不掌握关键上下文。" },
@@ -194,11 +194,11 @@ const ratingCopy: Record<RatingCopyKey, RatingOption[]> = {
     { score: 5, title: "成长很快", description: "明显进入更高水平或新阶段。" },
   ],
   futureGrowth: [
-    { score: 1, title: "看不到", description: "基本看不到成长空间。" },
-    { score: 2, title: "有限", description: "成长空间有限，可能很快重复。" },
-    { score: 3, title: "还有一些", description: "还有一些成长，但不确定。" },
-    { score: 4, title: "有点盼头", description: "成长空间较好，有明确可学的东西。" },
-    { score: 5, title: "盼头很大", description: "未来一年大概率继续显著升值。" },
+    { score: 1, title: "只会更会忍", description: "未来一年主要增加耐受力，市场价值不明显。" },
+    { score: 2, title: "升值有限", description: "能学一点，但很快会进入重复。" },
+    { score: 3, title: "有些变化", description: "还有成长空间，但确定性一般。" },
+    { score: 4, title: "会更值钱", description: "有明确可学的能力或项目，价值会提升。" },
+    { score: 5, title: "明显升值", description: "未来一年大概率进入更高能力或履历阶段。" },
   ],
   mentoring: [
     { score: 1, title: "没人带", description: "基本靠自己摸索，反馈和指导很少。" },
@@ -208,11 +208,11 @@ const ratingCopy: Record<RatingCopyKey, RatingOption[]> = {
     { score: 5, title: "大佬带飞", description: "身边有高水平的人带，成长速度明显提升。" },
   ],
   promotionClarity: [
-    { score: 1, title: "看不见", description: "完全不知道下一步怎么升。" },
-    { score: 2, title: "很模糊", description: "偶尔画饼，但标准和路径不清楚。" },
-    { score: 3, title: "有点影子", description: "大概知道方向，但不够确定。" },
-    { score: 4, title: "比较清楚", description: "有明确能力要求、项目机会或晋升路径。" },
-    { score: 5, title: "路很明", description: "下一阶段目标、标准和机会都比较清晰。" },
+    { score: 1, title: "完全看不见", description: "不知道下一步往哪升，也不知道标准是什么。" },
+    { score: 2, title: "只有大饼", description: "听过方向，但路径和标准很模糊。" },
+    { score: 3, title: "大概有路", description: "知道一些方向，但机会和要求还不够确定。" },
+    { score: 4, title: "路径清楚", description: "下一步需要什么能力、项目或机会比较明确。" },
+    { score: 5, title: "升级路线明确", description: "目标、标准、窗口期都比较清晰。" },
   ],
   feedbackQuality: [
     { score: 1, title: "没人反馈", description: "做完就完了，基本没人帮你纠偏。" },
@@ -229,32 +229,32 @@ const ratingCopy: Record<RatingCopyKey, RatingOption[]> = {
     { score: 5, title: "复利拉满", description: "每一轮发疯都在抬高你的市场价值。" },
   ],
   resumeValue: [
-    { score: 1, title: "几乎不加分", description: "经历难以对外解释，简历价值弱。" },
-    { score: 2, title: "加分有限", description: "能写一些，但市场识别度不高。" },
-    { score: 3, title: "凑合能写", description: "能支撑基本履历，但亮点不突出。" },
-    { score: 4, title: "能镀点金", description: "有明确成果、指标或难度。" },
-    { score: 5, title: "很能镀金", description: "对外非常好讲，能明显提升市场定价。" },
+    { score: 1, title: "明显加灰", description: "写上去也难解释价值，甚至显得经历发散。" },
+    { score: 2, title: "灰多金少", description: "能写一点，但亮点和市场识别度都偏弱。" },
+    { score: 3, title: "不脏不亮", description: "能支撑基本履历，但不算醒目。" },
+    { score: 4, title: "能镀点金", description: "有明确成果、指标或难度，写出来有加分。" },
+    { score: 5, title: "镀金明显", description: "对外很好讲，能明显提升市场定价。" },
   ],
   externalOpportunities: [
-    { score: 1, title: "几乎没有", description: "几乎没人找，也很难匹配外部岗位。" },
-    { score: 2, title: "偶尔有", description: "偶尔有机会，但质量一般或匹配度低。" },
-    { score: 3, title: "有一些", description: "有一些机会，但不确定能否拿到好 offer。" },
+    { score: 1, title: "没人路过", description: "几乎没人找，也很难匹配外部岗位。" },
+    { score: 2, title: "偶尔有人看", description: "偶尔有机会，但质量或匹配度一般。" },
+    { score: 3, title: "有人递绳", description: "有一些机会，但好 offer 不确定。" },
     { score: 4, title: "有人来捞", description: "能匹配不少不错岗位。" },
-    { score: 5, title: "抢着来捞", description: "容易获得高质量机会。" },
+    { score: 5, title: "很多人捞", description: "外部选择面宽，容易获得高质量机会。" },
   ],
   jdMatch: [
-    { score: 1, title: "很低", description: "外部 JD 关键要求大多不匹配。" },
-    { score: 2, title: "偏低", description: "能匹配少量要求，但短板明显。" },
-    { score: 3, title: "凑合能投", description: "能匹配常见要求，但优势不突出。" },
-    { score: 4, title: "挺能打", description: "能匹配多数目标岗位要求。" },
-    { score: 5, title: "高度对口", description: "与目标岗位高度契合，竞争力明确。" },
+    { score: 1, title: "完全不像", description: "目标岗位关键要求大多对不上。" },
+    { score: 2, title: "有点牵强", description: "能蹭上一些要求，但短板明显。" },
+    { score: 3, title: "勉强像", description: "常见要求能对上，优势还不突出。" },
+    { score: 4, title: "挺像自己人", description: "多数目标岗位要求都能匹配。" },
+    { score: 5, title: "很对口", description: "和目标岗位高度契合，竞争力明确。" },
   ],
   projectExplainability: [
-    { score: 1, title: "看不懂", description: "成果太内部，外面很难理解价值。" },
-    { score: 2, title: "有点费劲", description: "能解释，但需要很多背景铺垫。" },
-    { score: 3, title: "基本能懂", description: "外部能听懂大概价值，但亮点不够尖。" },
-    { score: 4, title: "挺好懂", description: "成果、指标和难度都比较容易讲清。" },
-    { score: 5, title: "一听就懂", description: "外部很容易理解价值，也容易认可含金量。" },
+    { score: 1, title: "像黑话", description: "成果太内部，外面很难理解价值。" },
+    { score: 2, title: "得铺半天", description: "能解释，但需要很多背景铺垫。" },
+    { score: 3, title: "大概能懂", description: "外部能听懂大概价值，但亮点不够尖。" },
+    { score: 4, title: "挺好讲", description: "成果、指标和难度都比较容易讲清。" },
+    { score: 5, title: "一眼懂", description: "外部很容易理解价值，也容易认可含金量。" },
   ],
   companyTransferability: [
     { score: 1, title: "很弱", description: "强依赖当前公司上下文，换公司价值下降明显。" },
@@ -271,32 +271,32 @@ const ratingCopy: Record<RatingCopyKey, RatingOption[]> = {
     { score: 5, title: "很能打", description: "能力跨行业通用，选择面很宽。" },
   ],
   longTermFit: [
-    { score: 1, title: "明显不适合", description: "明显不喜欢，不适合长期做。" },
-    { score: 2, title: "不太喜欢", description: "不太喜欢，经常内耗。" },
-    { score: 3, title: "凑合能过", description: "不讨厌但也谈不上喜欢。" },
-    { score: 4, title: "挺合", description: "比较喜欢，适合当前阶段。" },
-    { score: 5, title: "很合", description: "很喜欢，也愿意长期投入。" },
+    { score: 1, title: "明显不合", description: "和你的长期方向明显冲突，越做越偏。" },
+    { score: 2, title: "有点偏路", description: "能做，但和长期目标关系不大。" },
+    { score: 3, title: "暂时能接", description: "不算冲突，但也不是特别顺路。" },
+    { score: 4, title: "比较合", description: "和当前阶段、长期方向比较匹配。" },
+    { score: 5, title: "很匹配", description: "明显服务于你的长期路线，值得投入。" },
   ],
   industryLove: [
-    { score: 1, title: "明显不喜欢", description: "对行业缺乏认同，长期做会消耗。" },
-    { score: 2, title: "不太喜欢", description: "能做，但兴趣和认同感偏弱。" },
-    { score: 3, title: "凑合", description: "不排斥，但也没有明显热情。" },
-    { score: 4, title: "比较喜欢", description: "认可行业，愿意继续积累。" },
-    { score: 5, title: "很喜欢", description: "高度认同行业，愿意长期投入。" },
+    { score: 1, title: "很断电", description: "对行业缺乏认同，长期做会消耗。" },
+    { score: 2, title: "有点没电", description: "能做，但兴趣和认同感偏弱。" },
+    { score: 3, title: "电量一般", description: "不排斥，但也没有明显热情。" },
+    { score: 4, title: "挺来电", description: "认可行业，愿意继续积累。" },
+    { score: 5, title: "很有电", description: "高度认同行业，愿意长期投入。" },
   ],
   contentLove: [
-    { score: 1, title: "明显不喜欢", description: "工作内容让人排斥或持续内耗。" },
-    { score: 2, title: "不太喜欢", description: "能完成，但经常缺乏动力。" },
-    { score: 3, title: "凑合", description: "不讨厌，但也没有明显兴趣。" },
-    { score: 4, title: "比较喜欢", description: "大部分内容适合自己。" },
-    { score: 5, title: "很喜欢", description: "内容本身有吸引力，愿意持续钻研。" },
+    { score: 1, title: "想立刻关机", description: "工作内容让人排斥或持续内耗。" },
+    { score: 2, title: "不太想开", description: "能完成，但经常缺乏动力。" },
+    { score: 3, title: "勉强能开", description: "不讨厌，但也没有明显兴趣。" },
+    { score: 4, title: "愿意开干", description: "大部分内容适合自己。" },
+    { score: 5, title: "主动上头", description: "内容本身有吸引力，愿意持续钻研。" },
   ],
   extraLearningWillingness: [
-    { score: 1, title: "不愿意", description: "完全不想为这条路额外投入。" },
-    { score: 2, title: "偏低", description: "只有被动需要时才会学习。" },
-    { score: 3, title: "一般", description: "愿意做必要学习，但主动性有限。" },
-    { score: 4, title: "较愿意", description: "愿意持续补能力、做积累。" },
-    { score: 5, title: "很愿意", description: "愿意长期主动投入，形成复利。" },
+    { score: 1, title: "只想下线", description: "完全不想为这条路额外投入。" },
+    { score: 2, title: "被动上线", description: "只有被要求时才会学习。" },
+    { score: 3, title: "必要时练", description: "愿意做必要学习，但主动性有限。" },
+    { score: 4, title: "愿意加练", description: "愿意持续补能力、做积累。" },
+    { score: 5, title: "主动刷熟练度", description: "愿意长期主动投入，形成复利。" },
   ],
   valueRecognition: [
     { score: 1, title: "隐形牛马", description: "活干了很多，但像没在组织里出现过。" },
@@ -780,19 +780,19 @@ export default function JobCalculator() {
 
           <Section eyebrow="第一步" title="基础信息">
             <SelectField
-              label="这份工作在哪座城市消耗你的电量？"
+              label="在哪打工"
               options={Object.entries(cityBenchmarks).map(([value, item]) => ({ value: value as CityKey, label: item.label }))}
               value={inputs.city}
               onChange={(value) => setValue("city", value)}
             />
             <SelectField
-              label="你现在掉进了哪个行业坑？"
+              label="在哪个坑"
               options={Object.entries(industryBenchmarks).map(([value, item]) => ({ value: value as IndustryKey, label: item.label }))}
               value={inputs.industry}
               onChange={(value) => setValue("industry", value)}
             />
             <SelectField<JobLevelInput>
-              label="你现在在坑里站到哪一层了？"
+              label="坑位等级"
               options={jobLevelOptions}
               value={inputs.jobLevel}
               onChange={(value) => setValue("jobLevel", value)}
@@ -800,21 +800,21 @@ export default function JobCalculator() {
             {inputs.mode === "detailed" ? (
               <>
                 <SelectField
-                  label="你带着什么学历 buff 下副本？"
+                  label="学历 buff"
                   options={educationOptions.map((item) => ({ value: item, label: item }))}
                   value={inputs.education}
                   onChange={(value) => setValue("education", value)}
                 />
-                <NumberField label="你的职场血条已经用了多少岁？" suffix="岁" value={inputs.age} onChange={(value) => setValue("age", value)} />
-                <NumberField label="你已经在工位上修炼了几年？" suffix="年" value={inputs.experienceYears} onChange={(value) => setValue("experienceYears", value)} />
+                <NumberField label="打工人年龄" suffix="岁" value={inputs.age} onChange={(value) => setValue("age", value)} />
+                <NumberField label="打工年限" suffix="年" value={inputs.experienceYears} onChange={(value) => setValue("experienceYears", value)} />
                 <SelectField
-                  label="你每天主要被哪类活按住？"
+                  label="具体坑位"
                   options={Object.entries(roleBenchmarks).map(([value, item]) => ({ value: value as RoleKey, label: item.label }))}
                   value={inputs.role}
                   onChange={(value) => setValue("role", value)}
                 />
                 <SelectField<EnterpriseNatureInput>
-                  label="这家公司是哪种江湖门派？"
+                  label="公司段位"
                   options={enterpriseNatureOptions}
                   value={inputs.enterpriseNature}
                   onChange={(value) => setValue("enterpriseNature", value)}
@@ -825,14 +825,14 @@ export default function JobCalculator() {
 
           <Section eyebrow="第二步" title="钱给够没">
             <NumberField
-              label={inputs.mode === "detailed" ? "老板一年实际往你卡里砸多少现金？" : "老板一年总共给你画了多少饼和钱？"}
+              label={inputs.mode === "detailed" ? "税前总包：现金部分" : "税前总包"}
               suffix="元/年"
               value={inputs.annualCashIncome}
               onChange={(value) => setValue("annualCashIncome", value)}
             />
             {inputs.mode === "detailed" ? (
               <NumberField
-                label="股票期权这些远方的大饼，一年先按多少算？"
+                label="税前总包：股权/期权年化"
                 suffix="元/年"
                 value={inputs.annualEquityIncome}
                 onChange={(value) => setValue("annualEquityIncome", value)}
@@ -905,7 +905,7 @@ export default function JobCalculator() {
 
           <Section eyebrow="第四步" title="这饭碗稳不稳">
             <SelectField<CompanySize>
-              label="这家公司是航母、木筏，还是纸糊的？"
+              label="公司体量"
               options={[
                 { value: "large", label: "大公司" },
                 { value: "medium", label: "中型公司" },
@@ -984,7 +984,7 @@ export default function JobCalculator() {
               <>
                 <RatingField label="回头看过去半年，你是升级了，还是只是老了？" low="只是老了" high="明显升级" copyKey="pastGrowth" value={inputs.pastGrowth} onChange={(value) => setValue("pastGrowth", value)} />
                 <RatingField label="想象一年后的自己，会更值钱，还是更会忍？" low="只会忍" high="更值钱" copyKey="futureGrowth" value={inputs.futureGrowth} onChange={(value) => setValue("futureGrowth", value)} />
-                <RatingField label="你知道下一关往哪打吗？" low="地图全黑" high="路线清楚" copyKey="promotionClarity" value={inputs.promotionClarity} onChange={(value) => setValue("promotionClarity", value)} />
+                <RatingField label="你看得清下一步该怎么升吗？" low="看不见路" high="路线清楚" copyKey="promotionClarity" value={inputs.promotionClarity} onChange={(value) => setValue("promotionClarity", value)} />
                 <RatingField label="身边有没有人能把你从坑里往上拽一把？" low="没人管" high="有人带飞" copyKey="mentoring" value={inputs.mentoring} onChange={(value) => setValue("mentoring", value)} />
                 <RatingField label="你做完事之后，收到的是反馈还是空气？" low="全是空气" high="反馈很准" copyKey="feedbackQuality" value={inputs.feedbackQuality} onChange={(value) => setValue("feedbackQuality", value)} />
                 <RatingField label="你现在做的事，是资产，还是一次性燃料？" low="烧完就没" high="越烧越值钱" copyKey="compoundingValue" value={inputs.compoundingValue} onChange={(value) => setValue("compoundingValue", value)} />
@@ -992,9 +992,9 @@ export default function JobCalculator() {
             ) : (
               <>
                 <RatingField label="想象一年后的自己，会更值钱，还是更会忍？" low="只会忍" high="更值钱" copyKey="futureGrowth" value={inputs.futureGrowth} onChange={(value) => setValue("futureGrowth", value)} />
-                <RatingField label="你知道下一关往哪打吗？" low="地图全黑" high="路线清楚" copyKey="promotionClarity" value={inputs.promotionClarity} onChange={(value) => setValue("promotionClarity", value)} />
+                <RatingField label="你看得清下一步该怎么升吗？" low="看不见路" high="路线清楚" copyKey="promotionClarity" value={inputs.promotionClarity} onChange={(value) => setValue("promotionClarity", value)} />
                 <RatingField label="外面有没有人愿意来捞你出坑？" low="没人路过" high="很多人捞" copyKey="externalOpportunities" value={inputs.externalOpportunities} onChange={(value) => setValue("externalOpportunities", value)} />
-                <RatingField label="这份工作是在送你去目的地，还是带你绕远路？" low="越走越偏" high="正好顺路" copyKey="longTermFit" value={inputs.longTermFit} onChange={(value) => setValue("longTermFit", value)} />
+                <RatingField label="长期路线合不合" low="不适合" high="很匹配" copyKey="longTermFit" value={inputs.longTermFit} onChange={(value) => setValue("longTermFit", value)} />
                 <RatingField label="每天做这些事，你是愿意打开电脑，还是想立刻关机？" low="想关机" high="愿意开干" copyKey="contentLove" value={inputs.contentLove} onChange={(value) => setValue("contentLove", value)} />
               </>
             )}
@@ -1020,7 +1020,7 @@ export default function JobCalculator() {
 
           {inputs.mode === "detailed" ? (
             <Section eyebrow="第七步" title="你和这班八字合不合">
-              <RatingField label="这份工作是在送你去目的地，还是带你绕远路？" low="越走越偏" high="正好顺路" copyKey="longTermFit" value={inputs.longTermFit} onChange={(value) => setValue("longTermFit", value)} />
+              <RatingField label="长期路线合不合" low="不适合" high="很匹配" copyKey="longTermFit" value={inputs.longTermFit} onChange={(value) => setValue("longTermFit", value)} />
               <RatingField label="这个行业让你有电，还是让你断电？" low="很断电" high="挺来电" copyKey="industryLove" value={inputs.industryLove} onChange={(value) => setValue("industryLove", value)} />
               <RatingField label="每天做这些事，你是愿意打开电脑，还是想立刻关机？" low="想关机" high="愿意开干" copyKey="contentLove" value={inputs.contentLove} onChange={(value) => setValue("contentLove", value)} />
               <RatingField label="为了这条路，你会主动加练，还是只想下线？" low="只想下线" high="愿意加练" copyKey="extraLearningWillingness" value={inputs.extraLearningWillingness} onChange={(value) => setValue("extraLearningWillingness", value)} />
