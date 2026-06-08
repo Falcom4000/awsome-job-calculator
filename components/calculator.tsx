@@ -30,7 +30,8 @@ type RatingOption = {
   description: string;
 };
 
-const SHARE_URL = "www.crazy.work";
+const SHARE_DISPLAY_URL = "www.crazy.work";
+const SHARE_QR_URL = "https://www.crazy.work";
 
 const ratingThemes = {
   S: {
@@ -633,7 +634,7 @@ export default function JobCalculator() {
           cacheBust: true,
           pixelRatio: 2,
         }),
-        QRCode.toDataURL(SHARE_URL, {
+        QRCode.toDataURL(SHARE_QR_URL, {
           margin: 1,
           width: 240,
           color: {
@@ -695,7 +696,7 @@ export default function JobCalculator() {
       context.fillText("扫码测测你的工作疯得值不值", textX, footerY + 78);
       context.fillStyle = "#64748b";
       context.font = "600 30px sans-serif";
-      context.fillText(SHARE_URL, textX, footerY + 120);
+      context.fillText(SHARE_DISPLAY_URL, textX, footerY + 120);
 
       const link = document.createElement("a");
       link.href = canvas.toDataURL("image/png");
