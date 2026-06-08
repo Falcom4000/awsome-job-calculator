@@ -951,40 +951,44 @@ export default function JobCalculator() {
             <RatingField label="饭碗安全感" low="不安全" high="很安全" copyKey="safetyFeeling" value={inputs.safetyFeeling} onChange={(value) => setValue("safetyFeeling", value)} />
           </Section>
 
-          <Section eyebrow="第五步" title="这班有没有盼头">
-            <RatingField label="过去半年有没有变强" low="停滞" high="变强很多" copyKey="pastGrowth" value={inputs.pastGrowth} onChange={(value) => setValue("pastGrowth", value)} />
-            <RatingField label="未来一年有没有盼头" low="有限" high="空间大" copyKey="futureGrowth" value={inputs.futureGrowth} onChange={(value) => setValue("futureGrowth", value)} />
-            <RatingField label="有没有清晰上升通道" low="看不见" high="很清楚" copyKey="promotionClarity" value={inputs.promotionClarity} onChange={(value) => setValue("promotionClarity", value)} />
+          <Section eyebrow="第五步" title={inputs.mode === "detailed" ? "这班有没有盼头" : "这班有没有盼头，外面还有没有路"}>
             {inputs.mode === "detailed" ? (
               <>
+                <RatingField label="过去半年有没有变强" low="停滞" high="变强很多" copyKey="pastGrowth" value={inputs.pastGrowth} onChange={(value) => setValue("pastGrowth", value)} />
+                <RatingField label="未来一年有没有盼头" low="有限" high="空间大" copyKey="futureGrowth" value={inputs.futureGrowth} onChange={(value) => setValue("futureGrowth", value)} />
+                <RatingField label="有没有清晰上升通道" low="看不见" high="很清楚" copyKey="promotionClarity" value={inputs.promotionClarity} onChange={(value) => setValue("promotionClarity", value)} />
                 <RatingField label="有没有大佬带飞" low="没人带" high="学得快" copyKey="mentoring" value={inputs.mentoring} onChange={(value) => setValue("mentoring", value)} />
                 <RatingField label="有没有高质量反馈" low="没人反馈" high="反馈很准" copyKey="feedbackQuality" value={inputs.feedbackQuality} onChange={(value) => setValue("feedbackQuality", value)} />
                 <RatingField label="做的事有没有复利" low="一次性杂活" high="越做越值钱" copyKey="compoundingValue" value={inputs.compoundingValue} onChange={(value) => setValue("compoundingValue", value)} />
               </>
-            ) : null}
-          </Section>
-
-          <Section eyebrow="第六步" title="外面还有没有路">
-            <RatingField label="有没有人来捞你" low="很少" high="很多" copyKey="externalOpportunities" value={inputs.externalOpportunities} onChange={(value) => setValue("externalOpportunities", value)} />
-            <RatingField label="目标岗位配不配你" low="低" high="高" copyKey="jdMatch" value={inputs.jdMatch} onChange={(value) => setValue("jdMatch", value)} />
-            <RatingField label="简历能不能镀金" low="弱" high="强" copyKey="resumeValue" value={inputs.resumeValue} onChange={(value) => setValue("resumeValue", value)} />
-            {inputs.mode === "detailed" ? (
+            ) : (
               <>
-                <RatingField
-                  label="成果能不能被外面看懂"
-                  low="看不懂"
-                  high="很好懂"
-                  copyKey="projectExplainability"
-                  value={inputs.projectExplainability}
-                  onChange={(value) => setValue("projectExplainability", value)}
-                />
-                <RatingField label="换家公司还能不能打" low="弱" high="强" copyKey="companyTransferability" value={inputs.companyTransferability} onChange={(value) => setValue("companyTransferability", value)} />
-                <RatingField label="换个行业还能不能活" low="弱" high="强" copyKey="industryTransferability" value={inputs.industryTransferability} onChange={(value) => setValue("industryTransferability", value)} />
+                <RatingField label="未来一年有没有盼头" low="有限" high="空间大" copyKey="futureGrowth" value={inputs.futureGrowth} onChange={(value) => setValue("futureGrowth", value)} />
+                <RatingField label="有没有清晰上升通道" low="看不见" high="很清楚" copyKey="promotionClarity" value={inputs.promotionClarity} onChange={(value) => setValue("promotionClarity", value)} />
+                <RatingField label="有没有人来捞你" low="很少" high="很多" copyKey="externalOpportunities" value={inputs.externalOpportunities} onChange={(value) => setValue("externalOpportunities", value)} />
               </>
-            ) : null}
+            )}
           </Section>
 
-          <Section eyebrow="第七步" title="你和这班八字合不合">
+          {inputs.mode === "detailed" ? (
+            <Section eyebrow="第六步" title="外面还有没有路">
+              <RatingField label="有没有人来捞你" low="很少" high="很多" copyKey="externalOpportunities" value={inputs.externalOpportunities} onChange={(value) => setValue("externalOpportunities", value)} />
+              <RatingField label="目标岗位配不配你" low="低" high="高" copyKey="jdMatch" value={inputs.jdMatch} onChange={(value) => setValue("jdMatch", value)} />
+              <RatingField label="简历能不能镀金" low="弱" high="强" copyKey="resumeValue" value={inputs.resumeValue} onChange={(value) => setValue("resumeValue", value)} />
+              <RatingField
+                label="成果能不能被外面看懂"
+                low="看不懂"
+                high="很好懂"
+                copyKey="projectExplainability"
+                value={inputs.projectExplainability}
+                onChange={(value) => setValue("projectExplainability", value)}
+              />
+              <RatingField label="换家公司还能不能打" low="弱" high="强" copyKey="companyTransferability" value={inputs.companyTransferability} onChange={(value) => setValue("companyTransferability", value)} />
+              <RatingField label="换个行业还能不能活" low="弱" high="强" copyKey="industryTransferability" value={inputs.industryTransferability} onChange={(value) => setValue("industryTransferability", value)} />
+            </Section>
+          ) : null}
+
+          <Section eyebrow={inputs.mode === "detailed" ? "第七步" : "第六步"} title="你和这班八字合不合">
             <RatingField label="长期路线合不合" low="不适合" high="很匹配" copyKey="longTermFit" value={inputs.longTermFit} onChange={(value) => setValue("longTermFit", value)} />
             <RatingField label="对这个行业满意吗" low="不喜欢" high="喜欢" copyKey="industryLove" value={inputs.industryLove} onChange={(value) => setValue("industryLove", value)} />
             <RatingField label="对工作内容满意吗" low="不喜欢" high="喜欢" copyKey="contentLove" value={inputs.contentLove} onChange={(value) => setValue("contentLove", value)} />
