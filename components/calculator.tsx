@@ -1021,7 +1021,7 @@ export default function JobCalculator() {
                   疯值报告
                 </div>
               </div>
-              <div className="mt-5 grid gap-6 md:grid-cols-[minmax(0,1fr)_260px] md:items-center">
+              <div className="mt-5">
                 <div>
                   <div className="flex items-center gap-5 md:gap-6">
                     <div className={`flex h-28 w-24 shrink-0 items-center justify-center md:h-36 md:w-32 ${resultTheme.grade}`}>
@@ -1033,42 +1033,26 @@ export default function JobCalculator() {
                     </div>
                   </div>
                 </div>
-                <div className="rounded-[2rem] bg-white p-5 text-stone-950">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-bold text-stone-500">发疯性价比分</p>
-                    <Gauge className={`h-5 w-5 ${resultTheme.gauge}`} />
-                  </div>
-                  <div className="mt-4 flex items-end gap-2">
-                    <span className="text-7xl font-black leading-none">{result.total}</span>
-                    <span className="pb-2 text-xl font-bold text-stone-500">/ 100</span>
-                  </div>
-                  <p className="mt-3 text-sm font-bold text-stone-500">约超过 {result.rating.percentile}% 的工作</p>
-                </div>
               </div>
             </header>
 
             <div className="grid gap-6">
               <div className={`space-y-4 rounded-[2.5rem] border border-stone-900/10 bg-white p-5 ${isSharing ? "shadow-none" : "shadow-lg"}`}>
+                <div className="rounded-[2rem] bg-stone-950 p-5 text-white">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-bold text-stone-300">发疯性价比分</p>
+                    <Gauge className={`h-5 w-5 ${resultTheme.gauge}`} />
+                  </div>
+                  <div className="mt-4 flex items-end gap-2">
+                    <span className="text-7xl font-black leading-none">{result.total}</span>
+                    <span className="pb-2 text-xl font-bold text-stone-400">/ 100</span>
+                  </div>
+                  <p className="mt-3 text-sm font-bold text-stone-300">约超过 {result.rating.percentile}% 的工作</p>
+                </div>
+
                 <div className="flex justify-center overflow-hidden rounded-[2rem] bg-stone-50 px-2 py-2 md:p-4">
                   <div className="-my-6 w-full max-w-[680px] md:-my-8">
                     <RadarChart values={radarValues} />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="rounded-[1.5rem] border border-stone-200 bg-stone-50 p-4 text-stone-950 md:rounded-[2rem] md:p-5">
-                    <p className="text-sm font-bold text-stone-600">综合收益</p>
-                    <div className="mt-4 flex items-end gap-1.5 md:gap-2">
-                      <span className="text-4xl font-black leading-none md:text-5xl">{result.aggregateScores.benefit}</span>
-                      <span className="pb-1 text-sm font-bold text-stone-500">/ 100</span>
-                    </div>
-                  </div>
-                  <div className="rounded-[1.5rem] border border-stone-200 bg-stone-50 p-4 text-stone-950 md:rounded-[2rem] md:p-5">
-                    <p className="text-sm font-bold text-stone-600">综合成本</p>
-                    <div className="mt-4 flex items-end gap-1.5 md:gap-2">
-                      <span className="text-4xl font-black leading-none md:text-5xl">{result.aggregateScores.cost}</span>
-                      <span className="pb-1 text-sm font-bold text-stone-500">/ 100</span>
-                    </div>
                   </div>
                 </div>
               </div>
