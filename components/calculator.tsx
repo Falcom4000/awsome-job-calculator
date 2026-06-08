@@ -951,7 +951,7 @@ export default function JobCalculator() {
             <RatingField label="饭碗安全感" low="不安全" high="很安全" copyKey="safetyFeeling" value={inputs.safetyFeeling} onChange={(value) => setValue("safetyFeeling", value)} />
           </Section>
 
-          <Section eyebrow="第五步" title={inputs.mode === "detailed" ? "这班有没有盼头" : "这班有没有盼头，外面还有没有路"}>
+          <Section eyebrow="第五步" title="这班有没有盼头">
             {inputs.mode === "detailed" ? (
               <>
                 <RatingField label="过去半年有没有变强" low="停滞" high="变强很多" copyKey="pastGrowth" value={inputs.pastGrowth} onChange={(value) => setValue("pastGrowth", value)} />
@@ -966,6 +966,8 @@ export default function JobCalculator() {
                 <RatingField label="未来一年有没有盼头" low="有限" high="空间大" copyKey="futureGrowth" value={inputs.futureGrowth} onChange={(value) => setValue("futureGrowth", value)} />
                 <RatingField label="有没有清晰上升通道" low="看不见" high="很清楚" copyKey="promotionClarity" value={inputs.promotionClarity} onChange={(value) => setValue("promotionClarity", value)} />
                 <RatingField label="有没有人来捞你" low="很少" high="很多" copyKey="externalOpportunities" value={inputs.externalOpportunities} onChange={(value) => setValue("externalOpportunities", value)} />
+                <RatingField label="长期路线合不合" low="不适合" high="很匹配" copyKey="longTermFit" value={inputs.longTermFit} onChange={(value) => setValue("longTermFit", value)} />
+                <RatingField label="对工作内容满意吗" low="不喜欢" high="喜欢" copyKey="contentLove" value={inputs.contentLove} onChange={(value) => setValue("contentLove", value)} />
               </>
             )}
           </Section>
@@ -988,17 +990,15 @@ export default function JobCalculator() {
             </Section>
           ) : null}
 
-          <Section eyebrow={inputs.mode === "detailed" ? "第七步" : "第六步"} title="你和这班八字合不合">
-            <RatingField label="长期路线合不合" low="不适合" high="很匹配" copyKey="longTermFit" value={inputs.longTermFit} onChange={(value) => setValue("longTermFit", value)} />
-            <RatingField label="对这个行业满意吗" low="不喜欢" high="喜欢" copyKey="industryLove" value={inputs.industryLove} onChange={(value) => setValue("industryLove", value)} />
-            <RatingField label="对工作内容满意吗" low="不喜欢" high="喜欢" copyKey="contentLove" value={inputs.contentLove} onChange={(value) => setValue("contentLove", value)} />
-            {inputs.mode === "detailed" ? (
-              <>
-                <RatingField label="愿不愿意为它加练" low="不愿意" high="很愿意" copyKey="extraLearningWillingness" value={inputs.extraLearningWillingness} onChange={(value) => setValue("extraLearningWillingness", value)} />
-                <RatingField label="你的价值有没有被看见" low="没人知道" high="很被认可" copyKey="valueRecognition" value={inputs.valueRecognition} onChange={(value) => setValue("valueRecognition", value)} />
-              </>
-            ) : null}
-          </Section>
+          {inputs.mode === "detailed" ? (
+            <Section eyebrow="第七步" title="你和这班八字合不合">
+              <RatingField label="长期路线合不合" low="不适合" high="很匹配" copyKey="longTermFit" value={inputs.longTermFit} onChange={(value) => setValue("longTermFit", value)} />
+              <RatingField label="对这个行业满意吗" low="不喜欢" high="喜欢" copyKey="industryLove" value={inputs.industryLove} onChange={(value) => setValue("industryLove", value)} />
+              <RatingField label="对工作内容满意吗" low="不喜欢" high="喜欢" copyKey="contentLove" value={inputs.contentLove} onChange={(value) => setValue("contentLove", value)} />
+              <RatingField label="愿不愿意为它加练" low="不愿意" high="很愿意" copyKey="extraLearningWillingness" value={inputs.extraLearningWillingness} onChange={(value) => setValue("extraLearningWillingness", value)} />
+              <RatingField label="你的价值有没有被看见" low="没人知道" high="很被认可" copyKey="valueRecognition" value={inputs.valueRecognition} onChange={(value) => setValue("valueRecognition", value)} />
+            </Section>
+          ) : null}
 
           <div className="rounded-[2rem] border border-stone-900/10 bg-stone-950 p-5 text-white shadow-xl">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
