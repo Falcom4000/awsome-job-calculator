@@ -236,11 +236,11 @@ const ratingCopy: Record<RatingCopyKey, RatingOption[]> = {
     { score: 5, title: "镀金明显", description: "对外很好讲，能明显提升市场定价。" },
   ],
   externalOpportunities: [
-    { score: 1, title: "没人路过", description: "几乎没人找，也很难匹配外部岗位。" },
-    { score: 2, title: "偶尔有人看", description: "偶尔有机会，但质量或匹配度一般。" },
-    { score: 3, title: "有人递绳", description: "有一些机会，但好 offer 不确定。" },
-    { score: 4, title: "有人来捞", description: "能匹配不少不错岗位。" },
-    { score: 5, title: "很多人捞", description: "外部选择面宽，容易获得高质量机会。" },
+    { score: 1, title: "没人约", description: "几乎没人找你聊机会，也很难匹配外部岗位。" },
+    { score: 2, title: "偶尔有人问", description: "偶尔有机会，但质量或匹配度一般。" },
+    { score: 3, title: "有人聊聊", description: "有一些跳槽机会，但好 offer 不确定。" },
+    { score: 4, title: "常有人约", description: "能匹配不少不错岗位。" },
+    { score: 5, title: "很多人约", description: "外部选择面宽，容易获得高质量机会。" },
   ],
   jdMatch: [
     { score: 1, title: "完全不像", description: "目标岗位关键要求大多对不上。" },
@@ -993,8 +993,8 @@ export default function JobCalculator() {
               <>
                 <RatingField label="想象一年后的自己，会更值钱，还是更会忍？" low="只会忍" high="更值钱" copyKey="futureGrowth" value={inputs.futureGrowth} onChange={(value) => setValue("futureGrowth", value)} />
                 <RatingField label="你看得清下一步该怎么升吗？" low="看不见路" high="路线清楚" copyKey="promotionClarity" value={inputs.promotionClarity} onChange={(value) => setValue("promotionClarity", value)} />
-                <RatingField label="外面有没有人愿意来捞你出坑？" low="没人路过" high="很多人捞" copyKey="externalOpportunities" value={inputs.externalOpportunities} onChange={(value) => setValue("externalOpportunities", value)} />
-                <RatingField label="长期路线合不合" low="不适合" high="很匹配" copyKey="longTermFit" value={inputs.longTermFit} onChange={(value) => setValue("longTermFit", value)} />
+                <RatingField label="外面有没有人约你跳槽？" low="没人约" high="很多人约" copyKey="externalOpportunities" value={inputs.externalOpportunities} onChange={(value) => setValue("externalOpportunities", value)} />
+                <RatingField label="符合自己的长远规划吗？" low="不适合" high="很匹配" copyKey="longTermFit" value={inputs.longTermFit} onChange={(value) => setValue("longTermFit", value)} />
                 <RatingField label="每天做这些事，你是愿意打开电脑，还是想立刻关机？" low="想关机" high="愿意开干" copyKey="contentLove" value={inputs.contentLove} onChange={(value) => setValue("contentLove", value)} />
               </>
             )}
@@ -1002,7 +1002,7 @@ export default function JobCalculator() {
 
           {inputs.mode === "detailed" ? (
             <Section eyebrow="第六步" title="外面还有没有路">
-              <RatingField label="外面有没有人愿意来捞你出坑？" low="没人路过" high="很多人捞" copyKey="externalOpportunities" value={inputs.externalOpportunities} onChange={(value) => setValue("externalOpportunities", value)} />
+              <RatingField label="外面有没有人约你跳槽？" low="没人约" high="很多人约" copyKey="externalOpportunities" value={inputs.externalOpportunities} onChange={(value) => setValue("externalOpportunities", value)} />
               <RatingField label="你想去的下一份工作，看你像自己人吗？" low="完全不像" high="很对口" copyKey="jdMatch" value={inputs.jdMatch} onChange={(value) => setValue("jdMatch", value)} />
               <RatingField label="这份经历写进简历，是镀金还是加灰？" low="加灰" high="镀金" copyKey="resumeValue" value={inputs.resumeValue} onChange={(value) => setValue("resumeValue", value)} />
               <RatingField
@@ -1020,7 +1020,7 @@ export default function JobCalculator() {
 
           {inputs.mode === "detailed" ? (
             <Section eyebrow="第七步" title="你和这班八字合不合">
-              <RatingField label="长期路线合不合" low="不适合" high="很匹配" copyKey="longTermFit" value={inputs.longTermFit} onChange={(value) => setValue("longTermFit", value)} />
+              <RatingField label="符合自己的长远规划吗？" low="不适合" high="很匹配" copyKey="longTermFit" value={inputs.longTermFit} onChange={(value) => setValue("longTermFit", value)} />
               <RatingField label="这个行业让你有电，还是让你断电？" low="很断电" high="挺来电" copyKey="industryLove" value={inputs.industryLove} onChange={(value) => setValue("industryLove", value)} />
               <RatingField label="每天做这些事，你是愿意打开电脑，还是想立刻关机？" low="想关机" high="愿意开干" copyKey="contentLove" value={inputs.contentLove} onChange={(value) => setValue("contentLove", value)} />
               <RatingField label="为了这条路，你会主动加练，还是只想下线？" low="只想下线" high="愿意加练" copyKey="extraLearningWillingness" value={inputs.extraLearningWillingness} onChange={(value) => setValue("extraLearningWillingness", value)} />
